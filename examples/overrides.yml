@@ -1,0 +1,9 @@
+image:
+  tag: 'latest'
+
+nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
+
+secret:
+  name: 'cloudsecret'
+  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+  adminPassword: 'ADMIN_PASSWORD'

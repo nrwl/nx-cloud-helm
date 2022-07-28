@@ -1,0 +1,43 @@
+image:
+  tag: ''
+
+nxCloudAppURL: ''
+verboseLogging: 'false'
+
+ingress:
+  globalStaticIpName: ''
+  managedCertificates: ''
+  class: ''
+
+fileStorage:
+  storageClassName: ''
+  size: '30Gi'
+
+awsS3:
+  enabled: false
+  bucket: ''
+  accelerated: false
+  endpoint: ''
+
+azure:
+  enabled: false
+  container: ''
+
+github:
+  auth:
+    enabled: false
+  pr:
+    enabled: false
+    apiUrl: ''
+
+secret:
+  name: ''
+  nxCloudMongoServerEndpoint: ''
+  adminPassword: ''
+  awsS3AccessKeyId: ''
+  awsS3SecretAccessKey: ''
+  azureConnectionString: ''
+  githubAuthClientId: ''
+  githubAuthClientSecret: ''
+  githubWebhookSecret: ''
+  githubAuthToken: ''

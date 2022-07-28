@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  nx-cloud:
+  - apiVersion: v2
+    created: "2022-07-28T09:43:59.786233-04:00"
+    description: Nx Cloud Helm Chart
+    digest: 61ece7edddaab0213ef67d0f0bfd432aecdce5cce6fff45f4706574044f94503
+    name: nx-cloud
+    type: application
+    urls:
+    - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-07-28T09:43:59.785672-04:00"

@@ -1,0 +1,245 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-frontend
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-frontend
+    spec:
+      containers:
+        - name: nx-cloud-frontend
+          image: nxprivatecloud/nx-cloud-frontend:latest
+          resources:
+            requests:
+              memory: '0.5Gi'
+              cpu: '0.5'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-api
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-api
+    spec:
+      containers:
+        - name: nx-cloud-api
+          image: nxprivatecloud/nx-cloud-api:latest
+          resources:
+            requests:
+              memory: '0.5Gi'
+              cpu: '0.5'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4000
+          env:
+            - name: NX_CLOUD_APP_URL
+              value: NX_CLOUD_APP_URL_VALUE
+            - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+              value: NX_CLOUD_MONGO_SERVER_ENDPOINT_VALUE
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-nx-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-nx-api
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-nx-api
+    spec:
+      containers:
+        - name: nx-cloud-nx-api
+          image: nxprivatecloud/nx-cloud-nx-api:latest
+          resources:
+            requests:
+              memory: '1Gi'
+              cpu: '0.5'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4203
+          env:
+            - name: NX_CLOUD_APP_URL
+              value: NX_CLOUD_APP_URL_VALUE
+            - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+              value: NX_CLOUD_MONGO_SERVER_ENDPOINT_VALUE
+            - name: AWS_S3_ACCESS_KEY_ID
+              value: AWS_S3_ACCESS_KEY_ID_VALUE
+            - name: AWS_S3_SECRET_ACCESS_KEY
+              value: AWS_S3_SECRET_ACCESS_KEY_VALUE
+            - name: AWS_S3_BUCKET
+              value: AWS_S3_BUCKET_VALUE
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nx-cloud-aggregator
+spec:
+  schedule: '*/10 * * * *'
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: nx-cloud-aggregator
+              image: nxprivatecloud/nx-cloud-aggregator:latest
+              resources:
+                requests:
+                  memory: '0.5Gi'
+                  cpu: '0.5'
+              imagePullPolicy: Always
+              env:
+                - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+                  value: NX_CLOUD_MONGO_SERVER_ENDPOINT_VALUE
+                - name: ADMIN_PASSWORD
+                  value: ADMIN_PASSWORD_VALUE
+          restartPolicy: OnFailure
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nx-cloud-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: nx-cloud-ip
+    networking.gke.io/managed-certificates: cloud-cert
+    kubernetes.io/ingress.class: 'gce'
+  labels:
+    app: nx-cloud
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /nx-cloud
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nx-api-service
+                port:
+                  number: 4203
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /download
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+  defaultBackend:
+    service:
+      name: nx-cloud-frontend-service
+      port:
+        number: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-nx-api-service
+  labels:
+    app: nx-cloud-nx-api
+spec:
+  type: NodePort
+  selector:
+    app: nx-cloud-nx-api
+  ports:
+    - port: 4203
+      targetPort: 4203
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-nrwl-api-service
+  labels:
+    app: nx-cloud-api
+spec:
+  type: NodePort
+  selector:
+    app: nx-cloud-api
+  ports:
+    - port: 4000
+      targetPort: 4000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-frontend-service
+  labels:
+    app: nx-cloud-frontend
+spec:
+  type: NodePort
+  selector:
+    app: nx-cloud-frontend
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: cloud-cert
+spec:
+  domains:
+    -
