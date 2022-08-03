@@ -2,7 +2,8 @@ image:
   tag: ''
 
 nxCloudAppURL: ''
-verboseLogging: 'false'
+verboseLogging: false
+verboseMongoLogging: false
 
 ingress:
   globalStaticIpName: ''
@@ -27,6 +28,7 @@ github:
   auth:
     enabled: false
   pr:
+    defaultWorkspaceId: ''
     enabled: false
     apiUrl: ''
 

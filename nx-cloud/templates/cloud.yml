@@ -38,7 +38,7 @@ spec:
           env:
             {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: '{{ .Values.verboseLogging }}'
+              value: 'true'
             {{ end }}
             {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
@@ -142,7 +142,9 @@ spec:
             {{ end }}
             {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: '{{ .Values.verboseLogging }}'
+              value: 'true'
+            - name: NX_API_LOG_LEVEL
+              value: 'DEBUG'
             {{ end }}
             {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
@@ -302,10 +304,24 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.githubAuthToken }}
+            {{ if .Values.github.pr.defaultWorkspaceId }}
+              - name: NX_CLOUD_INTEGRATION_DEFAULT_WORKSPACE_ID
+                value: {{ .Values.github.pr.defaultWorkspaceId }}
+            {{ end }}
             {{ end }}
             {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: '{{ .Values.verboseLogging }}'
+              value: 'true'
+            - name: NX_API_LOG_LEVEL
+              value: 'DEBUG'
+            {{ end }}
+            {{ if .Values.verboseMongoLogging }}
+            - name: NX_MONGO_LOG_LEVEL
+              value: 'DEBUG'
+            {{ end }}
+            {{ if .Values.fixedBatchSize }}
+            - name: NX_CLOUD_FIXED_BATCH_SIZE
+              value: {{ .Values.fixedBatchSize }}
             {{ end }}
             {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
@@ -434,7 +450,13 @@ spec:
                 {{ end }}
                 {{ if .Values.verboseLogging }}
                 - name: NX_VERBOSE_LOGGING
-                  value: '{{ .Values.verboseLogging }}'
+                  value: 'true'
+                - name: NX_API_LOG_LEVEL
+                  value: 'DEBUG'
+                {{ end }}
+                {{ if .Values.verboseMongoLogging }}
+                - name: NX_MONGO_LOG_LEVEL
+                  value: 'DEBUG'
                 {{ end }}
                 {{ if .Values.mode }}
                 - name: NX_CLOUD_MODE
