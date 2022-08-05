@@ -109,7 +109,102 @@ be different. If you are interested in creating the two using GKE, check out the
 * [Reserving a static external IP address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
 * [Using Google-managed SSL certificates](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs)
 
-If you aren't using GKE, `ingress.class` will also be different.
+If you aren't using GKE, `ingress.class` will also be different. For instance, this is a setup for EKS:
+
+```yaml
+image:
+   tag: 'latest'
+
+nxCloudAppURL: 'https://nx-cloud.myorg.com'
+
+ingress:
+   class: 'alb'
+   albScheme: 'internet-facing'
+   albListenPorts: '[{"HTTPS":443}]'
+   albCertificateArn: 'arn:aws:acm:us-east-1:411686525067:certificate/8adf7812-a1af-4eae-af1b-ea425a238a67'
+
+secret:
+   name: 'cloud'
+   nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+   adminPassword: 'ADMIN_PASSWORD'
+```
+
+If you need to have a detailed ignress configuration, you can tell the package to skip defining ingress:
+
+```yaml
+image:
+   tag: 'latest'
+
+nxCloudAppURL: 'https://nx-cloud.myorg.com'
+
+ingress:
+    skip: true
+```
+
+and then define it yourself:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nx-cloud-ingress
+  annotations:
+     
+  labels:
+    app: nx-cloud
+spec:
+  rules:
+    - http:
+        paths:
+          # define the next /file section only if you use the built-in file server
+          - path: /file
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-file-server-service
+                port:
+                  number: 5000
+          - path: /nx-cloud
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nx-api-service
+                port:
+                  number: 4203
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /download
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+  defaultBackend:
+    service:
+      name: nx-cloud-frontend-service
+      port:
+        number: 8080
+```
 
 ## Variations
 

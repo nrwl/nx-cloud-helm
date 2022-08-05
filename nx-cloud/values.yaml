@@ -6,8 +6,12 @@ verboseLogging: false
 verboseMongoLogging: false
 
 ingress:
+  skip: false
   globalStaticIpName: ''
   managedCertificates: ''
+  albScheme: ''
+  albListenPorts: ''
+  albCertificateArn: ''
   class: ''
 
 fileStorage:

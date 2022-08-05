@@ -485,6 +485,7 @@ spec:
                       key: ROLLBAR_TOKEN
                 {{ end }}
           restartPolicy: OnFailure
+{{ if not .Values.ingress.skip }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -502,6 +503,15 @@ metadata:
     {{ end }}
     {{ if eq .Values.ingress.class "nginx" }}
     nginx.ingress.kubernetes.io/proxy-body-size: 1000m
+    {{ end }}
+    {{ if .Values.ingress.albScheme }}
+    alb.ingress.kubernetes.io/scheme: {{ .Values.ingress.albScheme }}
+    {{ end }}
+    {{ if .Values.ingress.albListenPorts }}
+    alb.ingress.kubernetes.io/listen-ports: {{ .Values.ingress.albListenPorts }}
+    {{ end }}
+    {{ if .Values.ingress.albCertificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.albCertificateArn }}
     {{ end }}
   labels:
     app: nx-cloud
@@ -558,6 +568,7 @@ spec:
       name: nx-cloud-frontend-service
       port:
         number: 8080
+{{ end }}
 {{ if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
 ---
 apiVersion: v1
