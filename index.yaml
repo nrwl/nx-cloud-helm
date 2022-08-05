@@ -2,7 +2,16 @@ apiVersion: v1
 entries:
   nx-cloud:
   - apiVersion: v2
-    created: "2022-08-03T15:52:41.71709-04:00"
+    created: "2022-08-05T15:24:17.489329-04:00"
+    description: Nx Cloud Helm Chart
+    digest: 586c8f01c43cc8c95d96f94cf8645f8fea1a0053676cdd14730ab53d86e0c1b4
+    name: nx-cloud
+    type: application
+    urls:
+    - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    created: "2022-08-05T15:24:17.489047-04:00"
     description: Nx Cloud Helm Chart
     digest: 2358a915b0e12e35b34bc71b96b3b1fca482fb2a06bd6c9fda65c6fa516a8ad9
     name: nx-cloud
@@ -11,7 +20,7 @@ entries:
     - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
-    created: "2022-08-03T15:52:41.716851-04:00"
+    created: "2022-08-05T15:24:17.488748-04:00"
     description: Nx Cloud Helm Chart
     digest: 4a02cfb6d514803c0acfe23f992ddf042c0a0dda8a1a396b8b292ec70e101a00
     name: nx-cloud
@@ -20,7 +29,7 @@ entries:
     - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.2.1.tgz
     version: 0.2.1
   - apiVersion: v2
-    created: "2022-08-03T15:52:41.716619-04:00"
+    created: "2022-08-05T15:24:17.488457-04:00"
     description: Nx Cloud Helm Chart
     digest: d24b0cd5807715959aebf48ae559dc0b91f6fb10546b12a75d9a2adc9962ae33
     name: nx-cloud
@@ -29,7 +38,7 @@ entries:
     - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.2.0.tgz
     version: 0.2.0
   - apiVersion: v2
-    created: "2022-08-03T15:52:41.716368-04:00"
+    created: "2022-08-05T15:24:17.488164-04:00"
     description: Nx Cloud Helm Chart
     digest: 61ece7edddaab0213ef67d0f0bfd432aecdce5cce6fff45f4706574044f94503
     name: nx-cloud
@@ -37,4 +46,4 @@ entries:
     urls:
     - https://nrwl.github.io/nx-cloud-helm/helm-charts/nx-cloud-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-03T15:52:41.715762-04:00"
+generated: "2022-08-05T15:24:17.48774-04:00"
