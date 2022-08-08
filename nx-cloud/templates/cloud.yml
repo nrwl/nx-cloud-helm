@@ -292,8 +292,10 @@ spec:
                   key: {{ .Values.secret.azureConnectionString }}
             {{ end }}
             {{ if .Values.github.pr.enabled }}
+            {{ if .Values.github.pr.apiUrl }}
             - name: GITHUB_API_URL
               value: {{ .Values.github.pr.apiUrl }}
+            {{ end }}
             - name: GITHUB_WEBHOOK_SECRET
               valueFrom:
                 secretKeyRef:
