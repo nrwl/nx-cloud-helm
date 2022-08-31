@@ -5,6 +5,11 @@ nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
 
+replicas:
+  frontend: 1
+  api: 1
+  nxApi: 1
+
 ingress:
   skip: false
   globalStaticIpName: ''
