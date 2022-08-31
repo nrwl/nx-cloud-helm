@@ -163,7 +163,7 @@ spec:
               image: nxprivatecloud/nx-cloud-aggregator:latest
               resources:
                 requests:
-                  memory: '0.5Gi'
+                  memory: '1.0Gi'
                   cpu: '0.5'
               imagePullPolicy: Always
               env:

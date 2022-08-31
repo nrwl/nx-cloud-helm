@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: nx-cloud-frontend
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.frontend }}
   selector:
     matchLabels:
       app: nx-cloud-frontend
@@ -23,11 +23,12 @@ spec:
       containers:
         - name: nx-cloud-frontend
           image:
-            {{ if .Values.image.local }}
+        {{ if .Values.image.local }}
             localhost:5001/nx-cloud-frontend:next
-            {{ else }}
+        {{ else }}
             nxprivatecloud/nx-cloud-frontend:{{ .Values.image.tag }}
-            {{end}}
+        {{end}}
+
           resources:
             requests:
               memory: '0.5Gi'
@@ -36,15 +37,18 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            {{ if .Values.verboseLogging }}
+
+        {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: 'true'
-            {{ end }}
-            {{ if .Values.mode }}
+        {{ end }}
+
+        {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
               value: '{{ .Values.mode }}'
-            {{ end }}
-            {{ if eq .Values.mode "public"}}
+        {{ end }}
+
+        {{ if eq .Values.mode "public"}}
             - name: NX_CLOUD_AUTH0_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -75,12 +79,17 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: ROLLBAR_ENV
-            - name: ROLLBAR_TOKEN
+            - name: ROLLBAR_NX_CLOUD_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: ROLLBAR_TOKEN
-            {{ end }}
+            - name: GOOGLE_ANALYTICS_LOGGED_IN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GOOGLE_ANALYTICS_LOGGED_IN_ID
+        {{ end }}
 
 ---
 apiVersion: apps/v1
@@ -88,7 +97,7 @@ kind: Deployment
 metadata:
   name: nx-cloud-api
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.api }}
   selector:
     matchLabels:
       app: nx-cloud-api
@@ -108,14 +117,14 @@ spec:
       containers:
         - name: nx-cloud-api
           image:
-            {{ if .Values.image.local }}
+        {{ if .Values.image.local }}
             localhost:5001/nx-cloud-api:next
-            {{ else }}
+        {{ else }}
             nxprivatecloud/nx-cloud-api:{{ .Values.image.tag }}
-            {{end}}
+        {{end}}
           resources:
             requests:
-              memory: '0.5Gi'
+              memory: '1Gi'
               cpu: '0.5'
           imagePullPolicy: Always
           ports:
@@ -123,12 +132,20 @@ spec:
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
+
+        {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
-            {{ if .Values.github.auth.enabled }}
+        {{ else }}
+            - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
+              value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+        {{ end }}
+
+        {{ if .Values.github.auth.enabled }}
+          {{ if .Values.secret.name }}
             - name: GITHUB_AUTH_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -139,18 +156,27 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.githubAuthClientSecret }}
-            {{ end }}
-            {{ if .Values.verboseLogging }}
+          {{ else }}
+            - name: SECRET_FILE_GITHUB_AUTH_CLIENT_ID
+              value: {{ .Values.secret.githubAuthClientId }}
+            - name: SECRET_FILE_GITHUB_AUTH_CLIENT_SECRET
+              value: {{ .Values.secret.githubAuthClientSecret }}
+          {{ end }}
+        {{ end }}
+
+        {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: 'true'
             - name: NX_API_LOG_LEVEL
               value: 'DEBUG'
-            {{ end }}
-            {{ if .Values.mode }}
+        {{ end }}
+
+        {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
               value: '{{ .Values.mode }}'
-            {{ end }}
-            {{ if eq .Values.mode "public"}}
+        {{ end }}
+
+        {{ if eq .Values.mode "public"}}
             - name: K8S
               value: 'true'
             - name: NX_CLOUD_AUTH0_CLIENT_ID
@@ -213,14 +239,14 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: ROLLBAR_TOKEN
-            {{ end }}
+        {{ end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-nx-api
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas.nxApi }}
   selector:
     matchLabels:
       app: nx-cloud-nx-api
@@ -240,11 +266,11 @@ spec:
       containers:
         - name: nx-cloud-nx-api
           image:
-            {{ if .Values.image.local }}
+        {{ if .Values.image.local }}
             localhost:5001/nx-cloud-nx-api:next
-            {{ else }}
+        {{ else }}
             nxprivatecloud/nx-cloud-nx-api:{{ .Values.image.tag }}
-            {{end}}
+        {{ end }}
           resources:
             requests:
               memory: '1Gi'
@@ -255,16 +281,25 @@ spec:
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
+
+        {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
-            {{ if .Values.awsS3.accelerated }}
+        {{ else }}
+            - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
+              value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+        {{ end }}
+
+        {{ if .Values.awsS3.accelerated }}
             - name: AWS_S3_ACCELERATED
               value: 'TRUE'
-            {{ end }}
-            {{ if .Values.awsS3.enabled }}
+        {{ end }}
+
+        {{ if .Values.awsS3.enabled }}
+          {{ if .Values.secret.name }}
             - name: AWS_S3_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -275,31 +310,45 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.awsS3SecretAccessKey }}
+          {{ else }}
+            - name: SECRET_FILE_AWS_S3_ACCESS_KEY_ID
+              value: {{ .Values.secret.awsS3AccessKeyId }}
+            - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
+              value: {{ .Values.secret.awsS3SecretAccessKey }}
+          {{ end }}
+
             - name: AWS_S3_BUCKET
               value: {{ .Values.awsS3.bucket }}
-            {{ end }}
-            {{ if .Values.awsS3.endpoint }}
+        {{ end }}
+
+        {{ if .Values.awsS3.endpoint }}
             - name: AWS_S3_ENDPOINT
               value: {{ .Values.awsS3.endpoint }}
-            {{ end }}
-            {{ if .Values.azure.enabled }}
+        {{ end }}
+
+        {{ if .Values.azure.enabled }}
             - name: AZURE_CONTAINER
               value: '{{ .Values.azure.container }}'
+
+          {{ if .Values.secret.name }}
             - name: AZURE_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.azureConnectionString }}
-            {{ end }}
-            {{ if .Values.github.pr.enabled }}
+          {{ else }}
+            - name: SECRET_FILE_AZURE_CONNECTION_STRING
+              value: {{ .Values.secret.azureConnectionString }}
+          {{ end }}
+        {{ end }}
+
+        {{ if .Values.github.pr.enabled }}
             {{ if .Values.github.pr.apiUrl }}
             - name: GITHUB_API_URL
               value: {{ .Values.github.pr.apiUrl }}
             {{ end }}
-            {{ if .Values.github.pr.remoteRepositoryName }}
-            - name: NX_CLOUD_REMOTE_REPOSITORY_NAME
-              value: {{ .Values.github.pr.remoteRepositoryName }}
-            {{ end }}
+
+          {{ if .Values.secret.name }}
             - name: GITHUB_WEBHOOK_SECRET
               valueFrom:
                 secretKeyRef:
@@ -310,30 +359,43 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.githubAuthToken }}
-            {{ if .Values.github.pr.defaultWorkspaceId }}
-              - name: NX_CLOUD_INTEGRATION_DEFAULT_WORKSPACE_ID
-                value: {{ .Values.github.pr.defaultWorkspaceId }}
-            {{ end }}
-            {{ end }}
-            {{ if .Values.verboseLogging }}
+          {{ else }}
+            - name: SECRET_FILE_GITHUB_WEBHOOK_SECRET
+              value: {{ .Values.secret.githubWebhookSecret }}
+            - name: SECRET_FILE_GITHUB_AUTH_TOKEN
+              value: {{ .Values.secret.githubAuthToken }}
+          {{ end }}
+
+          {{ if .Values.github.pr.defaultWorkspaceId }}
+            - name: NX_CLOUD_INTEGRATION_DEFAULT_WORKSPACE_ID
+              value: {{ .Values.github.pr.defaultWorkspaceId }}
+          {{ end }}
+        {{ end }}
+
+
+        {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: 'true'
             - name: NX_API_LOG_LEVEL
               value: 'DEBUG'
-            {{ end }}
-            {{ if .Values.verboseMongoLogging }}
+        {{ end }}
+
+        {{ if .Values.verboseMongoLogging }}
             - name: NX_MONGO_LOG_LEVEL
               value: 'DEBUG'
-            {{ end }}
-            {{ if .Values.fixedBatchSize }}
+        {{ end }}
+
+        {{ if .Values.fixedBatchSize }}
             - name: NX_CLOUD_FIXED_BATCH_SIZE
               value: {{ .Values.fixedBatchSize }}
-            {{ end }}
-            {{ if .Values.mode }}
+        {{ end }}
+
+        {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
               value: '{{ .Values.mode }}'
-            {{ end }}
-            {{ if eq .Values.mode "public"}}
+        {{ end }}
+
+        {{ if eq .Values.mode "public"}}
             - name: GITHUB_APP_ID
               valueFrom:
                 secretKeyRef:
@@ -354,7 +416,17 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: GITHUB_WEBHOOK_SECRET
-            {{ end }}
+            - name: ROLLBAR_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_ENV
+            - name: ROLLBAR_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_TOKEN
+        {{ end }}
 {{ if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
 ---
 apiVersion: apps/v1
@@ -386,11 +458,11 @@ spec:
       containers:
         - name: nx-cloud-file-server
           image:
-            {{ if .Values.image.local }}
+        {{ if .Values.image.local }}
             localhost:5001/nx-cloud-file-server:next
-            {{ else }}
+        {{ else }}
             nxprivatecloud/nx-cloud-file-server:{{ .Values.image.tag }}
-            {{end}}
+        {{end}}
           resources:
             requests:
               memory: '0.5Gi'
@@ -431,44 +503,65 @@ spec:
           containers:
             - name: nx-cloud-aggregator
               image:
-                {{ if .Values.image.local }}
+            {{ if .Values.image.local }}
                 localhost:5001/nx-cloud-aggregator:next
-                {{ else }}
+            {{ else }}
                 nxprivatecloud/nx-cloud-aggregator:{{ .Values.image.tag }}
-                {{end}}
+            {{end}}
               resources:
                 requests:
-                  memory: '0.5Gi'
+                  memory: '1.0Gi'
                   cpu: '0.5'
               imagePullPolicy: Always
               env:
+
+            {{ if .Values.secret.name }}
                 - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
                   valueFrom:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
-                {{ if .Values.secret.adminPassword }}
+            {{ else }}
+                - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
+                  value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+            {{ end }}
+
+            {{ if .Values.secret.adminPassword }}
+              {{ if .Values.secret.name }}
                 - name: ADMIN_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: {{ .Values.secret.adminPassword }}
-                {{ end }}
-                {{ if .Values.verboseLogging }}
+              {{ else }}
+                - name: SECRET_FILE_ADMIN_PASSWORD
+                  value: {{ .Values.secret.adminPassword }}
+              {{ end }}
+            {{ end }}
+
+            {{ if .Values.verboseLogging }}
                 - name: NX_VERBOSE_LOGGING
                   value: 'true'
                 - name: NX_API_LOG_LEVEL
                   value: 'DEBUG'
-                {{ end }}
-                {{ if .Values.verboseMongoLogging }}
+            {{ end }}
+
+            {{ if .Values.verboseMongoLogging }}
                 - name: NX_MONGO_LOG_LEVEL
                   value: 'DEBUG'
-                {{ end }}
-                {{ if .Values.mode }}
+            {{ end }}
+
+            {{ if .Values.mode }}
                 - name: NX_CLOUD_MODE
                   value: '{{ .Values.mode }}'
-                {{ end }}
-                {{ if eq .Values.mode "public"}}
+            {{ end }}
+
+            {{ if eq .Values.mode "public"}}
+                - name: AGGREGATOR_DEAD_MAN_SNITCH_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: AGGREGATOR_DEAD_MAN_SNITCH_URI
                 - name: AGGREGATE_JOB_SNITCH
                   valueFrom:
                     secretKeyRef:
@@ -489,7 +582,7 @@ spec:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: ROLLBAR_TOKEN
-                {{ end }}
+            {{ end }}
           restartPolicy: OnFailure
 {{ if not .Values.ingress.skip }}
 ---
