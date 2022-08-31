@@ -343,10 +343,15 @@ spec:
         {{ end }}
 
         {{ if .Values.github.pr.enabled }}
-            {{ if .Values.github.pr.apiUrl }}
+          {{ if .Values.github.pr.apiUrl }}
             - name: GITHUB_API_URL
               value: {{ .Values.github.pr.apiUrl }}
-            {{ end }}
+          {{ end }}
+
+          {{ if .Values.github.pr.remoteRepositoryName }}
+            - name: NX_CLOUD_REMOTE_REPOSITORY_NAME
+              value: {{ .Values.github.pr.remoteRepositoryName }}
+          {{ end }}
 
           {{ if .Values.secret.name }}
             - name: GITHUB_WEBHOOK_SECRET
