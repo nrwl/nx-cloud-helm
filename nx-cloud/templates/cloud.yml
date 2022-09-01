@@ -103,7 +103,7 @@ spec:
       app: nx-cloud-api
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
-  minReadySeconds: 10
+  minReadySeconds: 20
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -252,7 +252,7 @@ spec:
       app: nx-cloud-nx-api
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
-  minReadySeconds: 10
+  minReadySeconds: 25
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -263,6 +263,7 @@ spec:
       labels:
         app: nx-cloud-nx-api
     spec:
+      terminationGracePeriodSeconds: 60
       containers:
         - name: nx-cloud-nx-api
           image:
