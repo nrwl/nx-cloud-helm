@@ -33,6 +33,8 @@ azure:
   enabled: false
   container: ''
 
+useCosmosDb: false
+
 github:
   auth:
     enabled: false

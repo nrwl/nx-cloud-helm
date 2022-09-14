@@ -129,6 +129,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4000
+          livenessProbe:
+            httpGet:
+              path: /api/uptime-check
+              port: 4000
+            initialDelaySeconds: 20
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
@@ -174,6 +179,11 @@ spec:
         {{ if .Values.mode }}
             - name: NX_CLOUD_MODE
               value: '{{ .Values.mode }}'
+        {{ end }}
+
+        {{ if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
         {{ end }}
 
         {{ if eq .Values.mode "public"}}
@@ -279,6 +289,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4203
+          livenessProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 30
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
@@ -401,6 +416,11 @@ spec:
               value: '{{ .Values.mode }}'
         {{ end }}
 
+        {{ if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
+        {{ end }}
+
         {{ if eq .Values.mode "public"}}
             - name: GITHUB_APP_ID
               valueFrom:
@@ -461,6 +481,11 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: cloud-volume
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nx-cloud-file-server
           image:
@@ -476,6 +501,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            initialDelaySeconds: 10
           volumeMounts:
             - mountPath: /data
               name: data
@@ -560,6 +590,11 @@ spec:
             {{ if .Values.mode }}
                 - name: NX_CLOUD_MODE
                   value: '{{ .Values.mode }}'
+            {{ end }}
+
+            {{ if .Values.useCosmosDb }}
+                - name: NX_CLOUD_USE_MONGO42
+                  value: 'false'
             {{ end }}
 
             {{ if eq .Values.mode "public"}}

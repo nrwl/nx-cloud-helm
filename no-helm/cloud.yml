@@ -63,6 +63,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4000
+          livenessProbe:
+            httpGet:
+              path: /api/uptime-check
+              port: 4000
+            initialDelaySeconds: 20
           env:
             - name: NX_CLOUD_APP_URL
               value: NX_CLOUD_APP_URL_VALUE
@@ -102,6 +107,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4203
+          livenessProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 30
           env:
             - name: NX_CLOUD_APP_URL
               value: NX_CLOUD_APP_URL_VALUE
@@ -134,6 +144,11 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: cloud-volume
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: nx-cloud-file-server
           image: nxprivatecloud/nx-cloud-file-server:latest
@@ -144,6 +159,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            initialDelaySeconds: 10
           volumeMounts:
             - mountPath: /data
               name: data
@@ -243,7 +263,6 @@ metadata:
   labels:
     app: nx-cloud-file-server
 spec:
-  type: NodePort
   selector:
     app: nx-cloud-file-server
   ports:
@@ -257,7 +276,6 @@ metadata:
   labels:
     app: nx-cloud-nx-api
 spec:
-  type: NodePort
   selector:
     app: nx-cloud-nx-api
   ports:
@@ -271,7 +289,6 @@ metadata:
   labels:
     app: nx-cloud-api
 spec:
-  type: NodePort
   selector:
     app: nx-cloud-api
   ports:
@@ -285,7 +302,6 @@ metadata:
   labels:
     app: nx-cloud-frontend
 spec:
-  type: NodePort
   selector:
     app: nx-cloud-frontend
   ports:
