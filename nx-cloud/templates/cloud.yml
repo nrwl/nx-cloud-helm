@@ -776,7 +776,7 @@ spec:
                 port:
                   number: 5000
           {{ end }}
-          {{- range .Values.nxApiExtraIngressRoutes }}
+          {{- range .Values.ingress.nxApiExtraRoutes }}
           - path: {{ . }}
             pathType: Prefix
             backend:
