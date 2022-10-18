@@ -149,6 +149,31 @@ spec:
               value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
         {{ end }}
 
+
+        {{ if .Values.saml }}
+        {{ if .Values.saml.enabled }}
+          {{ if .Values.secret.name }}
+            - name: SAML_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.samlCert }}
+            - name: SAML_ENTRY_POINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.samlEntryPoint }}
+          {{ else }}
+            - name: SAML_CERT
+              value: {{ .Values.secret.samlCert }}
+            - name: SAML_ENTRY_POINT
+              value: {{ .Values.secret.samlEntryPoint }}
+          {{ end }}
+        {{ end }}
+        {{ end }}
+
+        {{ if .Values.github }}
+        {{ if .Values.github.auth }}
         {{ if .Values.github.auth.enabled }}
           {{ if .Values.secret.name }}
             - name: GITHUB_AUTH_CLIENT_ID
@@ -167,6 +192,8 @@ spec:
             - name: SECRET_FILE_GITHUB_AUTH_CLIENT_SECRET
               value: {{ .Values.secret.githubAuthClientSecret }}
           {{ end }}
+        {{ end }}
+        {{ end }}
         {{ end }}
 
         {{ if .Values.verboseLogging }}
@@ -749,6 +776,15 @@ spec:
                 port:
                   number: 5000
           {{ end }}
+          {{- range .Values.nxApiExtraIngressRoutes }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nx-api-service
+                port:
+                  number: 4203
+          {{- end }}
           - path: /nx-cloud
             pathType: Prefix
             backend:
