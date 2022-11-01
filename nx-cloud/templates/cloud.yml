@@ -196,6 +196,11 @@ spec:
         {{ end }}
         {{ end }}
 
+        {{ if .Values.addonUnlockKey }}
+            - name: NX_CLOUD_ADDON_KEY
+              value: '{{ .Values.addonUnlockKey }}'
+        {{ end }}
+
         {{ if .Values.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: 'true'
