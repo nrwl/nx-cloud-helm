@@ -317,7 +317,7 @@ spec:
           resources:
             requests:
               memory: '1Gi'
-              cpu: '0.5'
+              cpu: '1.0'
           imagePullPolicy: Always
           ports:
             - containerPort: 4203
