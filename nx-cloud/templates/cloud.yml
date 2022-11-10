@@ -103,7 +103,6 @@ spec:
       app: nx-cloud-api
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
-  minReadySeconds: 20
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -134,6 +133,13 @@ spec:
               path: /api/uptime-check
               port: 4000
             initialDelaySeconds: 20
+          startupProbe:
+            httpGet:
+              path: /api/uptime-check
+              port: 4000
+            initialDelaySeconds: 5
+            failureThreshold: 5
+            periodSeconds: 10
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
@@ -294,7 +300,6 @@ spec:
       app: nx-cloud-nx-api
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
-  minReadySeconds: 25
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -321,6 +326,13 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 4203
+          startupProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /nx-cloud/uptime-check
@@ -579,7 +591,6 @@ spec:
       app: nx-cloud-file-server
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
-  minReadySeconds: 10
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -619,6 +630,12 @@ spec:
               path: /file/uptime-check
               port: 5000
             initialDelaySeconds: 10
+          startupProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            failureThreshold: 10
+            periodSeconds: 5
           volumeMounts:
             - mountPath: /data
               name: data
