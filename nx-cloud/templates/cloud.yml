@@ -677,7 +677,7 @@ spec:
               resources:
                 requests:
                   memory: '1200M'
-                  cpu: '500m'
+                  cpu: '1.0'
               imagePullPolicy: Always
               env:
 
