@@ -150,9 +150,35 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+
+          {{ if .Values.secret.githubPrivateKey }}
+            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubPrivateKey }}
+          {{ end }}
+
+          {{ if .Values.secret.githubAppId }}
+            - name: NX_CLOUD_GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAppId }}
+          {{ end }}
         {{ else }}
             - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
               value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+
+          {{ if .Values.secret.githubPrivateKey }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
+              value: {{ .Values.secret.githubPrivateKey }}
+          {{ end }}
+
+          {{ if .Values.secret.githubAppId }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+              value: {{ .Values.secret.githubAppId }}
+          {{ end }}
         {{ end }}
 
 
@@ -402,6 +428,44 @@ spec:
           {{ end }}
         {{ end }}
 
+
+    {{ if .Values.secret.name }}
+      {{ if .Values.secret.githubAuthToken }}
+            - name: NX_CLOUD_GITHUB_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAuthToken }}
+      {{ end }}
+      {{ if .Values.secret.githubAppId }}
+            - name: NX_CLOUD_GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAppId }}
+      {{end}}
+      {{ if .Values.secret.githubPrivateKey }}
+            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubPrivateKey }}
+      {{ end }}
+    {{ else }}
+      {{ if .Values.secret.githubAuthToken }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_AUTH_TOKEN
+              value: {{ .Values.secret.githubAuthToken }}
+      {{ end }}
+      {{ if .Values.secret.githubAppId }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+              value: {{ .Values.secret.githubAppId }}
+      {{ end }}
+      {{ if .Values.secret.githubPrivateKey }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
+              value: {{ .Values.secret.githubPrivateKey }}
+      {{ end }}
+    {{ end }}
+
 {{ if .Values.github.pr.enabled }}
   {{ if eq .Values.github.pr.mode "webhook" }}
             - name: NX_CLOUD_VCS_INTEGRATION_TYPE
@@ -453,42 +517,7 @@ spec:
               value: {{ .Values.github.pr.remoteRepositoryName }}
     {{ end }}
 
-    {{ if .Values.secret.name }}
-      {{ if .Values.secret.githubAuthToken }}
-            - name: NX_CLOUD_GITHUB_AUTH_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: {{ .Values.secret.githubAuthToken }}
-      {{ end }}
-      {{ if .Values.secret.githubAppId }}
-            - name: NX_CLOUD_GITHUB_APP_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: {{ .Values.secret.githubAppId }}
-      {{end}}
-      {{ if .Values.secret.githubPrivateKey }}
-            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: {{ .Values.secret.githubPrivateKey }}
-      {{ end }}
-    {{ else }}
-      {{ if .Values.secret.githubAuthToken }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_AUTH_TOKEN
-              value: {{ .Values.secret.githubAuthToken }}
-      {{ end }}
-      {{ if .Values.secret.githubAppId }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
-              value: {{ .Values.secret.githubAppId }}
-      {{ end }}
-      {{ if .Values.secret.githubPrivateKey }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
-              value: {{ .Values.secret.githubPrivateKey }}
-      {{ end }}
-    {{ end }}
+
   {{ end }}
 {{ end }}
 
