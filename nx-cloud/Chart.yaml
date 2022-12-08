@@ -2,4 +2,4 @@ apiVersion: v2
 name: nx-cloud
 description: Nx Cloud Helm Chart
 type: application
-version: 0.7.7
+version: 0.7.8

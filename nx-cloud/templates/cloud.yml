@@ -337,6 +337,9 @@ spec:
         app: nx-cloud-nx-api
     spec:
       terminationGracePeriodSeconds: 60
+      {{ if .Values.awsS3.serviceAccountName }}
+      serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
+      {{ end }}
       containers:
         - name: nx-cloud-nx-api
           image:
@@ -384,7 +387,7 @@ spec:
               value: 'TRUE'
         {{ end }}
 
-        {{ if .Values.awsS3.enabled }}
+        {{ if .Values.secret.awsS3AccessKeyId }}
           {{ if .Values.secret.name }}
             - name: AWS_S3_ACCESS_KEY_ID
               valueFrom:
@@ -402,7 +405,9 @@ spec:
             - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
               value: {{ .Values.secret.awsS3SecretAccessKey }}
           {{ end }}
+        {{ end }}
 
+        {{ if .Values.awsS3.bucket }}
             - name: AWS_S3_BUCKET
               value: {{ .Values.awsS3.bucket }}
         {{ end }}
@@ -807,7 +812,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: {{ .Values.ingress.albScheme }}
     {{ end }}
     {{ if .Values.ingress.albListenPorts }}
-    alb.ingress.kubernetes.io/listen-ports: {{ .Values.ingress.albListenPorts }}
+    alb.ingress.kubernetes.io/listen-ports: '{{ .Values.ingress.albListenPorts }}'
     {{ end }}
     {{ if .Values.ingress.albCertificateArn }}
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.albCertificateArn }}
@@ -871,11 +876,13 @@ spec:
                 name: nx-cloud-nrwl-api-service
                 port:
                   number: 4000
-  defaultBackend:
-    service:
-      name: nx-cloud-frontend-service
-      port:
-        number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-frontend-service
+                port:
+                  number: 8080
 {{ end }}
 {{ if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
 ---
