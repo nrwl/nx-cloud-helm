@@ -1,35 +1,21 @@
 # EKS Installation
 
-1. Create a new cluster config file for EKS and give it enough compute resources to scale up when necesarry: 
+1. Create a new EKS cluster: 
 
-```yaml
-# cluster.yaml
+   ```shell
+   eksctl create cluster --name nx-cloud-cluster --region us-east-1 --nodegroup-name ng-1  --node-type t3.medium --nodes 5 --managed
+   ```
 
-apiVersion: eksctl.io/v1alpha5
-kind: ClusterConfig
-
-metadata:
-  name: nx-cloud-cluster
-  region: us-east-1
-
-nodeGroups:
-   - name: ng-2
-     instanceType: t3.medium
-     desiredCapacity: 4
-     volumeSize: 5
-```
-
-2. `eksctl create cluster -f cluster.yaml` `create cluster --name in28minutes-cluster --nodegroup-name in28minutes-cluster-node-group  --node-type t2.medium --nodes 3 --nodes-min 3 --nodes-max 7 --managed --asg-access --zones=us-east-1a,us-east-1b`
    1. Notes on resources:
       1. the NxCloud services do not require a lot of compute power. Open up [the K8s templates here](https://github.com/nrwl/nx-cloud-helm/blob/main/nx-cloud/templates/cloud.yml) and look for `resource` annotations - this will tell you how many resources each Pod needs. 
       2. the biggest resource you'll need to consider is space required for your cache. Depending on whether you're using an external S3 bucket, or internal Pods to your cluster (both will be configured below), you might need to allocate a few GBs of space later on, the more active your workspace is.
       3. Make sure to [configure autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html#cluster-autoscaler) so you only create Nodes that are needed
 
-3. Switch contexts
+2. Switch contexts
    1. `kubectl config get-contexts`
    2. `kubectl config use-context <your-new-cluster-context>`
 
-4. Create an IAM OIDC provider associated with your cluster
+3. Create an IAM OIDC provider associated with your cluster
    3. `eksctl utils associate-iam-oidc-provider --cluster=nx-cloud-cluster --approve`
    1. This will help us authenticate with all kinds of services below from within the cluster using Service Accounts
    2. See [this](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) and this [deep dive](https://mjarosie.github.io/dev/2021/09/15/iam-roles-for-kubernetes-service-accounts-deep-dive.html) for more details
