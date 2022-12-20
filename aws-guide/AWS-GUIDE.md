@@ -64,8 +64,7 @@ Below, we'll create one inside the cluster. **If you already have an external Mo
 
 Note: If you'd like to use something like the "AWS Secrets Manager", you can skip this step and check out the guide below.
 
-(TODO upload the new secrets file with the new secrets name on Helm)
-1. Download an example secrets file: `curl -o secrets.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/examples/secret.yml` 
+1. Download an example secrets file: `curl -o secrets.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/secret.yml` 
 2. Mongo connection string
    1. If you used the Mongo operator above, your connection string will look something like this (replace `DB_PASSWORD` with your configured password): `mongodb+srv://admin-user:DB_PASSWORD@cloud-mongodb-svc.default.svc.cluster.local/nrwl-api?replicaSet=cloud-mongodb&ssl=false`
    2. If you have an external MongoDB, you can now add its connection string. 
@@ -92,44 +91,26 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
 
 ## 5. Install NxCloud:
 
-1. We will use Helm to deploy NxCloud. Create a new NxCloud `helm-values.yml` config:
-   (TODO upload this file on the helm repo)
-   ```yaml
-   cat > helm-values.yml << ENDOFFILE
-   image:
-      tag: 'latest'
-   
-   nxCloudAppURL: 'https://your-domain-nx-cloud.com' # <-- if you are using HTTPS and you know your domain name, change this value now. Otherwise, we'll configure it later below.
-   
-   ingress:
-      class: 'alb'
-      albScheme: 'internet-facing'
-      albListenPorts: '[{"HTTPS":443}]' # this can also be "HTTP":80 if you skipped the certificate part above
-      albCertificateArn: 'arn:aws:acm:us-east-1:411686525067:certificate/8adf7812-a1af-4eae-af1b-ea425a238a67' # your certificate ARN here which you copied above. Remove this option if you only want HTTP.
-   
-   secret:
-      name: 'nx-cloud-k8s-secret'
-      nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
-      adminPassword: 'ADMIN_PASSWORD'
-   ENDOFFILE
-   ```
-   
-   Note: Make sure to read through the comments above to ensure your Ingress is configured correctly for HTTPS/HTTP.
+1. We will use Helm to deploy NxCloud.
+   1. Download the example AWS Helm config file: `curl -o secrets.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/helm-values.yml`
+   2. Open and make sure to read all end of line comments
+   3. Read our [generic guide here](https://github.com/nrwl/nx-cloud-helm/) for all the different ways you can configure NxCloud
 
-2. Deploy NxCloud to your cluster: `helm upgrade --install nx-cloud nx-cloud/nx-cloud --values=./helm-values.yml`
+4. Deploy NxCloud to your cluster: `helm upgrade --install nx-cloud nx-cloud/nx-cloud --values=./helm-values.yml`
 
-3. Configure your NxCloud URL
+5. Configure your NxCloud URL
    1. Get the ingress address: `kubectl get ingress`
-   2. If using HTTPS: Point your custom domain name's CNAME to the address above (TODO add screenshot here)
+   2. If using HTTPS: Point your custom domain name's CNAME to the address above
+      1. ![cname-dns-config-example](/aws-guide/CNAME-DNS-config.png) 
    3. If HTTP-only: Just copy the "ADDRESS" field from step 1. above
    4. In your `helm-values.yml` file update the NxCloud URL with either your custom domain or your Load Balancer HTTP address from step 3.: 
-      1. `nxCloudAppURL: 'https://your-new-nx-cloud-url.com'`
-      2. OR `nxCloudAppURL: 'http://k8s-default-nxcloudi-f36cd47328-1606205137.us-east-1.elb.amazonaws.com'`
+      1. for HTTPS: `nxCloudAppURL: 'https://your-new-nx-cloud-url.com'`
+      2. or for HTTP: `nxCloudAppURL: 'http://k8s-default-nxcloudi-f36cd47328-1606205137.us-east-1.elb.amazonaws.com'`
    5. Re-apply the changes: `helm upgrade --install nx-cloud nx-cloud/nx-cloud --values=./helm-values.yml`
    6. You might need to restart your deployments as well so they can pick up the new URL `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
 
-4. In your Nx workspace, enable NxCloud and point it to the above URL: `NX_CLOUD_API=https://your-nx-cloud-url.com nx connect`
-5. Run a command, you should start seeing NxCloud Run URLs at the end
+6. In your Nx workspace, enable NxCloud and point it to the above URL: `NX_CLOUD_API=https://your-nx-cloud-url.com nx connect`
+7. Run a command, you should start seeing NxCloud Run URLs at the end
    
 ## 6. External S3 access:
 
@@ -187,7 +168,7 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
 1. Make sure you remove any previous k8s secrets named `nx-cloud-k8s-secret`, otherwise it will affect the below
    1. `kubectl delete secret nx-cloud-k8s-secret`
 2. [Create a new `AWS Secret Manager` secret](https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html) with key/value pairs called `nx-cloud-secrets`
-   1. TODO: add screenshot here
+   1. ![aws-secret-manager-example](/aws-guide/aws-secret-manager-example.png)
 3. Create a policy that can read secrets:
 
 ```shell
