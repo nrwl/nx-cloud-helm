@@ -109,7 +109,7 @@ be different. If you are interested in creating the two using GKE, check out the
 * [Reserving a static external IP address](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address)
 * [Using Google-managed SSL certificates](https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs)
 
-If you aren't using GKE, `ingress.class` will also be different. For example, see [here for AWS set-up instructions.](./AWS-GUIDE.md)
+If you aren't using GKE, `ingress.class` will also be different. For example, see [our example config for AWS](https://github.com/nrwl/nx-cloud-helm/blob/main/aws-guide/helm-values.yml#L7) or check out the AWS Load Balancer set-up section [here for AWS set-up instructions.](./aws-guide/AWS-GUIDE.md#3-install-a-load-balancer)
 
 If you need to have a detailed Ingress configuration, you can tell the package to skip defining ingress:
 
@@ -198,25 +198,9 @@ spec:
 If you use AWS or Azure, you can configure Nx Cloud to store cached artifacts on S3 or Azure Blob. In this case, you
 won't need the PVC or the file-server container. S3 and Azure Blob also tend to be faster.
 
-```yaml
-image:
-  tag: 'latest'
+For S3 buckets, see the [AWS Guide](./aws-guide/AWS-GUIDE.md#6-external-s3-access)
 
-nxCloudAppURL: 'https://nx-cloud.myorg.com'
-
-awsS3:
-  enabled: true
-  bucket: 'nx-cloud'
-  # accelerated: true  uncomment when using accelerated bucket
-  # endpoint: ''  uncomment when using a custom endpoint
-
-secret:
-  name: 'cloudsecret'
-  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
-  adminPassword: 'ADMIN_PASSWORD'
-  awsS3AccessKeyId: 'AWS_S3_ACCESS_KEY_ID'
-  awsS3SecretAccessKey: 'AWS_S3_SECRET_ACCESS_KEY'
-```
+For Azure:
 
 ```yaml
 image:
@@ -235,7 +219,7 @@ secret:
   azureConnectionString: 'AZURE_CONNECTION_STRING'
 ```
 
-Note that the secret must contain `AWS_S3_ACCESS_KEY_ID`, `AWS_S3_SECRET_ACCESS_KEY` or `AZURE_CONNECTION_STRING`.
+Note that the secret for setting up Azure must contain `AZURE_CONNECTION_STRING`.
 
 ### GitHub Auth
 

@@ -25,7 +25,7 @@
 NxCloud needs a Mongo database to store details about your runs and record your hashes. You can either point it to your existing external Mongo instance or let it create its own inside the above cluster.
 Below, we'll create one inside the cluster. **If you already have an external Mongo instance, you can skip this section.**
 
-1. Create your Amazon EBS CSI plugin IAM role ():
+1. Create your Amazon EBS CSI plugin IAM role:
 
    ```shell
    eksctl create iamserviceaccount \
@@ -159,6 +159,8 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
       enabled: true
       bucket: '<your-bucket-name>'
       serviceAccountName: 'nx-cloud-service-account'
+      # accelerated: true  uncomment when using accelerated bucket
+      # endpoint: ''  uncomment when using a custom endpoint
    ```
 
 4. Push the new config: `helm upgrade --install nx-cloud nx-cloud/nx-cloud --values=./helm-values.yml`
