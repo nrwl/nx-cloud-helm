@@ -54,7 +54,7 @@ Below, we'll create one inside the cluster. **If you already have an external Mo
    helm install community-operator mongodb/community-operator
    ```
 4. Apply a replica set that will use the operator you created above:
-   1. Download the example config file `curl -o mongodb.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/examples/mongodb.yml`
+   1. Download the example config file `curl -o mongodb.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/mongodb.yml`
    2. Chose a SAFER password for your internal DB: `sed -i '' 's/DB_PASSWORD/my_password_123/' mongodb.yml`
    3. Apply the config `kubectl apply -f mongodb.yml`
    4. Check if your Mongo pods are getting created. If you have 3 replica sets, you should see 3 MongoDB pods: `kubectl get pods`
@@ -210,8 +210,9 @@ eksctl create iamserviceaccount \
 ```
 
 3. Install the External Secrets Operator
+   2. We'll be using the [External Secrets operators](https://external-secrets.io/) to sync our Kubernetes secrets with the "AWS Secrets Manager"
    1. Add the External Secrets Helm repo `helm repo add external-secrets https://charts.external-secrets.io`
-   2. Install the External Secrets operators:
+   3. Install the External Secrets operators:
 
    ```shell
    helm install external-secrets \
@@ -222,49 +223,13 @@ eksctl create iamserviceaccount \
       --set webhook.port=9443
    ```
 
-4. Create a `secret-store.yaml` file:
-
-   ```yaml
-   apiVersion: external-secrets.io/v1beta1
-   kind: SecretStore
-   metadata:
-     name: nx-cloud-secret-store
-   spec:
-     provider:
-       aws:
-         service: SecretsManager
-         region: us-east-1
-         auth:
-           jwt:
-             serviceAccountRef:
-               name: read-secrets-service-account
-   ```
-
-5. Then apply it: `kubectl apply -f secret-store.yaml`
-6. Create an `external-secret.yaml` file:
-
-   ```yaml
-   ---
-   apiVersion: external-secrets.io/v1beta1
-   kind: ExternalSecret
-   metadata:
-     name: nx-cloud-external-secret
-   spec:
-     refreshInterval: 10m
-     secretStoreRef:
-       kind: SecretStore
-       name: nx-cloud-secret-store # the name of the store resource we created above
-     target:
-       name: nx-cloud-k8s-secret # need to match the secret name in your NxCloud helm-values.yaml
-       creationPolicy: Owner
-     dataFrom:
-       - extract:
-           key: nx-cloud-secrets # name of your secret in the AWS Secret Manager
-   ```
-
-7. Then apply it `kubectl apply -f external-secret.yaml`
-
-8. Check the status of the secrets:
+4. Download the example Secret Store config `curl -o secret-store.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/secret-store.yml`
+   1. Have a look through it to ensure it applies to your cluster
+5. Then apply it: `kubectl apply -f secret-store.yml`
+6. Download the example External Secret config ``curl -o secret-store.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/external-secret.yml``
+   1. Read through and the its comments to ensure it applies to your configuration.
+8. Then apply it `kubectl apply -f external-secret.yml`
+9. Check the status of the secrets:
    1. Check if secret keys are being retrieved correctly: `kubectl get secrets nx-cloud-k8s-secret -o json`
    2. You can see any errors by `kubectl describe externalsecrets.external-secrets.io nx-cloud-external-secret`
-9. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
+10. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
