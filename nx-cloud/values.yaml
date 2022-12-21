@@ -35,20 +35,9 @@ azure:
 
 useCosmosDb: false
 
-gitlab:
-  mr:
-    enabled: false
-    apiUrl: ''
-    projectId: ''
-
 github:
   auth:
     enabled: false
-  pr:
-    defaultWorkspaceId: ''
-    enabled: false
-    mode: 'webhook'
-    apiUrl: ''
 
 secret:
   name: ''
