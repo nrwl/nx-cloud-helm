@@ -8,6 +8,10 @@ This repo contains:
 * Instructions on how to install Nx Cloud using Helm
 * Instructions on how to install Nx Cloud using kubectl. See [here](./no-helm/README.md).
 
+## Deployments on AWS/EKS
+
+If you're deploying on EKS, check out our [AWS Guide](./aws-guide/AWS-GUIDE.md). Otherwise, continue reading below.
+
 ## Installing Using Helm
 
 Steps:
@@ -123,7 +127,11 @@ ingress:
     skip: true
 ```
 
-and then define it yourself:
+
+
+
+<details>
+<summary>⤵️ and then define it yourself (expand me)</summary>
 
 ```yaml
 apiVersion: networking.k8s.io/v1
@@ -188,8 +196,9 @@ spec:
                   name: nx-cloud-frontend-service
                   port:
                      number: 8080
-
 ```
+
+</details>
 
 ## Variations
 
