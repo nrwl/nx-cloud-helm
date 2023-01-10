@@ -1,0 +1,298 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-nx-api
+spec:
+  replicas: {{ .Values.replicas.nxApi }}
+  selector:
+    matchLabels:
+      app: nx-cloud-nx-api
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-nx-api
+    spec:
+      terminationGracePeriodSeconds: 60
+      {{ if .Values.awsS3.serviceAccountName }}
+      serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
+      {{ end }}
+      containers:
+        - name: nx-cloud-nx-api
+          image:
+        {{ if .Values.image.local }}
+            localhost:5001/nx-cloud-nx-api:next
+        {{ else }}
+            nxprivatecloud/nx-cloud-nx-api:{{ .Values.image.tag }}
+        {{ end }}
+          resources:
+            requests:
+              memory: '1Gi'
+              cpu: '1.0'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4203
+          startupProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 30
+          env:
+            - name: NX_CLOUD_APP_URL
+              value: {{ .Values.nxCloudAppURL }}
+
+        {{ if .Values.secret.name }}
+            - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+        {{ else }}
+            - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
+              value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+        {{ end }}
+
+        {{ if .Values.awsS3.accelerated }}
+            - name: AWS_S3_ACCELERATED
+              value: 'TRUE'
+        {{ end }}
+
+        {{ if .Values.secret.awsS3AccessKeyId }}
+          {{ if .Values.secret.name }}
+            - name: AWS_S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.awsS3AccessKeyId }}
+            - name: AWS_S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.awsS3SecretAccessKey }}
+          {{ else }}
+            - name: SECRET_FILE_AWS_S3_ACCESS_KEY_ID
+              value: {{ .Values.secret.awsS3AccessKeyId }}
+            - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
+              value: {{ .Values.secret.awsS3SecretAccessKey }}
+          {{ end }}
+        {{ end }}
+
+        {{ if .Values.awsS3.bucket }}
+            - name: AWS_S3_BUCKET
+              value: {{ .Values.awsS3.bucket }}
+        {{ end }}
+
+        {{ if .Values.awsS3.endpoint }}
+            - name: AWS_S3_ENDPOINT
+              value: {{ .Values.awsS3.endpoint }}
+        {{ end }}
+
+        {{ if .Values.azure.enabled }}
+            - name: AZURE_CONTAINER
+              value: '{{ .Values.azure.container }}'
+
+          {{ if .Values.secret.name }}
+            - name: AZURE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.azureConnectionString }}
+          {{ else }}
+            - name: SECRET_FILE_AZURE_CONNECTION_STRING
+              value: {{ .Values.secret.azureConnectionString }}
+          {{ end }}
+        {{ end }}
+
+
+    {{ if .Values.secret.name }}
+      {{ if .Values.secret.githubAuthToken }}
+            - name: NX_CLOUD_GITHUB_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAuthToken }}
+      {{ end }}
+      {{ if .Values.secret.githubAppId }}
+            - name: NX_CLOUD_GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAppId }}
+      {{end}}
+      {{ if .Values.secret.githubPrivateKey }}
+            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubPrivateKey }}
+      {{ end }}
+    {{ else }}
+      {{ if .Values.secret.githubAuthToken }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_AUTH_TOKEN
+              value: {{ .Values.secret.githubAuthToken }}
+      {{ end }}
+      {{ if .Values.secret.githubAppId }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+              value: {{ .Values.secret.githubAppId }}
+      {{ end }}
+      {{ if .Values.secret.githubPrivateKey }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
+              value: {{ .Values.secret.githubPrivateKey }}
+      {{ end }}
+    {{ end }}
+
+{{ if .Values.github.pr.enabled }}
+  {{ if eq .Values.github.pr.mode "webhook" }}
+            - name: NX_CLOUD_VCS_INTEGRATION_TYPE
+              value: 'GITHUB_WEBHOOK'
+    {{ if .Values.github.pr.apiUrl }}
+            - name: GITHUB_API_URL
+              value: {{ .Values.github.pr.apiUrl }}
+    {{ end }}
+
+    {{ if .Values.github.pr.remoteRepositoryName }}
+            - name: NX_CLOUD_REMOTE_REPOSITORY_NAME
+              value: {{ .Values.github.pr.remoteRepositoryName }}
+    {{ end }}
+
+    {{ if .Values.secret.name }}
+            - name: GITHUB_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubWebhookSecret }}
+            - name: GITHUB_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAuthToken }}
+    {{ else }}
+            - name: SECRET_FILE_GITHUB_WEBHOOK_SECRET
+              value: {{ .Values.secret.githubWebhookSecret }}
+            - name: SECRET_FILE_GITHUB_AUTH_TOKEN
+              value: {{ .Values.secret.githubAuthToken }}
+    {{ end }}
+
+    {{ if .Values.github.pr.defaultWorkspaceId }}
+            - name: NX_CLOUD_INTEGRATION_DEFAULT_WORKSPACE_ID
+              value: {{ .Values.github.pr.defaultWorkspaceId }}
+    {{ end }}
+  {{ end }}
+
+  {{ if eq .Values.github.pr.mode "eventless" }}
+            - name: NX_CLOUD_VCS_INTEGRATION_TYPE
+              value: 'GITHUB_EVENTLESS'
+
+    {{ if .Values.github.pr.apiUrl }}
+            - name: NX_CLOUD_GITHUB_API_URL
+              value: {{ .Values.github.pr.apiUrl }}
+    {{ end }}
+    {{ if .Values.github.pr.remoteRepositoryName }}
+            - name: NX_CLOUD_REMOTE_REPOSITORY_NAME
+              value: {{ .Values.github.pr.remoteRepositoryName }}
+    {{ end }}
+
+
+  {{ end }}
+{{ end }}
+
+{{ if .Values.gitlab.mr.enabled }}
+          - name: NX_CLOUD_VCS_INTEGRATION_TYPE
+            value: "GITLAB_EVENTLESS"
+
+  {{ if .Values.gitlab.projectId }}
+          - name: NX_CLOUD_GITLAB_PROJECT_ID
+            value: {{ .Values.gitlab.projectId }}
+  {{ end }}
+  {{ if .Values.gitlab.apiUrl }}
+          - name: NX_CLOUD_GITLAB_BASE_URL
+            value: {{ .Values.gitlab.apiUrl }}
+  {{ end }}
+  {{ if .Values.secret.name }}
+    {{ if .Values.secret.gitlabAccessToken }}
+          - name: NX_CLOUD_GITLAB_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.secret.name }}
+                key: {{ .Values.secret.gitlabAccessToken }}
+    {{ end }}
+  {{ else }}
+          - name: SECRET_FILE_NX_CLOUD_GITLAB_ACCESS_TOKEN
+            value: {{ .Values.secret.gitlabAccessToken }}
+  {{ end }}
+{{ end }}
+
+
+        {{ if .Values.verboseLogging }}
+            - name: NX_VERBOSE_LOGGING
+              value: 'true'
+            - name: NX_API_LOG_LEVEL
+              value: 'DEBUG'
+        {{ end }}
+
+        {{ if .Values.verboseMongoLogging }}
+            - name: NX_MONGO_LOG_LEVEL
+              value: 'DEBUG'
+        {{ end }}
+
+        {{ if .Values.fixedBatchSize }}
+            - name: NX_CLOUD_FIXED_BATCH_SIZE
+              value: {{ .Values.fixedBatchSize }}
+        {{ end }}
+
+        {{ if .Values.mode }}
+            - name: NX_CLOUD_MODE
+              value: '{{ .Values.mode }}'
+        {{ end }}
+
+        {{ if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
+        {{ end }}
+
+        {{ if eq .Values.mode "public"}}
+            - name: GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_APP_ID
+            - name: GITHUB_APP_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_APP_PRIVATE_KEY
+            - name: GITHUB_BOT_USERID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_BOT_USERID
+            - name: GITHUB_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_WEBHOOK_SECRET
+            - name: ROLLBAR_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_ENV
+            - name: ROLLBAR_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_TOKEN
+        {{ end }}
