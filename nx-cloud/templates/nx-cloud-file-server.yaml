@@ -1,0 +1,76 @@
+{{ if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-file-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-file-server
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-file-server
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: cloud-volume
+      securityContext:
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: nx-cloud-file-server
+          image:
+        {{ if .Values.image.local }}
+            localhost:5001/nx-cloud-file-server:next
+        {{ else }}
+            nxprivatecloud/nx-cloud-file-server:{{ .Values.image.tag }}
+        {{end}}
+          resources:
+            requests:
+              memory: '0.5Gi'
+              cpu: '0.5'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            initialDelaySeconds: 10
+          startupProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            failureThreshold: 10
+            periodSeconds: 5
+          volumeMounts:
+            - mountPath: /data
+              name: data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cloud-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{ if .Values.fileStorage.storageClassName }}
+  storageClassName: {{ .Values.fileStorage.storageClassName }}
+  {{ end}}
+  resources:
+    requests:
+      storage: {{ .Values.fileStorage.size }}
+{{ end }}

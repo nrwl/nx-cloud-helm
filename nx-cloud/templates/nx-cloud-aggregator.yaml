@@ -1,0 +1,101 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nx-cloud-aggregator
+spec:
+  schedule: '*/10 * * * *'
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: nx-cloud-aggregator
+              image:
+            {{ if .Values.image.local }}
+                localhost:5001/nx-cloud-aggregator:next
+            {{ else }}
+                nxprivatecloud/nx-cloud-aggregator:{{ .Values.image.tag }}
+            {{end}}
+              resources:
+                requests:
+                  memory: '1200M'
+                  cpu: '1.0'
+              imagePullPolicy: Always
+              env:
+
+            {{ if .Values.secret.name }}
+                - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+            {{ else }}
+                - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
+                  value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
+            {{ end }}
+
+            {{ if .Values.secret.adminPassword }}
+              {{ if .Values.secret.name }}
+                - name: ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: {{ .Values.secret.adminPassword }}
+              {{ else }}
+                - name: SECRET_FILE_ADMIN_PASSWORD
+                  value: {{ .Values.secret.adminPassword }}
+              {{ end }}
+            {{ end }}
+
+            {{ if .Values.verboseLogging }}
+                - name: NX_VERBOSE_LOGGING
+                  value: 'true'
+                - name: NX_API_LOG_LEVEL
+                  value: 'DEBUG'
+            {{ end }}
+
+            {{ if .Values.verboseMongoLogging }}
+                - name: NX_MONGO_LOG_LEVEL
+                  value: 'DEBUG'
+            {{ end }}
+
+            {{ if .Values.mode }}
+                - name: NX_CLOUD_MODE
+                  value: '{{ .Values.mode }}'
+            {{ end }}
+
+            {{ if .Values.useCosmosDb }}
+                - name: NX_CLOUD_USE_MONGO42
+                  value: 'false'
+            {{ end }}
+
+            {{ if eq .Values.mode "public"}}
+                - name: AGGREGATOR_DEAD_MAN_SNITCH_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: AGGREGATOR_DEAD_MAN_SNITCH_URI
+                - name: AGGREGATE_JOB_SNITCH
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: AGGREGATE_JOB_SNITCH
+                - name: STRIPE_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_API_KEY
+                - name: ROLLBAR_ENV
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: ROLLBAR_ENV
+                - name: ROLLBAR_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: ROLLBAR_TOKEN
+            {{ end }}
+          restartPolicy: OnFailure
