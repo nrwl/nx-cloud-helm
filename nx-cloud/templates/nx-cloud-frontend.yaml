@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-frontend
+spec:
+  replicas: {{ .Values.replicas.frontend }}
+  selector:
+    matchLabels:
+      app: nx-cloud-frontend
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-frontend
+    spec:
+      containers:
+        - name: nx-cloud-frontend
+          image:
+        {{ if .Values.image.local }}
+            localhost:5001/nx-cloud-frontend:next
+        {{ else }}
+            nxprivatecloud/nx-cloud-frontend:{{ .Values.image.tag }}
+        {{end}}
+
+          resources:
+            requests:
+              memory: '0.5Gi'
+              cpu: '0.5'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+
+        {{ if .Values.verboseLogging }}
+            - name: NX_VERBOSE_LOGGING
+              value: 'true'
+        {{ end }}
+
+        {{ if .Values.mode }}
+            - name: NX_CLOUD_MODE
+              value: '{{ .Values.mode }}'
+        {{ end }}
+
+        {{ if eq .Values.mode "public"}}
+            - name: NX_CLOUD_AUTH0_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_CLIENT_ID
+            - name: NX_CLOUD_AUTH0_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_DOMAIN
+            - name: NX_CLOUD_AUTH0_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_AUDIENCE
+            - name: STRIPE_PLAN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: STRIPE_PLAN_ID
+            - name: STRIPE_PUBLISHED_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: STRIPE_PUBLISHED_KEY
+            - name: ROLLBAR_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_ENV
+            - name: ROLLBAR_NX_CLOUD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_TOKEN
+            - name: GOOGLE_ANALYTICS_LOGGED_IN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GOOGLE_ANALYTICS_LOGGED_IN_ID
+        {{ end }}
+
+
