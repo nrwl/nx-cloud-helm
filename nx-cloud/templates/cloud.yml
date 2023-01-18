@@ -166,6 +166,14 @@ spec:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.githubAppId }}
           {{ end }}
+
+          {{ if .Values.secret.hubspotApiKey }}
+            - name: HUBSPOT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.hubspotApiKey }}
+          {{ end }}
         {{ else }}
             - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
               value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
