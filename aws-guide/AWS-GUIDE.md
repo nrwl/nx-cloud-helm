@@ -92,7 +92,7 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
 ## 5. Install NxCloud:
 
 1. We will use Helm to deploy NxCloud.
-   1. Download the example AWS Helm config file: `curl -o secrets.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/helm-values.yml`
+   1. Download the example AWS Helm config file: `curl -o helm-values.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/helm-values.yml`
    2. Open and make sure to read all end of line comments
    3. Read our [generic guide here](https://github.com/nrwl/nx-cloud-helm/) for all the different ways you can configure NxCloud
 
