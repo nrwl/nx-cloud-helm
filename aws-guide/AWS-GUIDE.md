@@ -151,6 +151,14 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
      --approve \
      --role-name nx-cloud-cluster-s3-access-role
    ```
+   
+3. Increase the session duration of the role to 5 hours:
+
+   ```shell
+   aws iam update-role --role-name nx-cloud-cluster-s3-access-role --max-session-duration=18000
+   ```
+   
+   We need to do this because the URLs for writing artefacts to your S3 cache are generated at the beginning of your CI run. And depending on how long your CI run takes, the URLs might expire if we don't give them a long enough time window.
 
 3. Add these options to the helm.yaml file:
 
