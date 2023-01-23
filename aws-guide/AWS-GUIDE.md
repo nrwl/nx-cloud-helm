@@ -243,3 +243,10 @@ eksctl create iamserviceaccount \
    1. Check if secret keys are being retrieved correctly: `kubectl get secrets nx-cloud-k8s-secret -o json`
    2. You can see any errors by `kubectl describe externalsecrets.external-secrets.io nx-cloud-external-secret`
 10. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
+
+
+## Common Issues
+
+1. When setting up Ingress "unable to discover at least one subnet"
+
+   You'll need to configure your VPC subnets for auto-discovery. [See Guide here](https://www.youtube.com/watch?v=3WbEt_sfTWU).
