@@ -92,7 +92,7 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
 ## 5. Install NxCloud:
 
 1. We will use Helm to deploy NxCloud.
-   1. Download the example AWS Helm config file: `curl -o secrets.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/helm-values.yml`
+   1. Download the example AWS Helm config file: `curl -o helm-values.yml https://raw.githubusercontent.com/nrwl/nx-cloud-helm/main/aws-guide/helm-values.yml`
    2. Open and make sure to read all end of line comments
    3. Read our [generic guide here](https://github.com/nrwl/nx-cloud-helm/) for all the different ways you can configure NxCloud
 
@@ -151,6 +151,14 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
      --approve \
      --role-name nx-cloud-cluster-s3-access-role
    ```
+   
+3. Increase the session duration of the role to 5 hours:
+
+   ```shell
+   aws iam update-role --role-name nx-cloud-cluster-s3-access-role --max-session-duration=18000
+   ```
+   
+   We need to do this because the URLs for writing artefacts to your S3 cache are generated at the beginning of your CI run. And depending on how long your CI run takes, the URLs might expire if we don't give them a long enough time window.
 
 3. Add these options to the helm.yaml file:
 
@@ -235,3 +243,10 @@ eksctl create iamserviceaccount \
    1. Check if secret keys are being retrieved correctly: `kubectl get secrets nx-cloud-k8s-secret -o json`
    2. You can see any errors by `kubectl describe externalsecrets.external-secrets.io nx-cloud-external-secret`
 10. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
+
+
+## Common Issues
+
+1. When setting up Ingress "unable to discover at least one subnet"
+
+   You'll need to configure your VPC subnets for auto-discovery. [See Guide here](https://www.youtube.com/watch?v=3WbEt_sfTWU).
