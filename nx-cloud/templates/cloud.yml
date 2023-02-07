@@ -775,11 +775,31 @@ spec:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: AGGREGATOR_DEAD_MAN_SNITCH_URI
-                - name: AGGREGATE_JOB_SNITCH
+                - name: NX_CLOUD_AGGREGATE_JOB_SNITCH
                   valueFrom:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: AGGREGATE_JOB_SNITCH
+                - name: NX_CLOUD_CALCULATE_TIME_SAVED_SNITCH
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: CALCULATE_TIME_SAVED_SNITCH
+                - name: NX_CLOUD_GROUP_USAGE_RECORDS_SNITCH
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: GROUP_USAGE_RECORDS_SNITCH
+                - name: NX_CLOUD_RUN_MIGRATIONS_SNITCH
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: RUN_MIGRATIONS_SNITCH
+                - name: NX_CLOUD_AGGREGATE_RUNNER_METRICS_SNITCH
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: AGGREGATE_RUNNER_METRICS_SNITCH
                 - name: STRIPE_API_KEY
                   valueFrom:
                     secretKeyRef:
