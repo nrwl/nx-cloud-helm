@@ -249,4 +249,5 @@ eksctl create iamserviceaccount \
 
 1. When setting up Ingress "unable to discover at least one subnet"
 
-   You'll need to configure your VPC subnets for auto-discovery. [See Guide here](https://www.youtube.com/watch?v=3WbEt_sfTWU).
+   - You'll need to configure your VPC subnets for auto-discovery. [See Guide here](https://www.youtube.com/watch?v=3WbEt_sfTWU).
+   - If that doesn't work, try changing the [`alb.ingress.kubernetes.io/target-type`](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/ingress/annotations/#traffic-routing) to `ip` 
