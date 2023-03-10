@@ -719,7 +719,11 @@ spec:
               resources:
                 requests:
                   memory: '1200M'
-                  cpu: '2.0'
+                  {{ if (((.Values.resources).aggregator).cpu) }}
+                  cpu: {{ (((.Values.resources).aggregator).cpu) }}
+                  {{ else }}
+                  cpu: '0.5'
+                  {{ end }}
               imagePullPolicy: Always
               env:
 
