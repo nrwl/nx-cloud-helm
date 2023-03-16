@@ -251,3 +251,6 @@ eksctl create iamserviceaccount \
 
    - You'll need to configure your VPC subnets for auto-discovery. [See Guide here](https://www.youtube.com/watch?v=3WbEt_sfTWU).
    - If that doesn't work, try changing the [`alb.ingress.kubernetes.io/target-type`](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/ingress/annotations/#traffic-routing) to `ip` 
+
+2. If you experience S3 permissions issues when trying to retrieve an artefact with the NxCloud runner:
+   3. If your bucket is encrypted, you need to add the `kms:GenerateDataKey` to the S3 access policy
