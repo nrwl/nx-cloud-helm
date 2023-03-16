@@ -40,3 +40,104 @@ this: `mongodb+srv://admin-user:DB_PASSWORD@cloud-mongodb-svc.default.svc.cluste
 Extract the connection string and remember it. You'll need to use in your `secrets.yml` file.
 
 Next steps: continue from [step 2. onwards](./README.md#step-2-create-a-secret).
+
+## Alternative - run the Mongo NxCloud Image
+
+If you can't run Mongo in Kubernetes, you can also set it up manually using our approved Docker image.
+
+1. Deploy this Docker image on ECS, or a custom VM: `nxprivatecloud/nx-cloud-mongo:latest`
+2. Here is an example of how to run it, and what options you should pass to it. Please adapt the command to the deployment env of your choice (We will provide an example ECS set-up below):
+    ```shell
+    docker run -t -i -p 27017:27017 \
+      -e MONGO_INITDB_ROOT_USERNAME=some-admin-usernamne -e MONGO_INITDB_ROOT_PASSWORD=someAdminPassword123 \
+      -v $PWD/mongo-data:/data/db \
+      --rm --name nx-cloud-mongo nxprivatecloud/nx-cloud-mongo:latest \
+      --wiredTigerCacheSizeGB 2 --bind_ip_all \
+      --replSet rs0 \
+      --keyFile /mongo-security/keyfile.txt
+    ```
+   
+   - There are a few important options we need to pass:
+     - `MONGO_INITDB_ROOT_USERNAME` and `MONGO_INITDB_ROOT_PASSWORD` - this will enable auth on our DB
+     - `-v $PWD/mongo-data:/data/db` - this will create a persistent volume mapping to the host, so the DB doesn't disappear when the Docker image gets recreated.
+     - `--wiredTigerCacheSizeGB 2` - This sets the memory limit of the DB. Try increasing it if you are having a lot of activity.
+     - `--replSet rs0 --keyFile /mongo-security/keyfile.txt` - this sets up a simple replica set. You can ignore this, it's an implementation detail needed for NxCloud connections.
+
+
+<details>
+<summary>⤵️ Here is an example ECS implementation</summary>
+
+```json
+{
+  "family": "nx-cloud-mongo-standalone",
+  "containerDefinitions": [
+    {
+      "name": "NxCloudMongo",
+      "image": "nxprivatecloud/nx-cloud-mongo:latest",
+      "cpu": 1024,
+      "memory": 3072,
+      "portMappings": [
+        {
+          "name": "nxcloudmongo-27017-tcp",
+          "containerPort": 27017,
+          "hostPort": 27017,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "command": [
+        "--wiredTigerCacheSizeGB",
+        "3",
+        "--bind_ip_all",
+        "--replSet",
+        "rs0",
+        "--keyFile",
+        "/mongo-security/keyfile.txt"
+      ],
+      "environment": [
+        {
+          "name": "MONGO_INITDB_ROOT_USERNAME",
+          "value": "some-admin-user"
+        },
+        {
+          "name": "MONGO_INITDB_ROOT_PASSWORD",
+          "value": "adminPass123"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "data",
+          "containerPath": "/data/db",
+          "readOnly": false
+        }
+      ],
+      "volumesFrom": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/DeployCloud",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::623002322076:role/ecsTaskExecutionRole",
+  "volumes": [
+    {
+      "name": "data",
+      "dockerVolumeConfiguration": {
+        "scope": "shared",
+        "autoprovision": true,
+        "driver": "local"
+      }
+    }
+  ],
+  "requiresCompatibilities": [
+    "EC2"
+  ],
+  "cpu": "1024",
+  "memory": "3072"
+}
+```
+</details>
