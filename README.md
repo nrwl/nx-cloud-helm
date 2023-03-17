@@ -14,50 +14,17 @@ If you're deploying on EKS, check out our [AWS Guide](./aws-guide/AWS-GUIDE.md).
 
 ## Installing Using Helm
 
-Steps:
 
-1. Deploy MongoDB Kubernetes Operator
-    * using helm: https://github.com/mongodb/helm-charts
-    * using kubectl: https://github.com/mongodb/mongodb-kubernetes-operator
-2. Create a mongodb replica set
-3. Create a secret
-4. Install Nx Cloud using helm
+### Step 1: OPTIONAL - Create Mongo replicas
 
-### Step 1: Deploy MongoDB Kubernetes Operator
+Skip if you already have a hosted Mongo instance, such as Atlas or CosmosDB): [Install the Mongo Community operator](./MONGO-OPERATOR-GUIDE.md)
 
-If you are using a hosted MongoDB installation (e.g., Mongo Atlas or CosmosSB, or you are running one yourself), you can
-skip steps 1 and 2.
 
-```
-> helm repo add mongodb https://mongodb.github.io/helm-charts
-> helm install community-operator mongodb/community-operator
-```
-
-### Step 2: Deploy a MongoDB replica set
-
-```
-> kubectl apply -f examples/mongodb.yml
-```
-
-This will create a secret. You can get the value of the secret as follows:
-
-```
-> kubectl get secret cloud-mongodb-nrwl-api-admin-user -o go-template='{{range $k,$v := .data}}{{"### "}}{{$k}}{{"n"}}{{$v|base64decode}}{{"nn"}}{{end}}'
-```
-
-You might need to wait a bit for the Pods to be created before this secret will be available.
-
-The result should look like
-this: `mongodb+srv://admin-user:DB_PASSWORD@cloud-mongodb-svc.default.svc.cluster.local/nrwl-api?replicaSet=cloud-mongodb&ssl=false`
-.
-
-Extract the connection string and paste it into your `secret.yml`.
-
-### Step 3: Create a secret
+### Step 2: Create a secret
 
 Create a secret by running `kubectl apply -f examples/secret.yml`
 
-### Step 4: Install Nx Cloud using helm
+### Step 3: Install Nx Cloud using helm
 
 ```
 > helm repo add nx-cloud https://nrwl.github.io/nx-cloud-helm
