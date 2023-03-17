@@ -378,7 +378,8 @@ spec:
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
-
+            - name: NSQD_ADDRESS
+              value: nx-cloud-messagequeue:4150
         {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
@@ -970,3 +971,59 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-messagequeue
+  labels:
+    app: nx-cloud-messagequeue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-messagequeue
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-messagequeue
+    spec:
+      containers:
+        - name: nx-cloud-messagequeue
+          image: nsqio/nsq:v1.2.0
+          imagePullPolicy: Always
+          args:
+            - 'nsqd'
+            - '-data-path=/data'
+            - '-max-body-size=5123840'
+            - '-max-msg-size=25165824'
+            - '-e2e-processing-latency-percentile=1.0,0.99,0.95'
+          ports:
+            - containerPort: 4160
+              name: tcp
+            - containerPort: 4161
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 4161
+            initialDelaySeconds: 3
+            periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-messagequeue
+  labels:
+    app: nx-cloud-messagequeue
+spec:
+  selector:
+    app: nx-cloud-messagequeue
+  type: ClusterIP
+  ports:
+    - name: tcp
+      port: 4150
+      targetPort: 4150
+    - name: http
+      port: 4151
+      targetPort: 4151
