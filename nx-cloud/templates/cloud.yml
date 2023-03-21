@@ -24,7 +24,7 @@ spec:
         - name: nx-cloud-frontend
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-frontend:next
+            "localhost:5001/nx-cloud-frontend:next"
         {{ else }}
             nxprivatecloud/nx-cloud-frontend:{{ .Values.image.tag }}
         {{end}}
@@ -117,7 +117,7 @@ spec:
         - name: nx-cloud-api
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-api:next
+            "localhost:5001/nx-cloud-api:next"
         {{ else }}
             nxprivatecloud/nx-cloud-api:{{ .Values.image.tag }}
         {{end}}
@@ -352,7 +352,7 @@ spec:
         - name: nx-cloud-nx-api
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-nx-api:next
+            "localhost:5001/nx-cloud-nx-api:next"
         {{ else }}
             nxprivatecloud/nx-cloud-nx-api:{{ .Values.image.tag }}
         {{ end }}
@@ -657,7 +657,7 @@ spec:
         - name: nx-cloud-file-server
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-file-server:next
+            "localhost:5001/nx-cloud-file-server:next"
         {{ else }}
             nxprivatecloud/nx-cloud-file-server:{{ .Values.image.tag }}
         {{end}}
@@ -713,7 +713,7 @@ spec:
             - name: nx-cloud-aggregator
               image:
             {{ if .Values.image.local }}
-                localhost:5001/nx-cloud-aggregator:next
+                "localhost:5001/nx-cloud-aggregator:next"
             {{ else }}
                 nxprivatecloud/nx-cloud-aggregator:{{ .Values.image.tag }}
             {{end}}
@@ -998,21 +998,21 @@ spec:
           imagePullPolicy: Always
           args:
             - 'nsqd'
-            - '-data-path=/data'
+            - '-data-path=/queue-data'
             - '-max-body-size=5123840'
             - '-max-msg-size=25165824'
             - '-e2e-processing-latency-percentile=1.0,0.99,0.95'
           ports:
-            - containerPort: 4160
+            - containerPort: 4150
               name: tcp
-            - containerPort: 4161
+            - containerPort: 4151
               name: http
-          livenessProbe:
-            httpGet:
-              path: /ping
-              port: 4161
-            initialDelaySeconds: 3
-            periodSeconds: 3
+          volumeMounts:
+          - mountPath: /queue-data
+            name: data
+      volumes:
+      - emptyDir: {}
+        name: data
 ---
 apiVersion: v1
 kind: Service
