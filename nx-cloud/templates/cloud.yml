@@ -24,7 +24,7 @@ spec:
         - name: nx-cloud-frontend
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-frontend:next
+            "localhost:5001/nx-cloud-frontend:next"
         {{ else }}
             nxprivatecloud/nx-cloud-frontend:{{ .Values.image.tag }}
         {{end}}
@@ -117,7 +117,7 @@ spec:
         - name: nx-cloud-api
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-api:next
+            "localhost:5001/nx-cloud-api:next"
         {{ else }}
             nxprivatecloud/nx-cloud-api:{{ .Values.image.tag }}
         {{end}}
@@ -352,7 +352,7 @@ spec:
         - name: nx-cloud-nx-api
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-nx-api:next
+            "localhost:5001/nx-cloud-nx-api:next"
         {{ else }}
             nxprivatecloud/nx-cloud-nx-api:{{ .Values.image.tag }}
         {{ end }}
@@ -378,7 +378,10 @@ spec:
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
-
+        {{ if .Values.enableMessageQueue }}
+            - name: NSQD_ADDRESS
+              value: nx-cloud-messagequeue:4150
+        {{ end }}
         {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
@@ -656,7 +659,7 @@ spec:
         - name: nx-cloud-file-server
           image:
         {{ if .Values.image.local }}
-            localhost:5001/nx-cloud-file-server:next
+            "localhost:5001/nx-cloud-file-server:next"
         {{ else }}
             nxprivatecloud/nx-cloud-file-server:{{ .Values.image.tag }}
         {{end}}
@@ -712,7 +715,7 @@ spec:
             - name: nx-cloud-aggregator
               image:
             {{ if .Values.image.local }}
-                localhost:5001/nx-cloud-aggregator:next
+                "localhost:5001/nx-cloud-aggregator:next"
             {{ else }}
                 nxprivatecloud/nx-cloud-aggregator:{{ .Values.image.tag }}
             {{end}}
@@ -974,3 +977,61 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+{{ if .Values.enableMessageQueue }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-messagequeue
+  labels:
+    app: nx-cloud-messagequeue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-messagequeue
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-messagequeue
+    spec:
+      containers:
+        - name: nx-cloud-messagequeue
+          image: nsqio/nsq:v1.2.0
+          imagePullPolicy: Always
+          args:
+            - 'nsqd'
+            - '-data-path=/queue-data'
+            - '-max-body-size=5123840'
+            - '-max-msg-size=25165824'
+            - '-e2e-processing-latency-percentile=1.0,0.99,0.95'
+          ports:
+            - containerPort: 4150
+              name: tcp
+            - containerPort: 4151
+              name: http
+          volumeMounts:
+          - mountPath: /queue-data
+            name: data
+      volumes:
+      - emptyDir: {}
+        name: data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-messagequeue
+  labels:
+    app: nx-cloud-messagequeue
+spec:
+  selector:
+    app: nx-cloud-messagequeue
+  type: ClusterIP
+  ports:
+    - name: tcp
+      port: 4150
+      targetPort: 4150
+    - name: http
+      port: 4151
+      targetPort: 4151
+{{ end }}

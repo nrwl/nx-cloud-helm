@@ -4,6 +4,7 @@ image:
 nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
+enableMessageQueue: false
 
 replicas:
   frontend: 1
