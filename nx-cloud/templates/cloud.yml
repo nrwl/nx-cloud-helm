@@ -378,8 +378,10 @@ spec:
           env:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
+        {{ if .Values.enableMessageQueue }}
             - name: NSQD_ADDRESS
               value: nx-cloud-messagequeue:4150
+        {{ end }}
         {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
@@ -975,6 +977,7 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
+{{ if .Values.enableMessageQueue }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1031,3 +1034,4 @@ spec:
     - name: http
       port: 4151
       targetPort: 4151
+{{ end }}
