@@ -44,7 +44,7 @@ from the NxAPI to your S3 bucket.
 For that, you can try forcing the connection to bypass the proxy by setting the [`NO_PROXY=amazonaws.com`](https://about.gitlab.com/blog/2021/01/27/we-need-to-talk-no-proxy/) env var on your
 NxAPI pods.
 
-## Source control integrations
+## Supporting Self-Signed SSL Certificates
 
 If you are using a self-hosted Gitlab or Github instance, or a proxy, you will need to provide the extra CAs
 to NxCloud pods.
