@@ -246,6 +246,10 @@ secret:
 Note that the secret must contain `GITHUB_WEBHOOK_SECRET` and `GITHUB_AUTH_TOKEN`.
 Read [here](https://nx.dev/nx-cloud/private-cloud/github) on how to get those values.
 
+## Proxies and self-signed certificates
+
+Please refer to [this guide](./PROXY-GUIDE.md).
+
 ## More Information
 
 You can find more information about Nx Cloud and running it on
