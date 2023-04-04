@@ -65,7 +65,7 @@ If you can't run Mongo in Kubernetes, you can also set it up manually using our 
 
 #### Connecting to the instance
 
-This is a sample connection string you can use when connecting to your instance above. Not the extra params: `mongodb://52.201.253.213:27017/?authSource=admin&directConnection=true`
+This is a sample connection string you can use when connecting to your instance above (note the extra URL params at the end): `mongodb://<your-server-ip-or-address>:27017/?authSource=admin&directConnection=true`
 
 <details>
 <summary>⤵️ Here is an example ECS implementation</summary>
