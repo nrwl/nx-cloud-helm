@@ -63,6 +63,9 @@ If you can't run Mongo in Kubernetes, you can also set it up manually using our 
      - `--wiredTigerCacheSizeGB 2` - This sets the memory limit of the DB. Try increasing it if you are having a lot of activity.
      - `--replSet rs0 --keyFile /mongo-security/keyfile.txt` - this sets up a simple replica set. You can ignore this, it's an implementation detail needed for NxCloud connections.
 
+#### Connecting to the instance
+
+This is a sample connection string you can use when connecting to your instance above. Not the extra params: `mongodb://52.201.253.213:27017/?authSource=admin&directConnection=true`
 
 <details>
 <summary>⤵️ Here is an example ECS implementation</summary>
