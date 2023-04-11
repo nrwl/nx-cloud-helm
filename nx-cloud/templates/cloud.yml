@@ -782,6 +782,16 @@ spec:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: STRIPE_API_KEY
+                - name: STRIPE_FLAT_PRICE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_FLAT_PRICE_ID
+                - name: STRIPE_UNIT_PRICE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_UNIT_PRICE_ID
                 - name: ROLLBAR_ENV
                   valueFrom:
                     secretKeyRef:
@@ -792,6 +802,11 @@ spec:
                     secretKeyRef:
                       name: {{ .Values.secret.name }}
                       key: ROLLBAR_TOKEN
+                - name: MANDRILL_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: MANDRILL_API_KEY
             {{ end }}
           restartPolicy: OnFailure
 {{ if not .Values.ingress.skip }}
