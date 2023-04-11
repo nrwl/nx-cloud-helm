@@ -35,7 +35,7 @@ If you have an HTTP proxy, you will need to configure the runner to use your pro
                ….
             ],
             "url": "….",
-            "customAxiosConfigPath": "./custom-proxy-config.js" <--- here
+            "customProxyConfigPath": "./custom-proxy-config.js" <--- here
           }
         }
       },
