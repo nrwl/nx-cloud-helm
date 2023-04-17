@@ -379,8 +379,8 @@ spec:
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.nxCloudAppURL }}
         {{ if .Values.enableMessageQueue }}
-            - name: NSQD_ADDRESS
-              value: nx-cloud-messagequeue:4150
+            - name: ACTIVEMQ_ADDRESS
+              value: tcp://nx-cloud-messagequeue:61616
         {{ end }}
         {{ if .Values.secret.name }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
@@ -982,21 +982,13 @@ spec:
     spec:
       containers:
         - name: nx-cloud-messagequeue
-          image: nsqio/nsq:v1.2.0
+          image: nxprivatecloud/nx-cloud-messagequeue:latest
           imagePullPolicy: Always
-          args:
-            - 'nsqd'
-            - '-data-path=/queue-data'
-            - '-max-body-size=5123840'
-            - '-max-msg-size=25165824'
-            - '-e2e-processing-latency-percentile=1.0,0.99,0.95'
           ports:
-            - containerPort: 4150
+            - containerPort: 61616
               name: tcp
-            - containerPort: 4151
-              name: http
           volumeMounts:
-          - mountPath: /queue-data
+          - mountPath: /opt/activemq/data
             name: data
       volumes:
       - emptyDir: {}
@@ -1014,9 +1006,6 @@ spec:
   type: ClusterIP
   ports:
     - name: tcp
-      port: 4150
-      targetPort: 4150
-    - name: http
-      port: 4151
-      targetPort: 4151
+      port: 61616
+      targetPort: 61616
 {{ end }}
