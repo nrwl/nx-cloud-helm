@@ -2,13 +2,13 @@
 Return the proper image name
 Helper copied from bitnami/common: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_images.tpl
 and modified to support global imageTag
-{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" .Values.global ) }}
+{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" .Values.global "image" .Values.image ) }}
 */}}
 {{- define "common.images.image" -}}
 {{- $registryName := .imageRoot.registry -}}
 {{- $repositoryName := .imageRoot.repository -}}
 {{- $separator := ":" -}}
-{{- $termination := default .global.imageTag .imageRoot.tag | toString -}}
+{{- $termination := default .image.tag (default .global.imageTag .imageRoot.tag) | toString -}}
 {{- if .global }}
     {{- if .global.imageRegistry }}
      {{- $registryName = .global.imageRegistry -}}
@@ -30,33 +30,33 @@ and modified to support global imageTag
 Return proper frontend image name
 */}}
 {{- define "frontend.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.frontend.image "global" .Values.global) -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.frontend.image "global" .Values.global "image" .Values.image) -}}
 {{- end -}}
 
 {{/*
 Return proper api image name
 */}}
 {{- define "api.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.api.image "global" .Values.global) -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.api.image "global" .Values.global "image" .Values.image) -}}
 {{- end -}}
 
 {{/*
 Return proper nx-api image name
 */}}
 {{- define "nxApi.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.nxApi.image "global" .Values.global) -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.nxApi.image "global" .Values.global "image" .Values.image) -}}
 {{- end -}}
 
 {{/*
 Return proper fileServer image name
 */}}
 {{- define "fileServer.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.fileServer.image "global" .Values.global) -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.fileServer.image "global" .Values.global "image" .Values.image) -}}
 {{- end -}}
 
 {{/*
 Return proper aggregator image name
 */}}
 {{- define "aggregator.image" -}}
-{{- include "common.images.image" (dict "imageRoot" .Values.aggregator.image "global" .Values.global) -}}
+{{- include "common.images.image" (dict "imageRoot" .Values.aggregator.image "global" .Values.global "image" .Values.image) -}}
 {{- end -}}
