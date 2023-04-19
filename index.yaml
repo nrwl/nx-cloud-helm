@@ -2,7 +2,16 @@ apiVersion: v1
 entries:
   nx-cloud:
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.926829+01:00"
+    created: "2023-04-18T08:59:39.663200426-04:00"
+    description: Nx Cloud Helm Chart
+    digest: da2c44c512e45011848daf92f9762692797ea41f8c14b4f42f05639fce9331da
+    name: nx-cloud
+    type: application
+    urls:
+    - helm-packages/nx-cloud-0.7.16.tgz
+    version: 0.7.16
+  - apiVersion: v2
+    created: "2023-04-18T08:59:39.661119342-04:00"
     description: Nx Cloud Helm Chart
     digest: 8fcdda30dbd35ceb0d6dc4740a8e068a9fd1125e034fcd1b7c25a3d742d6d0a6
     name: nx-cloud
@@ -11,7 +20,7 @@ entries:
     - helm-charts/nx-cloud-0.7.15.tgz
     version: 0.7.15
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.926534+01:00"
+    created: "2023-04-18T08:59:39.660913767-04:00"
     description: Nx Cloud Helm Chart
     digest: b3430b48fe0b6f092dd4a05c612aeef985f4566b5b1b35a3d05a0143d39cc725
     name: nx-cloud
@@ -20,7 +29,7 @@ entries:
     - helm-charts/nx-cloud-0.7.14.tgz
     version: 0.7.14
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.926207+01:00"
+    created: "2023-04-18T08:59:39.660714041-04:00"
     description: Nx Cloud Helm Chart
     digest: 588707b97345414dbe3b81a95b0b4ab48982f9a5d7bab4ceea47755abfe9abc3
     name: nx-cloud
@@ -29,7 +38,7 @@ entries:
     - helm-charts/nx-cloud-0.7.13.tgz
     version: 0.7.13
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.92565+01:00"
+    created: "2023-04-18T08:59:39.660462205-04:00"
     description: Nx Cloud Helm Chart
     digest: 0ef870aed409063a99a22835671f346fe5efd12f04aecba85249f09d72e59550
     name: nx-cloud
@@ -38,7 +47,7 @@ entries:
     - helm-charts/nx-cloud-0.7.12.tgz
     version: 0.7.12
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.925186+01:00"
+    created: "2023-04-18T08:59:39.660248879-04:00"
     description: Nx Cloud Helm Chart
     digest: 973bc45f3d4902d1044d81bbfb69abbbca58f53f7f73016e255ff398f884c36f
     name: nx-cloud
@@ -47,7 +56,7 @@ entries:
     - helm-charts/nx-cloud-0.7.11.tgz
     version: 0.7.11
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.923688+01:00"
+    created: "2023-04-18T08:59:39.660003243-04:00"
     description: Nx Cloud Helm Chart
     digest: bb5f16d36d5d4ca402de5cab6dd28f066133c419f6adccc55a34ae381e5f2bf6
     name: nx-cloud
@@ -56,7 +65,7 @@ entries:
     - helm-charts/nx-cloud-0.7.10.tgz
     version: 0.7.10
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.929705+01:00"
+    created: "2023-04-18T08:59:39.662987-04:00"
     description: Nx Cloud Helm Chart
     digest: 3fa0e33ccae5961ce18a75b07d18d890022d851d3eecabd9ba8c8bf58c189c38
     name: nx-cloud
@@ -65,7 +74,7 @@ entries:
     - helm-charts/nx-cloud-0.7.9.tgz
     version: 0.7.9
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.929371+01:00"
+    created: "2023-04-18T08:59:39.662749254-04:00"
     description: Nx Cloud Helm Chart
     digest: 3f19be5c9251447941c4f1666e4f64bcf50c5bec0c20294e111d845329077fca
     name: nx-cloud
@@ -74,7 +83,7 @@ entries:
     - helm-charts/nx-cloud-0.7.8.tgz
     version: 0.7.8
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.929031+01:00"
+    created: "2023-04-18T08:59:39.662503588-04:00"
     description: Nx Cloud Helm Chart
     digest: b929ae464cb03aed98e08d2e61bca27375626d555ce68703285bdff83f4544e0
     name: nx-cloud
@@ -83,7 +92,7 @@ entries:
     - helm-charts/nx-cloud-0.7.7.tgz
     version: 0.7.7
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.928655+01:00"
+    created: "2023-04-18T08:59:39.662295092-04:00"
     description: Nx Cloud Helm Chart
     digest: c80484af127a8b40358328f998ffea16148264cb7513382ce83026160bb51e26
     name: nx-cloud
@@ -92,7 +101,7 @@ entries:
     - helm-charts/nx-cloud-0.7.6.tgz
     version: 0.7.6
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.928183+01:00"
+    created: "2023-04-18T08:59:39.662026325-04:00"
     description: Nx Cloud Helm Chart
     digest: deda48859a0d3252f04c37bb34c3c3a4443610aa286de7260440bd4d9b5d8e4c
     name: nx-cloud
@@ -101,7 +110,7 @@ entries:
     - helm-charts/nx-cloud-0.7.5.tgz
     version: 0.7.5
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.927838+01:00"
+    created: "2023-04-18T08:59:39.661789669-04:00"
     description: Nx Cloud Helm Chart
     digest: 3a4ef4da1913bbe8c2f00a2c4e2d50f5f136912a8a90d351cf9109e5755b1d18
     name: nx-cloud
@@ -110,7 +119,7 @@ entries:
     - helm-charts/nx-cloud-0.7.4.tgz
     version: 0.7.4
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.92755+01:00"
+    created: "2023-04-18T08:59:39.661595844-04:00"
     description: Nx Cloud Helm Chart
     digest: 8bde46a26f93f9a1478d72474564821258771c3f9a4c59ed08bbd900551717de
     name: nx-cloud
@@ -119,7 +128,7 @@ entries:
     - helm-charts/nx-cloud-0.7.3.tgz
     version: 0.7.3
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.9272+01:00"
+    created: "2023-04-18T08:59:39.661352388-04:00"
     description: Nx Cloud Helm Chart
     digest: e9f2946a07ee983b2d7d7e1b8ecf0c7f4b89411b3952d113d000220a76151beb
     name: nx-cloud
@@ -128,7 +137,7 @@ entries:
     - helm-charts/nx-cloud-0.7.2.tgz
     version: 0.7.2
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.923283+01:00"
+    created: "2023-04-18T08:59:39.659785987-04:00"
     description: Nx Cloud Helm Chart
     digest: a796acaa3cbf0c14309848cd00cf2a0bc3eee0aea7b6f6bbfd2ebba5eece7355
     name: nx-cloud
@@ -137,7 +146,7 @@ entries:
     - helm-charts/nx-cloud-0.7.1.tgz
     version: 0.7.1
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.922896+01:00"
+    created: "2023-04-18T08:59:39.659477429-04:00"
     description: Nx Cloud Helm Chart
     digest: 446690e801908ceeec564509cc9c9584a96aa637c6c63ff100b9819b8eef1dc9
     name: nx-cloud
@@ -146,7 +155,7 @@ entries:
     - helm-charts/nx-cloud-0.7.0.tgz
     version: 0.7.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.922595+01:00"
+    created: "2023-04-18T08:59:39.658557425-04:00"
     description: Nx Cloud Helm Chart
     digest: 0a335a7bcb9923dc5839b1b4d6fb3ced8f42dc34ed966318bcd5a5cdb32f1588
     name: nx-cloud
@@ -155,7 +164,7 @@ entries:
     - helm-charts/nx-cloud-0.6.9.tgz
     version: 0.6.9
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.922319+01:00"
+    created: "2023-04-18T08:59:39.65835809-04:00"
     description: Nx Cloud Helm Chart
     digest: 43c259340b3025d2738f78ddcd25d484ff563d260837ff016ef316d5f3a77d18
     name: nx-cloud
@@ -164,7 +173,7 @@ entries:
     - helm-charts/nx-cloud-0.6.8.tgz
     version: 0.6.8
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.922018+01:00"
+    created: "2023-04-18T08:59:39.658157785-04:00"
     description: Nx Cloud Helm Chart
     digest: 0c107c22a1fbfe0ac84e7f16005c6d1602b3cef6e5a0a281e575c1abea20a299
     name: nx-cloud
@@ -173,7 +182,7 @@ entries:
     - helm-charts/nx-cloud-0.6.7.tgz
     version: 0.6.7
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.921688+01:00"
+    created: "2023-04-18T08:59:39.65795651-04:00"
     description: Nx Cloud Helm Chart
     digest: bcfb5ee5bc3dcee60c68598fee0a7ac6fb4e1996f299574fd5567309aa540f4f
     name: nx-cloud
@@ -182,7 +191,7 @@ entries:
     - helm-charts/nx-cloud-0.6.6.tgz
     version: 0.6.6
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.921333+01:00"
+    created: "2023-04-18T08:59:39.657747894-04:00"
     description: Nx Cloud Helm Chart
     digest: bd7fcc1644fdd123f3ba13e8d13528b0bc3ff137b3c7ffe489c33335b4c9db18
     name: nx-cloud
@@ -191,7 +200,7 @@ entries:
     - helm-charts/nx-cloud-0.6.5.tgz
     version: 0.6.5
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.921061+01:00"
+    created: "2023-04-18T08:59:39.657554259-04:00"
     description: Nx Cloud Helm Chart
     digest: ac3d3fc5cd76b627b565ffd564c0ee643fed8ae73ce2328c4771397f50aa3cc6
     name: nx-cloud
@@ -200,7 +209,7 @@ entries:
     - helm-charts/nx-cloud-0.6.4.tgz
     version: 0.6.4
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.920796+01:00"
+    created: "2023-04-18T08:59:39.657354894-04:00"
     description: Nx Cloud Helm Chart
     digest: 4c568dbac0a0a51bd88a125785d96564e801aeb7de78bfbfb0eaf6f6b90c9acc
     name: nx-cloud
@@ -209,7 +218,7 @@ entries:
     - helm-charts/nx-cloud-0.6.3.tgz
     version: 0.6.3
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.920522+01:00"
+    created: "2023-04-18T08:59:39.657175019-04:00"
     description: Nx Cloud Helm Chart
     digest: 86f7df6d778eea082de47638de5554791d14f9cee83a3aa3eb351a14596aa752
     name: nx-cloud
@@ -218,7 +227,7 @@ entries:
     - helm-charts/nx-cloud-0.6.2.tgz
     version: 0.6.2
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.92026+01:00"
+    created: "2023-04-18T08:59:39.657014575-04:00"
     description: Nx Cloud Helm Chart
     digest: 34ee80a782cd9e5286ebef1edcdffd37466c2d63a24dafbdbd2dac432023c3fb
     name: nx-cloud
@@ -227,7 +236,7 @@ entries:
     - helm-charts/nx-cloud-0.6.1.tgz
     version: 0.6.1
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.919987+01:00"
+    created: "2023-04-18T08:59:39.656844781-04:00"
     description: Nx Cloud Helm Chart
     digest: 9082c5816e83d15b329907474335d1c510e84f10dcb235b5da83e5f8b46eda37
     name: nx-cloud
@@ -236,7 +245,7 @@ entries:
     - helm-charts/nx-cloud-0.6.0.tgz
     version: 0.6.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.919681+01:00"
+    created: "2023-04-18T08:59:39.656598775-04:00"
     description: Nx Cloud Helm Chart
     digest: dee52550b914b8e65a8c76c148c5a40a98c9f029b2dff5b5e3313a8213c7d039
     name: nx-cloud
@@ -245,7 +254,7 @@ entries:
     - helm-charts/nx-cloud-0.5.0.tgz
     version: 0.5.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.919371+01:00"
+    created: "2023-04-18T08:59:39.656381099-04:00"
     description: Nx Cloud Helm Chart
     digest: 586c8f01c43cc8c95d96f94cf8645f8fea1a0053676cdd14730ab53d86e0c1b4
     name: nx-cloud
@@ -254,7 +263,7 @@ entries:
     - helm-charts/nx-cloud-0.4.0.tgz
     version: 0.4.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.919097+01:00"
+    created: "2023-04-18T08:59:39.656213885-04:00"
     description: Nx Cloud Helm Chart
     digest: 2358a915b0e12e35b34bc71b96b3b1fca482fb2a06bd6c9fda65c6fa516a8ad9
     name: nx-cloud
@@ -263,7 +272,7 @@ entries:
     - helm-charts/nx-cloud-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.918792+01:00"
+    created: "2023-04-18T08:59:39.656054141-04:00"
     description: Nx Cloud Helm Chart
     digest: 4a02cfb6d514803c0acfe23f992ddf042c0a0dda8a1a396b8b292ec70e101a00
     name: nx-cloud
@@ -272,7 +281,7 @@ entries:
     - helm-charts/nx-cloud-0.2.1.tgz
     version: 0.2.1
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.918485+01:00"
+    created: "2023-04-18T08:59:39.655902737-04:00"
     description: Nx Cloud Helm Chart
     digest: d24b0cd5807715959aebf48ae559dc0b91f6fb10546b12a75d9a2adc9962ae33
     name: nx-cloud
@@ -281,7 +290,7 @@ entries:
     - helm-charts/nx-cloud-0.2.0.tgz
     version: 0.2.0
   - apiVersion: v2
-    created: "2023-04-18T11:10:03.916612+01:00"
+    created: "2023-04-18T08:59:39.655737512-04:00"
     description: Nx Cloud Helm Chart
     digest: 61ece7edddaab0213ef67d0f0bfd432aecdce5cce6fff45f4706574044f94503
     name: nx-cloud
@@ -289,4 +298,4 @@ entries:
     urls:
     - helm-charts/nx-cloud-0.1.0.tgz
     version: 0.1.0
-generated: "2023-04-18T11:10:03.916065+01:00"
+generated: "2023-04-18T08:59:39.655480746-04:00"
