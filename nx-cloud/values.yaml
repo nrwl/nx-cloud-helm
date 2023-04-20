@@ -1,10 +1,96 @@
 image:
-  tag: ''
+  tag: '' # Deprecated, please use global.imageTag or service specific image tag.
+
+global:
+  imageRegistry: ''
+  imageTag: ''
 
 nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
 enableMessageQueue: false
+
+frontend:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-frontend
+    tag: ''
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests:
+      memory: '0.5Gi'
+      cpu: '0.5'
+
+api:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-api
+    tag: ''
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests:
+      memory: '1Gi'
+      cpu: '0.5'
+
+nxApi:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-nx-api
+    tag: ''
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests:
+      memory: '1Gi'
+      cpu: '1.0'
+
+fileServer:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-file-server
+    tag: ''
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests:
+      memory: '0.5Gi'
+      cpu: '0.5'
+  securityContext:
+    enabled: true
+    runAsUser: 10000
+    runAsGroup: 10000
+    fsGroup: 10000
+    fsGroupChangePolicy: "OnRootMismatch"
+
+aggregator:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-aggregator
+    tag: ''
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests:
+      memory: '1200M'
+      cpu: '0.5'
+
+messagequeue:
+  image:
+    registry: ''
+    repository: nxprivatecloud/nx-cloud-messagequeue
+    tag: latest
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests: {}
 
 replicas:
   frontend: 1

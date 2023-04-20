@@ -1,5 +1,5 @@
-image:
-  tag: 'latest'
+global:
+  imageTag: 'latest'
 
 nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
 

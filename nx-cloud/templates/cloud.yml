@@ -22,18 +22,11 @@ spec:
     spec:
       containers:
         - name: nx-cloud-frontend
-          image:
-        {{ if .Values.image.local }}
-            "localhost:5001/nx-cloud-frontend:next"
-        {{ else }}
-            nxprivatecloud/nx-cloud-frontend:{{ .Values.image.tag }}
-        {{end}}
-
-          resources:
-            requests:
-              memory: '0.5Gi'
-              cpu: '0.5'
-          imagePullPolicy: Always
+          image: {{ include "frontend.image" . }}
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy | quote }}
+          {{- if .Values.frontend.resources }}
+          resources: {{- toYaml .Values.frontend.resources | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 8080
           env:
@@ -115,17 +108,11 @@ spec:
     spec:
       containers:
         - name: nx-cloud-api
-          image:
-        {{ if .Values.image.local }}
-            "localhost:5001/nx-cloud-api:next"
-        {{ else }}
-            nxprivatecloud/nx-cloud-api:{{ .Values.image.tag }}
-        {{end}}
-          resources:
-            requests:
-              memory: '1Gi'
-              cpu: '0.5'
-          imagePullPolicy: Always
+          image: {{ include "api.image" . }}
+          imagePullPolicy: {{ .Values.api.image.pullPolicy | quote }}
+          {{- if .Values.api.resources }}
+          resources: {{- toYaml .Values.api.resources | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 4000
           livenessProbe:
@@ -350,17 +337,11 @@ spec:
       {{ end }}
       containers:
         - name: nx-cloud-nx-api
-          image:
-        {{ if .Values.image.local }}
-            "localhost:5001/nx-cloud-nx-api:next"
-        {{ else }}
-            nxprivatecloud/nx-cloud-nx-api:{{ .Values.image.tag }}
-        {{ end }}
-          resources:
-            requests:
-              memory: '1Gi'
-              cpu: '1.0'
-          imagePullPolicy: Always
+          image: {{ include "nxApi.image" . }}
+          imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
+          {{- if .Values.nxApi.resources }}
+          resources: {{- toYaml .Values.nxApi.resources | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 4203
           startupProbe:
@@ -650,24 +631,16 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: cloud-volume
-      securityContext:
-        runAsUser: 10000
-        runAsGroup: 10000
-        fsGroup: 10000
-        fsGroupChangePolicy: "OnRootMismatch"
+      {{- if .Values.fileServer.securityContext.enabled }}
+      securityContext: {{- omit .Values.fileServer.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
       containers:
         - name: nx-cloud-file-server
-          image:
-        {{ if .Values.image.local }}
-            "localhost:5001/nx-cloud-file-server:next"
-        {{ else }}
-            nxprivatecloud/nx-cloud-file-server:{{ .Values.image.tag }}
-        {{end}}
-          resources:
-            requests:
-              memory: '0.5Gi'
-              cpu: '0.5'
-          imagePullPolicy: Always
+          image: {{ include "fileServer.image" . }}
+          imagePullPolicy: {{ .Values.fileServer.image.pullPolicy | quote }}
+          {{- if .Values.fileServer.resources }}
+          resources: {{- toYaml .Values.fileServer.resources | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 5000
           livenessProbe:
@@ -713,21 +686,11 @@ spec:
         spec:
           containers:
             - name: nx-cloud-aggregator
-              image:
-            {{ if .Values.image.local }}
-                "localhost:5001/nx-cloud-aggregator:next"
-            {{ else }}
-                nxprivatecloud/nx-cloud-aggregator:{{ .Values.image.tag }}
-            {{end}}
-              resources:
-                requests:
-                  memory: '1200M'
-                  {{ if (((.Values.resources).aggregator).cpu) }}
-                  cpu: {{ (((.Values.resources).aggregator).cpu) }}
-                  {{ else }}
-                  cpu: '0.5'
-                  {{ end }}
-              imagePullPolicy: Always
+              image: {{ include "aggregator.image" . }}
+              imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | quote }}
+              {{- if .Values.aggregator.resources }}
+              resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
+              {{- end }}
               env:
 
             {{ if .Values.secret.name }}

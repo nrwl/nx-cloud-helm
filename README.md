@@ -58,8 +58,8 @@ You can configure Ingress. For instance, the following will see the ingress clas
 to 'nx-cloud-ip', and will set a global Google managed certificate.
 
 ```yaml
-image:
-  tag: 'latest'
+global:
+  imageTag: 'latest'
 
 nxCloudAppURL: 'https://nx-cloud.myorg.com'
 
@@ -179,8 +179,8 @@ For S3 buckets, see the [AWS Guide](./aws-guide/AWS-GUIDE.md#6-external-s3-acces
 For Azure:
 
 ```yaml
-image:
-  tag: 'latest'
+global:
+  imageTag: 'latest'
 
 nxCloudAppURL: 'https://nx-cloud.myorg.com'
 
@@ -202,8 +202,8 @@ Note that the secret for setting up Azure must contain `AZURE_CONNECTION_STRING`
 To use GitHub for user authentication, you can use the following configuration:
 
 ```yaml
-image:
-  tag: 'latest'
+global:
+  imageTag: 'latest'
 
 nxCloudAppURL: 'https://nx-cloud.myorg.com'
 
@@ -226,8 +226,8 @@ Read [here](https://nx.dev/nx-cloud/private-cloud/auth-github) on how to get tho
 To enable the GitHub PR integration, you can use the following configuration:
 
 ```yaml
-image:
-  tag: 'latest'
+global:
+  imageTag: 'latest'
 
 nxCloudAppURL: 'https://nx-cloud.myorg.com'
 
