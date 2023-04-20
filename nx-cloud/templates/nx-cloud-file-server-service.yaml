@@ -1,0 +1,17 @@
+{{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-file-server-service
+  labels:
+    app: nx-cloud-file-server
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  type: NodePort
+  selector:
+    app: nx-cloud-file-server
+  ports:
+    - port: 5000
+      targetPort: 5000
+{{- end }}

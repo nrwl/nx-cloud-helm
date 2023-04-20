@@ -1,0 +1,18 @@
+{{- if .Values.enableMessageQueue }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-messagequeue
+  labels:
+    app: nx-cloud-messagequeue
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  selector:
+    app: nx-cloud-messagequeue
+  type: ClusterIP
+  ports:
+    - name: tcp
+      port: 61616
+      targetPort: 61616
+{{- end }}

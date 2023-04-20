@@ -1,0 +1,84 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nx-cloud-aggregator
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  schedule: '*/10 * * * *'
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: nx-cloud-aggregator
+              image: {{ include "nxCloud.images.aggregator.image" . }}
+              imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | quote }}
+              {{- if .Values.aggregator.resources }}
+              resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
+              {{- end }}
+              env:
+            {{- include "nxCloud.env.mongoSecrets" . | indent 16 }}
+            {{- include "nxCloud.env.verboseLogging" . | indent 16 }}
+            {{- include "nxCloud.env.verboseMongoLogging" . | indent 16 }}
+            {{- include "nxCloud.env.mode" . | indent 16 }}
+            {{- include "nxCloud.env.aggregatorBilling" . | indent 16 }}
+            {{- if .Values.clearRecordsOlderThanDays }}
+                - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
+                  value: '{{ .Values.clearRecordsOlderThanDays }}'
+                - name: NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS
+                  value: '{{ .Values.clearRecordsOlderThanDays }}'
+                - name: NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS
+                  value: '{{ .Values.clearRecordsOlderThanDays }}'
+            {{- end }}
+            {{- if .Values.secret.adminPassword }}
+              {{- if .Values.secret.name }}
+                - name: ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: {{ .Values.secret.adminPassword }}
+              {{- else }}
+                - name: SECRET_FILE_ADMIN_PASSWORD
+                  value: {{ .Values.secret.adminPassword }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.useCosmosDb }}
+                - name: NX_CLOUD_USE_MONGO42
+                  value: 'false'
+            {{- end }}
+            {{- if eq .Values.mode "public"}}
+                - name: STRIPE_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_API_KEY
+                - name: STRIPE_FLAT_PRICE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_FLAT_PRICE_ID
+                - name: STRIPE_UNIT_PRICE_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: STRIPE_UNIT_PRICE_ID
+                - name: ROLLBAR_ENV
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: ROLLBAR_ENV
+                - name: ROLLBAR_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: ROLLBAR_TOKEN
+                - name: MANDRILL_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.name }}
+                      key: MANDRILL_API_KEY
+            {{- end }}
+          restartPolicy: OnFailure

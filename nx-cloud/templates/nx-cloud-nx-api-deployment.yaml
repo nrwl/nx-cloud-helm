@@ -1,0 +1,150 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-nx-api
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas.nxApi }}
+  selector:
+    matchLabels:
+      app: nx-cloud-nx-api
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-nx-api
+    spec:
+      terminationGracePeriodSeconds: 60
+      {{- if .Values.awsS3.serviceAccountName }}
+      serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
+      {{- end }}
+      containers:
+        - name: nx-cloud-nx-api
+          image: {{ include "nxCloud.images.nxApi.image" . }}
+          imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
+          {{- if .Values.nxApi.resources }}
+          resources: {{- toYaml .Values.nxApi.resources | nindent 12 }}
+          {{- end }}
+          ports:
+            - containerPort: 4203
+          startupProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 30
+          env:
+          {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
+          {{- include "nxCloud.api.scm.githubAppEnv" . | indent 12 }}
+          {{- include "nxCloud.api.scm.all" . | indent 12 }}
+          {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
+          {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
+          {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
+          {{- if .Values.enableMessageQueue }}
+            - name: ACTIVEMQ_ADDRESS
+              value: tcp://nx-cloud-messagequeue:61616
+          {{- end }}
+          {{- with .Values.awsS3 }}
+            {{- if .accelerated }}
+            - name: AWS_S3_ACCELERATED
+              value: 'TRUE'
+            {{- end }}
+            {{- if .bucket }}
+            - name: AWS_S3_BUCKET
+              value: {{ .bucket }}
+            {{- end }}
+            {{- if .endpoint }}
+            - name: AWS_S3_ENDPOINT
+              value: {{ .endpoint }}
+            {{- end }}
+          {{- end }}
+          {{- with .Values.secret }}
+          {{- if .awsS3AccessKeyId }}
+            {{- if .name }}
+            - name: AWS_S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .awsS3AccessKeyId }}
+            - name: AWS_S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .awsS3SecretAccessKey }}
+              {{- else }}
+            - name: SECRET_FILE_AWS_S3_ACCESS_KEY_ID
+              value: {{ .awsS3AccessKeyId }}
+            - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
+              value: {{ .awsS3SecretAccessKey }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.azure.enabled }}
+            - name: AZURE_CONTAINER
+              value: '{{ .Values.azure.container }}'
+            {{- if .Values.secret.name }}
+            - name: AZURE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.azureConnectionString }}
+            {{- else }}
+            - name: SECRET_FILE_AZURE_CONNECTION_STRING
+              value: {{ .Values.secret.azureConnectionString }}
+            {{- end }}
+          {{- end }}
+        {{- if .Values.fixedBatchSize }}
+            - name: NX_CLOUD_FIXED_BATCH_SIZE
+              value: {{ .Values.fixedBatchSize }}
+        {{- end }}
+        {{- if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
+        {{- end }}
+        {{- if eq .Values.mode "public"}}
+            - name: GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_APP_ID
+            - name: GITHUB_APP_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_APP_PRIVATE_KEY
+            - name: GITHUB_BOT_USERID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_BOT_USERID
+            - name: GITHUB_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: GITHUB_WEBHOOK_SECRET
+            - name: ROLLBAR_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_ENV
+            - name: ROLLBAR_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_TOKEN
+        {{- end }}

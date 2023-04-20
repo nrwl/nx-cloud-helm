@@ -1,0 +1,197 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-api
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas.api }}
+  selector:
+    matchLabels:
+      app: nx-cloud-api
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-api
+    spec:
+      containers:
+        - name: nx-cloud-api
+          image: {{ include "nxCloud.images.api.image" . }}
+          imagePullPolicy: {{ .Values.api.image.pullPolicy | quote }}
+          {{- if .Values.api.resources }}
+          resources: {{- toYaml .Values.api.resources | nindent 12 }}
+          {{- end }}
+          ports:
+            - containerPort: 4000
+          livenessProbe:
+            httpGet:
+              path: /api/uptime-check
+              port: 4000
+            initialDelaySeconds: 20
+          startupProbe:
+            httpGet:
+              path: /api/uptime-check
+              port: 4000
+            initialDelaySeconds: 5
+            failureThreshold: 5
+            periodSeconds: 10
+          env:
+          {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
+          {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
+          {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
+          {{- with .Values.secret }}
+            {{- if .githubPrivateKey }}
+            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .githubPrivateKey }}
+            {{- end }}
+            {{- if .githubAppId }}
+            - name: NX_CLOUD_GITHUB_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .githubAppId }}
+            {{- end }}
+            {{- if .hubspotApiKey }}
+            - name: HUBSPOT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .hubspotApiKey }}
+            {{- end }}
+            {{- if .githubPrivateKey }}
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
+            value: {{ .githubPrivateKey }}
+            {{- end }}
+            {{- if .githubAppId }}
+              - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+              value: {{ .githubAppId }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.saml }}
+          {{- if .Values.saml.enabled }}
+          {{- if .Values.secret.name }}
+            - name: SAML_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.samlCert }}
+            - name: SAML_ENTRY_POINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.samlEntryPoint }}
+          {{- else }}
+            - name: SAML_CERT
+              value: {{ .Values.secret.samlCert }}
+            - name: SAML_ENTRY_POINT
+              value: {{ .Values.secret.samlEntryPoint }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.github }}
+          {{- if .Values.github.auth }}
+          {{- if .Values.github.auth.enabled }}
+          {{- if .Values.secret.name }}
+            - name: GITHUB_AUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAuthClientId }}
+            - name: GITHUB_AUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.githubAuthClientSecret }}
+          {{- else }}
+            - name: SECRET_FILE_GITHUB_AUTH_CLIENT_ID
+              value: {{ .Values.secret.githubAuthClientId }}
+            - name: SECRET_FILE_GITHUB_AUTH_CLIENT_SECRET
+              value: {{ .Values.secret.githubAuthClientSecret }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.addonUnlockKey }}
+                - name: NX_CLOUD_ADDON_KEY
+                value: '{{ .Values.addonUnlockKey }}'
+          {{- end }}
+          {{- if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
+          {{- end }}
+          {{- if eq .Values.mode "public"}}
+            - name: K8S
+              value: 'true'
+            - name: NX_CLOUD_AUTH0_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_CLIENT_ID
+            - name: NX_CLOUD_AUTH0_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_DOMAIN
+            - name: NX_CLOUD_AUTH0_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_AUDIENCE
+            - name: API_AUTH0_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: API_AUTH0_DOMAIN
+            - name: API_AUTH0_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: NX_CLOUD_AUTH0_AUDIENCE
+            - name: AUTH0_CREDENTIALS_GRANT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: AUTH0_CREDENTIALS_GRANT_CLIENT_ID
+            - name: AUTH0_CREDENTIALS_GRANT_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: AUTH0_CREDENTIALS_GRANT_CLIENT_SECRET
+            - name: AUTH0_MANAGEMENT_API_AUDIENCE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: AUTH0_MANAGEMENT_API_AUDIENCE
+            - name: MANDRILL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: MANDRILL_API_KEY
+            - name: STRIPE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: STRIPE_API_KEY
+            - name: ROLLBAR_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_ENV
+            - name: ROLLBAR_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: ROLLBAR_TOKEN
+        {{- end }}

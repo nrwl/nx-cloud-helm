@@ -1,0 +1,61 @@
+{{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-file-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nx-cloud-file-server
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-file-server
+        {{- include "nxCloud.app.labels" . | indent 4 }}
+    spec:
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: cloud-volume
+      {{- if .Values.fileServer.securityContext.enabled }}
+      securityContext: {{- omit .Values.fileServer.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: nx-cloud-file-server
+          image: {{ include "nxCloud.images.fileServer.image" . }}
+          imagePullPolicy: {{ .Values.fileServer.image.pullPolicy | quote }}
+          {{- if .Values.fileServer.resources }}
+          resources: {{- toYaml .Values.fileServer.resources | nindent 12 }}
+          {{- end }}
+          env:
+            {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
+            {{- if .Values.clearRecordsOlderThanDays }}
+            - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
+              value: '{{ .Values.clearRecordsOlderThanDays }}'
+            {{- end }}
+          ports:
+            - containerPort: 5000
+          livenessProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            initialDelaySeconds: 10
+          startupProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: 5000
+            failureThreshold: 10
+            periodSeconds: 5
+          volumeMounts:
+            - mountPath: /data
+              name: data
+{{- end }}

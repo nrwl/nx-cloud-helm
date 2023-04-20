@@ -5,6 +5,11 @@ global:
   imageRegistry: ''
   imageTag: ''
 
+naming:
+  nameOverride: ''
+  fullNameOverride: ''
+
+
 nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
