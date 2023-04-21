@@ -1,0 +1,98 @@
+{{- if not .Values.ingress.skip }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nx-cloud-ingress
+  annotations:
+    {{- with .Values.ingress }}
+    {{- if .globalStaticIpName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .globalStaticIpName }}
+    {{- end }}
+    {{- if .managedCertificates }}
+    networking.gke.io/managed-certificates: {{ .managedCertificates }}
+    {{- end }}
+    {{- if .class }}
+    kubernetes.io/ingress.class: {{ .class }}
+    {{- end }}
+    {{- if eq .class "nginx" }}
+    nginx.ingress.kubernetes.io/proxy-body-size: 1000m
+    {{- end }}
+    {{- if .albScheme }}
+    alb.ingress.kubernetes.io/scheme: {{ .albScheme }}
+    {{- end }}
+    {{- if .albListenPorts }}
+    alb.ingress.kubernetes.io/listen-ports: '{{ .albListenPorts }}'
+    {{- end }}
+    {{- if .albCertificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .albCertificateArn }}
+    {{- end }}
+    {{- end }}
+  labels:
+    app: nx-cloud
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  rules:
+    - http:
+        paths:
+          {{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
+          - path: /file
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-file-server-service
+                port:
+                  number: 5000
+          {{- end }}
+          {{- range .Values.ingress.nxApiExtraRoutes }}
+          - path: {{ . }}
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nx-api-service
+                port:
+                  number: 4203
+          {{- end }}
+          - path: /nx-cloud
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nx-api-service
+                port:
+                  number: 4203
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /graphql
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /download
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-nrwl-api-service
+                port:
+                  number: 4000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nx-cloud-frontend-service
+                port:
+                  number: 8080
+{{- end }}
