@@ -72,10 +72,10 @@ spec:
             {{- end }}
             {{- if .githubPrivateKey }}
             - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
-            value: {{ .githubPrivateKey }}
+              value: {{ .githubPrivateKey }}
             {{- end }}
             {{- if .githubAppId }}
-              - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
               value: {{ .githubAppId }}
             {{- end }}
           {{- end }}
