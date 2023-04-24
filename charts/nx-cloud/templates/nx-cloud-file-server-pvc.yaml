@@ -6,6 +6,10 @@ metadata:
   name: cloud-volume
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
+  annotations:
+  {{- if .Values.fileStorage.resourcePolicy }}
+    helm.sh/resource-policy: {{ .Values.fileStorage.resourcePolicy | quote }}
+  {{- end }}
 spec:
   accessModes:
     - ReadWriteOnce
