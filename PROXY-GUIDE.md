@@ -6,9 +6,9 @@ If you have an HTTP proxy, you will need to configure the runner to use your pro
 2. Create a new file `custom-proxy-config.js`
 3. Customise your proxy using the HPAgent however you like:
    ```javascript
-    const { HttpsProxyAgent } = require('hpagent');
+   const { HttpsProxyAgent } = require('hpagent');
     
-    const proxyConfig = (nxDefaultConfig) => ({
+   const proxyConfig = (nxDefaultConfig) => ({
      ...nxDefaultConfig,
      proxy: false,
      httpsAgent: new HttpsProxyAgent({
