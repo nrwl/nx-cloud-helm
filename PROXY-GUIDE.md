@@ -12,9 +12,9 @@ If you have an HTTP proxy, you will need to configure the runner to use your pro
      ...nxDefaultConfig,
      proxy: false,
      httpsAgent: new HttpsProxyAgent({
-       proxy: 'https://your-customproxy.com:4042', // -- enter your custom proxy details here
+       proxy: 'https://your-customproxy.com:4042', // <-- enter your custom proxy details here
        ca: [""], // --- optional path to a certificate authority
-       rejectUnauthorized: false // --- set this to false if you want it to ignore invalid certificate warnings
+       rejectUnauthorized: false // <-- set this to false if you want it to ignore invalid certificate warnings
      })
    });
 
