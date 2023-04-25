@@ -4,6 +4,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-file-server
+  labels:
+  {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   replicas: 1
   selector:
@@ -20,7 +22,6 @@ spec:
     metadata:
       labels:
         app: nx-cloud-file-server
-        {{- include "nxCloud.app.labels" . | indent 4 }}
     spec:
       volumes:
         - name: data
