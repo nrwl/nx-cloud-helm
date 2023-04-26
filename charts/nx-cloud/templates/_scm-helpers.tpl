@@ -14,7 +14,7 @@
     {{- if .Values.secret.name }}
 - name: GITHUB_WEBHOOK_SECRET
   valueFrom:
-    secretKeyRef:-
+    secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.githubWebhookSecret }}
 - name: GITHUB_AUTH_TOKEN

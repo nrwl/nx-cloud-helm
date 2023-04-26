@@ -1,9 +1,10 @@
 image:
-  tag: '' # Deprecated, please use global.imageTag or service specific image tag.
+  tag: ''  # Deprecated, please use global.imageTag or service specific image tag.
 
 global:
   imageRegistry: ''
   imageTag: ''
+  imageRepository: 'nxprivatecloud'
 
 naming:
   nameOverride: ''
@@ -18,7 +19,8 @@ enableMessageQueue: false
 frontend:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-frontend
+    imageName: nx-cloud-frontend
+    repository: ''
     tag: ''
     digest: ''
     pullPolicy: Always
@@ -31,7 +33,8 @@ frontend:
 api:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-api
+    imageName: nx-cloud-api
+    repository: ''
     tag: ''
     digest: ''
     pullPolicy: Always
@@ -44,7 +47,8 @@ api:
 nxApi:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-nx-api
+    imageName: nx-cloud-nx-api
+    repository: ''
     tag: ''
     digest: ''
     pullPolicy: Always
@@ -57,7 +61,8 @@ nxApi:
 fileServer:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-file-server
+    imageName: nx-cloud-file-server
+    repository: ''
     tag: ''
     digest: ''
     pullPolicy: Always
@@ -76,7 +81,8 @@ fileServer:
 aggregator:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-aggregator
+    imageName: nx-cloud-aggregator
+    repository: ''
     tag: ''
     digest: ''
     pullPolicy: Always
@@ -89,7 +95,8 @@ aggregator:
 messagequeue:
   image:
     registry: ''
-    repository: nxprivatecloud/nx-cloud-messagequeue
+    imageName: nx-cloud-messagequeue
+    repository: ''
     tag: latest
     digest: ''
     pullPolicy: Always

@@ -31,6 +31,7 @@ spec:
           {{- end }}
           ports:
             - containerPort: 4000
+          {{- if not .Values.api.skipLiveness }}
           livenessProbe:
             httpGet:
               path: /api/uptime-check
@@ -43,40 +44,44 @@ spec:
             initialDelaySeconds: 5
             failureThreshold: 5
             periodSeconds: 10
+          {{- end}}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- with .Values.secret }}
-            {{- if .githubPrivateKey }}
+            {{- if .name }}
+              {{- if .githubPrivateKey }}
             - name: NX_CLOUD_GITHUB_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .githubPrivateKey }}
-            {{- end }}
-            {{- if .githubAppId }}
+              {{- end }}
+              {{- if .githubAppId }}
             - name: NX_CLOUD_GITHUB_APP_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .githubAppId }}
-            {{- end }}
-            {{- if .hubspotApiKey }}
+              {{- end }}
+              {{- if .hubspotApiKey }}
             - name: HUBSPOT_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .hubspotApiKey }}
-            {{- end }}
-            {{- if .githubPrivateKey }}
+              {{- end }}
+            {{- else }}
+              {{- if .githubPrivateKey }}
             - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
               value: {{ .githubPrivateKey }}
-            {{- end }}
-            {{- if .githubAppId }}
+              {{- end }}
+              {{- if .githubAppId }}
             - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
               value: {{ .githubAppId }}
+              {{- end }}
             {{- end }}
           {{- end }}
           {{- if .Values.saml }}
@@ -124,8 +129,8 @@ spec:
           {{- end }}
           {{- end }}
           {{- if .Values.addonUnlockKey }}
-                - name: NX_CLOUD_ADDON_KEY
-                value: '{{ .Values.addonUnlockKey }}'
+            - name: NX_CLOUD_ADDON_KEY
+              value: '{{ .Values.addonUnlockKey }}'
           {{- end }}
           {{- if .Values.useCosmosDb }}
             - name: NX_CLOUD_USE_MONGO42
