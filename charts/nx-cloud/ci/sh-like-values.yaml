@@ -1,0 +1,74 @@
+global:
+  imageTag: 'latest'
+
+verboseLogging: 'true'
+
+nxCloudAppURL: 'https://something.example.com'
+
+fileStorage:
+  size: '1Gi'
+
+clearRecordsOlderThanDays: 15
+
+ingress:
+  class: 'gce'
+  globalStaticIpName: 'a-static-address'
+  managedCertificates: 'a-private-cert'
+
+github:
+  auth:
+    enabled: true
+
+useCosmosDb: true
+enableMessageQueue: true
+
+billing:
+  overrides:
+    disableCreateBillingRecords: ''
+    forceCreateBillingRecords: ''
+    disableProcessBilling: ''
+    forceProcessBilling: ''
+    disableWarnFreePlanOrgs: ''
+    forceWarnFreePlanOrgs: ''
+
+secret:
+  name: 'cloudsecret'
+  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+  adminPassword: 'ADMIN_PASSWORD'
+  githubAuthClientId: 'GITHUB_AUTH_CLIENT_ID'
+  githubAuthClientSecret: 'GITHUB_AUTH_CLIENT_SECRET'
+  githubWebhookSecret: 'GITHUB_WEBHOOK_SECRET'
+  githubAuthToken: 'GITHUB_AUTH_TOKEN'
+  githubPrivateKey: 'GITHUB_APP_PRIVATE_KEY'
+  githubAppId: 'GITHUB_APP_ID'
+
+frontend:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+api:
+  skipLiveness: 'true'
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxApi:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+fileServer:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+aggregator:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
