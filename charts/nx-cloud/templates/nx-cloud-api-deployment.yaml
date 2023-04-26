@@ -51,7 +51,7 @@ spec:
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- with .Values.secret }}
-            {{- if .name }}
+{{/*            {{- if .name }}*/}}
               {{- if .githubPrivateKey }}
             - name: NX_CLOUD_GITHUB_PRIVATE_KEY
               valueFrom:
@@ -73,7 +73,7 @@ spec:
                   name: {{ .name }}
                   key: {{ .hubspotApiKey }}
               {{- end }}
-            {{- else }}
+{{/*            {{- else }}*/}}
               {{- if .githubPrivateKey }}
             - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
               value: {{ .githubPrivateKey }}
@@ -82,7 +82,7 @@ spec:
             - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
               value: {{ .githubAppId }}
               {{- end }}
-            {{- end }}
+{{/*            {{- end }}*/}}
           {{- end }}
           {{- if .Values.saml }}
           {{- if .Values.saml.enabled }}
