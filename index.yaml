@@ -16,6 +16,26 @@ entries:
     version: 0.9.0
   - apiVersion: v2
     appVersion: helm-dev
+    created: "2023-04-26T12:57:36.674613144-04:00"
+    description: Nx Cloud Helm Chart
+    digest: 77fff9318d60a638f26dd345d9c745526cfb7f7d2500891330dd4773d6b19ee5
+    name: nx-cloud
+    type: application
+    urls:
+      - helm-charts/nx-cloud-0.8.5.tgz
+    version: 0.8.5
+  - apiVersion: v2
+    appVersion: helm-dev
+    created: "2023-04-26T12:57:36.673639898-04:00"
+    description: Nx Cloud Helm Chart
+    digest: c57daea2e8ad88ae6c87ca533978a2f0370c4a082d5703ebedffb3b0af7fdd47
+    name: nx-cloud
+    type: application
+    urls:
+      - helm-charts/nx-cloud-0.8.4.tgz
+    version: 0.8.4
+  - apiVersion: v2
+    appVersion: helm-dev
     created: "2023-04-24T07:27:20.999328679-04:00"
     description: Nx Cloud Helm Chart
     digest: 3fb71ee0604079978957b86f6c88fc6847134dcb75c6a7bc2d1c5580c1d857a7
