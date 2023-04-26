@@ -121,6 +121,7 @@ ingress:
 fileStorage:
   storageClassName: ''
   size: '30Gi'
+  resourcePolicy: ''
 
 awsS3:
   enabled: false
