@@ -3,7 +3,7 @@ name: Lint and Test Charts
 on: pull_request
 
 jobs:
-  lint-test:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
