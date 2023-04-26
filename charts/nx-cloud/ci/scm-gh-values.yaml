@@ -1,0 +1,53 @@
+global:
+  imageTag: 'latest'
+
+nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
+
+github:
+  auth:
+    enabled: true
+  pr:
+    defaultWorkspaceId: 'someworkspace'
+    enabled: true
+    mode: 'webhook'
+    apiUrl: 'https://api.example.com/'
+
+secret:
+  name: 'cloudsecret'
+  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+  adminPassword: 'ADMIN_PASSWORD'
+  githubWebhookSecret: 'GITHUB_SECRET'
+  githubAuthClientId: 'GH_CLIENT_ID'
+  githubAuthClientSecret: 'GH_CLIENT_SECRET_VALUE'
+  githubAuthToken: 'SOME_SECRET_TOKEN'
+
+frontend:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+api:
+  skipLiveness: 'true'
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxApi:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+fileServer:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+aggregator:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'

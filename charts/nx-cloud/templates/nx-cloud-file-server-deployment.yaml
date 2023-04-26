@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: nx-cloud-file-server
   labels:
-  {{- include "nxCloud.app.labels" . | indent 4 }}
+    {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   replicas: 1
   selector:

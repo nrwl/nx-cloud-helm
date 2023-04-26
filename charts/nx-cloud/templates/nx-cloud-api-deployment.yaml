@@ -31,6 +31,7 @@ spec:
           {{- end }}
           ports:
             - containerPort: 4000
+          {{- if not .Values.api.skipLiveness }}
           livenessProbe:
             httpGet:
               path: /api/uptime-check
@@ -43,6 +44,7 @@ spec:
             initialDelaySeconds: 5
             failureThreshold: 5
             periodSeconds: 10
+          {{- end}}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
@@ -127,8 +129,8 @@ spec:
           {{- end }}
           {{- end }}
           {{- if .Values.addonUnlockKey }}
-                - name: NX_CLOUD_ADDON_KEY
-                value: '{{ .Values.addonUnlockKey }}'
+            - name: NX_CLOUD_ADDON_KEY
+              value: '{{ .Values.addonUnlockKey }}'
           {{- end }}
           {{- if .Values.useCosmosDb }}
             - name: NX_CLOUD_USE_MONGO42
