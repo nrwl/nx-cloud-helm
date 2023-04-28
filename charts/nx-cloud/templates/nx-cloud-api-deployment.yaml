@@ -45,7 +45,16 @@ spec:
             failureThreshold: 5
             periodSeconds: 10
           {{- end}}
+          {{- if .Values.selfSignedCertConfigMap }}
+          volumeMounts:
+            - mountPath: /self-signed-certs
+              name: self-signed-certs-volume
+          {{- end}}
           env:
+            {{- if .Values.selfSignedCertConfigMap }}
+            - name: NODE_EXTRA_CA_CERTS
+              value: /self-signed-certs/self-signed-cert.crt
+            {{- end}}
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
@@ -200,3 +209,9 @@ spec:
                   name: {{ .Values.secret.name }}
                   key: ROLLBAR_TOKEN
         {{- end }}
+      {{- if .Values.selfSignedCertConfigMap }}
+      volumes:
+        - configMap:
+            name: {{ .Values.selfSignedCertConfigMap }}
+          name: self-signed-certs-volume
+      {{- end }}
