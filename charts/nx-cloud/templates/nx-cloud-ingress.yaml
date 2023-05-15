@@ -4,6 +4,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: nx-cloud-ingress
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
   annotations:
     {{- with .Values.ingress }}
     {{- if .globalStaticIpName }}
@@ -33,7 +34,8 @@ metadata:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   rules:
-    - http:
+    - host: {{ .Values.ingress.host }}
+      http:
         paths:
           {{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
           - path: /file

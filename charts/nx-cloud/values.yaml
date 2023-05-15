@@ -117,6 +117,8 @@ ingress:
   albListenPorts: ''
   albCertificateArn: ''
   class: ''
+  ingressClassName: 'nginx'
+  host: ''
 
 fileStorage:
   storageClassName: ''
