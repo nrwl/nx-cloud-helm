@@ -19,8 +19,8 @@ spec:
     spec:
       containers:
         - name: nx-cloud-messagequeue
-          image: nxprivatecloud/nx-cloud-messagequeue:latest
-          imagePullPolicy: Always
+          image: {{ include "nxCloud.images.messagequeue.image" . }}
+          imagePullPolicy: {{ .Values.messagequeue.image.pullPolicy | quote }}
           ports:
             - containerPort: 61616
               name: tcp
