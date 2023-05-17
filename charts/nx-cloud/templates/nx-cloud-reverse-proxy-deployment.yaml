@@ -1,4 +1,4 @@
-{{- if not .Values.reverseProxy.enable }}
+{{- if .Values.reverseProxy.enable }}
 ---
 apiVersion: apps/v1
 kind: Deployment

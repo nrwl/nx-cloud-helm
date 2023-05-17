@@ -104,7 +104,7 @@ messagequeue:
     limits: {}
     requests: {}
 
-messagequeue:
+haproxy:
   image:
     registry: ''
     imageName: haproxy

@@ -1,4 +1,4 @@
-{{- if not .Values.reverseProxy.enable }}
+{{- if .Values.reverseProxy.enable }}
 ---
 apiVersion: v1
 kind: ConfigMap
