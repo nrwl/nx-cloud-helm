@@ -1,0 +1,22 @@
+{{- if not .Values.reverseProxy.enable }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-reverse-proxy
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: nx-cloud-reverse-proxy
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: stat
+    port: 1024
+    protocol: TCP
+    targetPort: 1024
+{{- end }}

@@ -68,3 +68,10 @@ Return proper messagequeue image name
 {{- define "nxCloud.images.messagequeue.image" }}
 {{- include "nxCloud.images.common" (dict "imageRoot" .Values.messagequeue.image "global" .Values.global "image" .Values.image) }}
 {{- end }}
+
+{{/*
+Return proper haproxy image name
+*/}}
+{{- define "nxCloud.images.haproxy.image" }}
+{{- include "nxCloud.images.common" (dict "imageRoot" .Values.haproxy.image "global" .Values.global "image" .Values.image) }}
+{{- end }}

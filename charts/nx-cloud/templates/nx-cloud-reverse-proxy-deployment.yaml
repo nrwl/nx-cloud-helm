@@ -1,0 +1,53 @@
+{{- if not .Values.reverseProxy.enable }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-reverse-proxy
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicas.haproxy }}
+  selector:
+    matchLabels:
+      app: nx-cloud-reverse-proxy
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nx-cloud-reverse-proxy
+    spec:
+      terminationGracePeriodSeconds: 60
+      {{- if .Values.awsS3.serviceAccountName }}
+      serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
+      {{- end }}
+      containers:
+        - name: nx-cloud-reverse-proxy
+          image: {{ include "nxCloud.images.haproxy.image" . }}
+          imagePullPolicy: {{ .Values.haproxy.image.pullPolicy | quote }}
+          {{- if .Values.haproxy.resources }}
+          resources: {{- toYaml .Values.haproxy.resources | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 1042
+          ports:
+          - name: http
+            containerPort: 80
+          - name: stat
+            containerPort: 1024
+          volumeMounts:
+          - name: config
+            mountPath: /usr/local/etc/haproxy
+      volumes:
+        - name: config
+          configMap:
+            name: nx-cloud-reverse-proxy-cm
+{{- end}}

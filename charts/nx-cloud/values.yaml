@@ -104,6 +104,18 @@ messagequeue:
     limits: {}
     requests: {}
 
+messagequeue:
+  image:
+    registry: ''
+    imageName: haproxy
+    repository: ''
+    tag: latest
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits: {}
+    requests: {}
+
 replicas:
   frontend: 1
   api: 1
@@ -117,6 +129,9 @@ ingress:
   albListenPorts: ''
   albCertificateArn: ''
   class: ''
+
+reverseProxy:
+  enable: false
 
 fileStorage:
   storageClassName: ''
