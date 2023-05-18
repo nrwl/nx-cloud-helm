@@ -153,6 +153,8 @@ your NxCloud installation.
 Mongo upgrades need to be done incrementally between major versions. In both scenarios below, we'll upgrade from Mongo 4.2
 to 4.4 then to 5.0 then to 6.0.
 
+If at any point you run into any issues, or you'd like us to assist you with the upgrade, please send an email to [cloud-support@nrwl.io](mailto:cloud-support@nrwl.io)
+
 ##### Mongo Atlas
 
 If you're using Mongo Atlas, you can do a rolling upgrade by editing your cluster's configuration:
