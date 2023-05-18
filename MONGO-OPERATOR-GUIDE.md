@@ -147,7 +147,7 @@ This is a sample connection string you can use when connecting to your instance 
 
 ### Upgrading to Mongo 6
 
-As of version `latest-11-05-2023T11-28-04` and higher, we strongly recommend you update from Mongo 4.2 to Mongo 6 for
+As of version `latest-11-05-2023T11-28-04` (and all new calver based versions that are similar to `2305.11.3`) and higher, we strongly recommend you update from Mongo 4.2 to Mongo 6 for
 your NxCloud installation.
 
 Mongo upgrades need to be done incrementally between major versions. In both scenarios below, we'll upgrade from Mongo 4.2
@@ -155,17 +155,23 @@ to 4.4 then to 5.0 then to 6.0.
 
 ##### Mongo Atlas
 
-If you're using Mongo Atlas, you can do a rolling upgrade by editing your cluster's configuration and first selecting Mongo 4.4, then Mongo 5.0, finally Mongo 6.0.
+If you're using Mongo Atlas, you can do a rolling upgrade by editing your cluster's configuration:
+
+<img src="examples/images/atlas-edit-cluster-config.png">
+
+and first selecting Mongo 4.4, then Mongo 5.0, finally Mongo 6.0 (notice how it doesn't let us upgrade from 4.4 straight to 6):
+
+<img src="examples/images/atlas-upgrade-mongo-version.png">
 
 ##### Mongo Operator
 
 If you're using the Mongo Operator, you'll need to edit your Mongo ReplicaSet and apply the version changes incrementally, as Mongo doesn't allow a direct 4.2 to 6.0 upgrade.
-During the upgrade, we'll need to continually change our [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) on the pods.
-Mongo requires this is always trailing the version we want to upgrade to. For example, if we are on Mongo 4.4 and we want to upgrade to Mongo 5, our featureCompatibilityVersion needs to be 4.4.
+During the upgrade, we'll need to continually update our [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) also.
+Mongo requires that this `featureCompatibilityVersion` always trailing the version we want to upgrade to. For example, if our pods are on Mongo 4.4 and we want to upgrade them to Mongo 5, our featureCompatibilityVersion needs to be first set to 4.4.
 
-It's important you follow the exact steps in order to ensure a smooth upgrade without any downtime:
+It's important you follow the exact steps in order:
 
-1. Backup your database first
+1. [Backup your database first](https://docs.bitnami.com/tutorials/backup-restore-data-mongodb-kubernetes/) using a tool like `mongodump`. You can ssh into any of your pods. 
 1. Edit your `/mongo.yml` file
 2. Change to Mongo version 4.4: `version: '4.4.20'`
    - Then, we'll also set this option right below it: `featureCompatibilityVersion: '4.2'`
@@ -188,25 +194,24 @@ It's important you follow the exact steps in order to ensure a smooth upgrade wi
 4. Now set `version: '5.0.17'`
    5. Apply the change
    6. Leave it to upgrade for the next 20-30 minutes. 
-   7. Your `kubectl get pods` output should show healthy pods, with `2/2` availability and the `AGE` of the pods should now also be reset.
+   7. Your `kubectl get pods` output should show healthy pods, with `2/2` availability and the `AGE` of the pods should now also be reset (similar to the screenshot we saw above)
 3. Set `featureCompatibilityVersion: '5.0'` 
    4. Apply the changes. You don't need to wait/watch for pod upgrades as this change will be applied very quickly.
 3. Change to `version: '6.0.5'` and apply it.
    4. Wait for 20 minutes
    5. Then check your pods are in a healthy state `kubectl get pods`
-
-3. Finally, set `featureCompatibilityVersion: '6.0'` and apply the change.
+3. Finally, set `featureCompatibilityVersion: '6.0'` and apply the change. This change will be very quick.
 4. All your pods should now be on Mongo 6. Congratulations!
 
 ##### How to check pod Mongo version and featureCompatibilityVersion:
 
-If you'd like to check what Mongo version your pods are on, you can exec into a pod and:
+If you are unsure if your pods have finished upgrading between Mongo versions (as this a long, based on the steps above) and you'd like to check what Mongo version your pods are on, you can exec into a pod and:
 
 ```shell
-mongo --version
+mongo --version # you can do this for each pod part of your replica set
 ```
 
-To check the featureCompatibilityVersion, exec into the pod and:
+To check the `featureCompatibilityVersion`, exec into the pod and:
 
 ```shell
 mongo -u admin-user -p <password> --authenticationDatabase nrwl-api
@@ -214,5 +219,4 @@ use nrwl-api
 db.adminCommand({getParameter: 1, featureCompatibilityVersion: 1})
 ```
 
-You can use the above commands to check each of your 3 replicas is on the correct Mongo and featureCompatibilityVersion between the upgrade steps above.
-
+Although not necessary, you can use the above commands to check each of your 3 replicas is on the correct Mongo version and `featureCompatibilityVersion` between the upgrade steps above.
