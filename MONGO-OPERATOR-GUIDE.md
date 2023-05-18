@@ -192,14 +192,14 @@ It's important you follow the exact steps in order:
    - `kubectl apply -f mongo.yml` 
    - This will set the [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) of the Mongo pods to a version that we need for the next step of the upgrade.
 4. Now set `version: '5.0.17'`
-   5. Apply the change
-   6. Leave it to upgrade for the next 20-30 minutes. 
-   7. Your `kubectl get pods` output should show healthy pods, with `2/2` availability and the `AGE` of the pods should now also be reset (similar to the screenshot we saw above)
+   1. Apply the change
+   2. Leave it to upgrade for the next 20-30 minutes. 
+   3. Your `kubectl get pods` output should show healthy pods, with `2/2` availability and the `AGE` of the pods should now also be reset (similar to the screenshot we saw above)
 3. Set `featureCompatibilityVersion: '5.0'` 
-   4. Apply the changes. You don't need to wait/watch for pod upgrades as this change will be applied very quickly.
+   1. Apply the changes. You don't need to wait/watch for pod upgrades as this change will be applied very quickly.
 3. Change to `version: '6.0.5'` and apply it.
-   4. Wait for 20 minutes
-   5. Then check your pods are in a healthy state `kubectl get pods`
+   1. Wait for 20 minutes
+   2. Then check your pods are in a healthy state `kubectl get pods`
 3. Finally, set `featureCompatibilityVersion: '6.0'` and apply the change. This change will be very quick.
 4. All your pods should now be on Mongo 6. Congratulations!
 
