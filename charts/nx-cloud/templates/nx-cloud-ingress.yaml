@@ -44,15 +44,6 @@ spec:
                 port:
                   number: 5000
           {{- end }}
-          {{- range .Values.ingress.nxApiExtraRoutes }}
-          - path: {{ . }}
-            pathType: Prefix
-            backend:
-              service:
-                name: nx-cloud-nx-api-service
-                port:
-                  number: 4203
-          {{- end }}
           - path: /nx-cloud
             pathType: Prefix
             backend:

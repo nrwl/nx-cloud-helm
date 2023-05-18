@@ -57,7 +57,6 @@ spec:
             {{- end}}
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
-          {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- with .Values.secret }}
             {{- if .name }}
@@ -145,70 +144,6 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
           {{- end }}
-          {{- if eq .Values.mode "public"}}
-            - name: K8S
-              value: 'true'
-            - name: NX_CLOUD_AUTH0_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: NX_CLOUD_AUTH0_CLIENT_ID
-            - name: NX_CLOUD_AUTH0_DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: NX_CLOUD_AUTH0_DOMAIN
-            - name: NX_CLOUD_AUTH0_AUDIENCE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: NX_CLOUD_AUTH0_AUDIENCE
-            - name: API_AUTH0_DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: API_AUTH0_DOMAIN
-            - name: API_AUTH0_AUDIENCE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: NX_CLOUD_AUTH0_AUDIENCE
-            - name: AUTH0_CREDENTIALS_GRANT_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: AUTH0_CREDENTIALS_GRANT_CLIENT_ID
-            - name: AUTH0_CREDENTIALS_GRANT_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: AUTH0_CREDENTIALS_GRANT_CLIENT_SECRET
-            - name: AUTH0_MANAGEMENT_API_AUDIENCE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: AUTH0_MANAGEMENT_API_AUDIENCE
-            - name: MANDRILL_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: MANDRILL_API_KEY
-            - name: STRIPE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: STRIPE_API_KEY
-            - name: ROLLBAR_ENV
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: ROLLBAR_ENV
-            - name: ROLLBAR_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: ROLLBAR_TOKEN
-        {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
         - configMap:

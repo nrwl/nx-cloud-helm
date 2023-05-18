@@ -51,35 +51,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Below are various little env snippets that multiple mainifests make use of
 */}}
 
-{{- define "nxCloud.env.aggregatorBilling" }}
-{{- if ((.Values.billing).overrides) }}
-{{- if .Values.billing.overrides.disableCreateBillingRecords }}
-- name: NX_CLOUD_AGGREGATOR_DISABLE_CREATE_BILLING_RECORDS
-  value: '{{ .Values.billing.overrides.disableCreateBillingRecords }}'
-{{- end }}
-{{- if .Values.billing.overrides.forceCreateBillingRecords }}
-- name: NX_CLOUD_AGGREGATOR_FORCE_CREATE_BILLING_RECORDS
-  value: '{{ .Values.billing.overrides.forceCreateBillingRecords }}'
-{{- end }}
-{{- if .Values.billing.overrides.disableProcessBilling }}
-- name: NX_CLOUD_AGGREGATOR_DISABLE_PROCESS_BILLING
-  value: '{{ .Values.billing.overrides.disableProcessBilling }}'
-{{- end }}
-{{- if .Values.billing.overrides.forceProcessBilling }}
-- name: NX_CLOUD_AGGREGATOR_FORCE_PROCESS_BILLING
-  value: '{{ .Values.billing.overrides.forceProcessBilling }}'
-{{- end }}
-{{- if .Values.billing.overrides.disableWarnFreePlanOrgs }}
-- name: NX_CLOUD_AGGREGATOR_DISABLE_WARN_FREE_PLAN_ORGS
-  value: '{{ .Values.billing.overrides.disableWarnFreePlanOrgs }}'
-{{- end }}
-{{- if .Values.billing.overrides.forceWarnFreePlanOrgs }}
-- name: NX_CLOUD_AGGREGATOR_FORCE_WARN_FREE_PLAN_ORGS
-  value: '{{ .Values.billing.overrides.forceWarnFreePlanOrgs }}'
-{{- end }}
-{{- end }}
-{{- end}}
-
 {{- define "nxCloud.env.mongoSecrets" }}
 {{- if .Values.secret.name }}
 - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
@@ -90,13 +61,6 @@ Below are various little env snippets that multiple mainifests make use of
 {{- else }}
 - name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
   value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
-{{- end }}
-{{- end }}
-
-{{- define "nxCloud.env.mode" }}
-{{- if .Values.mode }}
-- name: NX_CLOUD_MODE
-  value: '{{ .Values.mode }}'
 {{- end }}
 {{- end }}
 
