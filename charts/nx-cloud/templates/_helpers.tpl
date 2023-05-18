@@ -54,7 +54,7 @@ Below are various little env snippets that multiple mainifests make use of
 {{- define "nxCloud.env.mode" }}
 {{- if .Values.mode }}
 - name: NX_CLOUD_MODE
-  value: '{{ .Values.mode | quote }}'
+  value: {{ .Values.mode | quote }}
 {{- end }}
 {{- end }}
 
