@@ -205,7 +205,7 @@ It's important you follow the exact steps in order:
 
 ##### How to check pod Mongo version and featureCompatibilityVersion:
 
-If you are unsure if your pods have finished upgrading between Mongo versions (as this a long, based on the steps above) and you'd like to check what Mongo version your pods are on, you can exec into a pod and:
+If you are unsure if your pods have finished upgrading between Mongo versions (as it takes a while for the Mongo operator to slowly do a rolling upgrade of your replicas) and you'd like to check what Mongo version your pods are on, you can exec into a pod and:
 
 ```shell
 mongo --version # you can do this for each pod part of your replica set
