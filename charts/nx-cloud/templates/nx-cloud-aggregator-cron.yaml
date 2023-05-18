@@ -22,9 +22,8 @@ spec:
               env:
             {{- include "nxCloud.env.mongoSecrets" . | indent 16 }}
             {{- include "nxCloud.env.verboseLogging" . | indent 16 }}
-            {{- include "nxCloud.env.verboseMongoLogging" . | indent 16 }}
             {{- include "nxCloud.env.mode" . | indent 16 }}
-            {{- include "nxCloud.env.aggregatorBilling" . | indent 16 }}
+            {{- include "nxCloud.env.verboseMongoLogging" . | indent 16 }}
             {{- if .Values.clearRecordsOlderThanDays }}
                 - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
                   value: '{{ .Values.clearRecordsOlderThanDays }}'
@@ -48,37 +47,5 @@ spec:
             {{- if .Values.useCosmosDb }}
                 - name: NX_CLOUD_USE_MONGO42
                   value: 'false'
-            {{- end }}
-            {{- if eq .Values.mode "public"}}
-                - name: STRIPE_API_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: STRIPE_API_KEY
-                - name: STRIPE_FLAT_PRICE_ID
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: STRIPE_FLAT_PRICE_ID
-                - name: STRIPE_UNIT_PRICE_ID
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: STRIPE_UNIT_PRICE_ID
-                - name: ROLLBAR_ENV
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: ROLLBAR_ENV
-                - name: ROLLBAR_TOKEN
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: ROLLBAR_TOKEN
-                - name: MANDRILL_API_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: MANDRILL_API_KEY
             {{- end }}
           restartPolicy: OnFailure

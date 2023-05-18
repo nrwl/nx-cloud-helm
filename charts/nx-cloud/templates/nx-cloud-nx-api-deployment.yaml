@@ -76,11 +76,11 @@ spec:
           {{- end}}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.api.scm.githubAppEnv" . | indent 12 }}
           {{- include "nxCloud.api.scm.all" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
-          {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- if .Values.enableMessageQueue }}
             - name: ACTIVEMQ_ADDRESS
@@ -142,38 +142,6 @@ spec:
         {{- if .Values.useCosmosDb }}
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
-        {{- end }}
-        {{- if eq .Values.mode "public"}}
-            - name: GITHUB_APP_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: GITHUB_APP_ID
-            - name: GITHUB_APP_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: GITHUB_APP_PRIVATE_KEY
-            - name: GITHUB_BOT_USERID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: GITHUB_BOT_USERID
-            - name: GITHUB_WEBHOOK_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: GITHUB_WEBHOOK_SECRET
-            - name: ROLLBAR_ENV
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: ROLLBAR_ENV
-            - name: ROLLBAR_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.secret.name }}
-                  key: ROLLBAR_TOKEN
         {{- end }}
         {{- if .Values.selfSignedCertConfigMap }}
             - name: NX_CLOUD_NX_API_STARTUP_DELAY_SECONDS
