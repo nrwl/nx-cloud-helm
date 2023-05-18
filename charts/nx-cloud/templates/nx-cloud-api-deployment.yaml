@@ -57,6 +57,7 @@ spec:
             {{- end}}
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- with .Values.secret }}
             {{- if .name }}

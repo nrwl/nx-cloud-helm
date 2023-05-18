@@ -51,6 +51,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Below are various little env snippets that multiple mainifests make use of
 */}}
 
+{{- define "nxCloud.env.mode" }}
+{{- if .Values.mode }}
+- name: NX_CLOUD_MODE
+  value: '{{ .Values.mode | quote }}'
+{{- end }}
+{{- end }}
+
 {{- define "nxCloud.env.mongoSecrets" }}
 {{- if .Values.secret.name }}
 - name: NX_CLOUD_MONGO_SERVER_ENDPOINT

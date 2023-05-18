@@ -22,6 +22,7 @@ spec:
               env:
             {{- include "nxCloud.env.mongoSecrets" . | indent 16 }}
             {{- include "nxCloud.env.verboseLogging" . | indent 16 }}
+            {{- include "nxCloud.env.mode" . | indent 16 }}
             {{- include "nxCloud.env.verboseMongoLogging" . | indent 16 }}
             {{- if .Values.clearRecordsOlderThanDays }}
                 - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS

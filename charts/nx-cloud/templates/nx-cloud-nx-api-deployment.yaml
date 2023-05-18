@@ -76,6 +76,7 @@ spec:
           {{- end}}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.api.scm.githubAppEnv" . | indent 12 }}
           {{- include "nxCloud.api.scm.all" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
