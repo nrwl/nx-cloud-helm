@@ -174,8 +174,8 @@ It's important you follow the exact steps in order:
 1. [Backup your database first](https://docs.bitnami.com/tutorials/backup-restore-data-mongodb-kubernetes/) using a tool like `mongodump`. You can ssh into any one of your pods, as they should have the same data. 
 1. Edit your `/mongo.yml` file
 2. Change to Mongo version 4.4: `version: '4.4.20'`
-   - Then, we'll also set this option right below it: `featureCompatibilityVersion: '4.2'`
-   - Your `mongo.yml` file should now contain these 2 lines:
+   1. Then, we'll also set this option right below it: `featureCompatibilityVersion: '4.2'`
+   2. Your `mongo.yml` file should now contain these 2 lines:
      ```yaml
      version: '4.4.20'
      featureCompatibilityVersion: '4.2'
@@ -189,8 +189,8 @@ It's important you follow the exact steps in order:
    7. <img src="examples/images/mongo-pods-healthy.png">
    8. The age of the pods needs to be a very low number. This means they have recently been re-created with the new Mongo version.
 3. Now set `featureCompatibilityVersion: '4.4'`
-   - `kubectl apply -f mongo.yml` 
-   - This will set the [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) of the Mongo pods to a version that we need for the next step of the upgrade.
+   1. `kubectl apply -f mongo.yml` 
+   2. This will set the [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) of the Mongo pods to a version that we need for the next step of the upgrade.
 4. Now set `version: '5.0.17'`
    1. Apply the change
    2. Leave it to upgrade for the next 20-30 minutes. 
