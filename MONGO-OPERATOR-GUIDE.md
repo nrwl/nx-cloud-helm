@@ -167,11 +167,11 @@ and first selecting Mongo 4.4, then Mongo 5.0, finally Mongo 6.0 (notice how it 
 
 If you're using the Mongo Operator, you'll need to edit your Mongo ReplicaSet and apply the version changes incrementally, as Mongo doesn't allow a direct 4.2 to 6.0 upgrade.
 During the upgrade, we'll need to continually update our [feature compatibility version](https://www.mongodb.com/docs/manual/reference/command/setFeatureCompatibilityVersion/) also.
-Mongo requires that this `featureCompatibilityVersion` always trailing the version we want to upgrade to. For example, if our pods are on Mongo 4.4 and we want to upgrade them to Mongo 5, our featureCompatibilityVersion needs to be first set to 4.4.
+Mongo requires that this `featureCompatibilityVersion` always trails the version we want to upgrade to. For example, if our pods are on Mongo 4.4 and we want to upgrade them to Mongo 5, our featureCompatibilityVersion needs to be first set to 4.4.
 
 It's important you follow the exact steps in order:
 
-1. [Backup your database first](https://docs.bitnami.com/tutorials/backup-restore-data-mongodb-kubernetes/) using a tool like `mongodump`. You can ssh into any of your pods. 
+1. [Backup your database first](https://docs.bitnami.com/tutorials/backup-restore-data-mongodb-kubernetes/) using a tool like `mongodump`. You can ssh into any one of your pods, as they should have the same data. 
 1. Edit your `/mongo.yml` file
 2. Change to Mongo version 4.4: `version: '4.4.20'`
    - Then, we'll also set this option right below it: `featureCompatibilityVersion: '4.2'`
@@ -181,10 +181,10 @@ It's important you follow the exact steps in order:
      featureCompatibilityVersion: '4.2'
       ```
 2. Apply your changes `kubectl apply -f mongo.yml`
-3. Your replica pods will slowly start upgrading now.
-   4. use `kubectl get pods` to monitor this 
-   4. This process will take around 10-20 minutes to complete.
-   5. It's very important to let all the pods completely upgrade before moving on to the next step.
+3. Your replica pods will slowly start upgrading now
+   1. use `kubectl get pods` to monitor this 
+   2. This process will take around 10-20 minutes to complete.
+   3. It's very important to let all the pods completely upgrade before moving on to the next step.
 6. Once all pods have upgraded and are in a healthy state, they should look similar to the below:
    7. <img src="examples/images/mongo-pods-healthy.png">
    8. The age of the pods needs to be a very low number. This means they have recently been re-created with the new Mongo version.
