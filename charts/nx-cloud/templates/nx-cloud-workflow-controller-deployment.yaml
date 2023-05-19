@@ -8,7 +8,8 @@ metadata:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   selector:
-    app: nx-cloud-workflow-controller
+    matchLabels:
+      app: nx-cloud-workflow-controller
   replicas: 1
   template:
     spec:
