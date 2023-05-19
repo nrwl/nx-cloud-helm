@@ -68,3 +68,10 @@ Return proper messagequeue image name
 {{- define "nxCloud.images.messagequeue.image" }}
 {{- include "nxCloud.images.common" (dict "imageRoot" .Values.messagequeue.image "global" .Values.global "image" .Values.image) }}
 {{- end }}
+
+{{/*
+Return proper nx-cloud-workflow-controller image name
+*/}}
+{{- define "nxCloud.images.nxCloudWorkflowController.image" }}
+{{- include "nxCloud.images.common" (dict "imageRoot" .Values.nxCloudWorkflowController.image "global" .Values.global "image" .Values.image) }}
+{{- end }}
