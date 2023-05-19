@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  app: nx-cloud-workflow-controller
+  name: nx-cloud-workflow-controller
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
@@ -12,6 +12,9 @@ spec:
       app: nx-cloud-workflow-controller
   replicas: 1
   template:
+    metadata:
+      labels:
+        app: nx-cloud-workflow-controller
     spec:
       securityContext:
         runAsNonRoot: true
