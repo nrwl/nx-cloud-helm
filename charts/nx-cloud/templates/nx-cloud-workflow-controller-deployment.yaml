@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-workflow-controller
+  namespace: {{ .Values.nxCloudWorkflowController.namespace }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
@@ -21,6 +22,8 @@ spec:
       containers:
         - command:
             - /nx-cloud-workflow-controller
+            - --namespace={{ .Values.nxCloudWorkflowController.namespace }}
+            - --in-cluster=true
           image: {{ include "nxCloud.images.nxCloudWorkflowController.image" . }}
           imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
           {{- if .Values.nxApi.resources }}

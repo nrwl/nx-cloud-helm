@@ -114,6 +114,7 @@ nxCloudWorkflowController:
     tag: latest
     digest: ''
     pullPolicy: Always
+  namespace: nx-cloud-workflows
   resources:
     limits:
       cpu: 500m

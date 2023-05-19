@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nx-cloud-workflow-controller-service
+  namespace: {{ .Values.nxCloudWorkflowController.namespace }}
   labels:
     app: nx-cloud-workflow-controller
     {{- include "nxCloud.app.labels" . | indent 4 }}
