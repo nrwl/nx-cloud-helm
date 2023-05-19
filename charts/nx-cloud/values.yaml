@@ -16,6 +16,7 @@ nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
 enableMessageQueue: false
+enableWorkflows: false
 
 frontend:
   image:
@@ -104,6 +105,23 @@ messagequeue:
   resources:
     limits: {}
     requests: {}
+
+nxCloudWorkflowController:
+  image:
+    registry: ''
+    imageName: nx-cloud-workflow-controller
+    repository: ''
+    tag: latest
+    digest: ''
+    pullPolicy: Always
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
 
 replicas:
   frontend: 1

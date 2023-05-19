@@ -1,0 +1,46 @@
+{{- if .Values.enableWorkflows }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  app: nx-cloud-workflow-controller
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  selector:
+    app: nx-cloud-workflow-controller
+  replicas: 1
+  template:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - command:
+            - /nx-cloud-workflow-controller
+          image: {{ include "nxCloud.images.nxCloudWorkflowController.image" . }}
+          imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
+          {{- if .Values.nxApi.resources }}
+          resources: {{- toYaml .Values.nxApi.resources | nindent 12 }}
+          {{- end }}
+          name: nx-cloud-workflow-controller
+          securityContext:
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - 'ALL'
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      serviceAccountName: nx-cloud-workflow-controller
+      terminationGracePeriodSeconds: 10
+{{- end }}
