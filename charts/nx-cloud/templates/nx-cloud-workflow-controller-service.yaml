@@ -10,7 +10,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: nx-workflow-controller
+    app: nx-cloud-workflow-controller
   ports:
     - port: 9000
       targetPort: 9000
