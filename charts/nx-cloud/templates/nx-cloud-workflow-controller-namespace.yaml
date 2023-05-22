@@ -1,9 +1,9 @@
-{{- if .Values.enableWorkflows }}
+{{- if .Values.nxCloudWorkflows.enabled }}
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.nxCloudWorkflowController.namespace }}
+  name: {{ .Values.nxCloudWorkflows.namespace }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 {{- end }}

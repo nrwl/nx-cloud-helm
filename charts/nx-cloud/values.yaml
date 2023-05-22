@@ -16,7 +16,6 @@ nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
 enableMessageQueue: false
-enableWorkflows: false
 
 frontend:
   image:
@@ -114,7 +113,6 @@ nxCloudWorkflowController:
     tag: latest
     digest: ''
     pullPolicy: Always
-  namespace: nx-cloud-workflows
   resources:
     limits:
       cpu: 500m
@@ -122,6 +120,10 @@ nxCloudWorkflowController:
     requests:
       cpu: 10m
       memory: 64Mi
+
+nxCloudWorkflows:
+  enabled: false
+  namespace: nx-cloud-workflows
 
 replicas:
   frontend: 1
