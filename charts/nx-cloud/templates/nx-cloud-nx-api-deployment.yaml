@@ -86,6 +86,10 @@ spec:
             - name: ACTIVEMQ_ADDRESS
               value: tcp://nx-cloud-messagequeue:61616
           {{- end }}
+          {{- if .Values.nxCloudWorkflows.enabled }}
+            - name: NX_CLOUD_CI_SERVER_ADDRESS
+              value: http://nx-cloud-workflow-controller-service:9000
+          {{- end }}
           {{- with .Values.awsS3 }}
             {{- if .accelerated }}
             - name: AWS_S3_ACCELERATED
