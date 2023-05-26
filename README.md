@@ -252,9 +252,10 @@ Please refer to [this guide](./PROXY-GUIDE.md).
 
 ## Suggested resources
 
-We recommend setting up [EKS Autoscaling](https://docs.aws.amazon.com/eks/latest/userguide/autoscaling.html) or [GKE Autopilot](https://cloud.google.com/kubernetes-engine/docs/concepts/autopilot-overview) for your cluster, so that you don't pay for unecesarry resources, and your Nodes can scale up automatically, as needed. However, this is indication of the resources you might need (you can always start with less and scale up to this as needed):
+Suggested resources for the NxCloud cluster are (you can always start with less and scale up to this as needed):
 - 9 vCPUS
 - 23GB memory
+- Or you can use the equivalent of 5 `t3.medium` AWS Nodes (or 7 if running Mongo)
 
 Disk size:
 - The biggest resource consideration will be the permanent Volume where your cached artefacts will be stored. This depends on the size/activity of the workspace. You can start with 20-50GB and scale up if needed.
