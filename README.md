@@ -250,6 +250,17 @@ Read [here](https://nx.dev/nx-cloud/private-cloud/github) on how to get those va
 
 Please refer to [this guide](./PROXY-GUIDE.md).
 
+## Suggested resources
+
+Suggested resources for the NxCloud cluster are (you can always start with less and scale up to this as needed):
+- 9 vCPUS
+- 23GB memory
+- Or you can use the equivalent of 5 `t3.medium` AWS Nodes (or 7 if running Mongo)
+
+Disk size:
+- The biggest resource consideration will be the permanent Volume where your cached artefacts will be stored. This depends on the size/activity of the workspace. You can start with 20-50GB and scale up if needed.
+- For Mongo, 5-10GB should be enough
+
 ## More Information
 
 You can find more information about Nx Cloud and running it on
