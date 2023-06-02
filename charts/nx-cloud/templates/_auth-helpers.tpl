@@ -12,13 +12,13 @@
     secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.githubAuthClientId }}
-    {{ if (.Values.github.pr).apiUrl }}
+    {{ if .Values.github.pr.apiUrl }}
 - name: GITHUB_API_URL
   value: {{ .Values.github.pr.apiUrl }}
     {{- end }}
 {{- end }}
 
-{{- if .Values.gitlab.auth.enabled) }}
+{{- if .Values.gitlab.auth.enabled }}
 - name: GITLAB_APP_ID
   valueFrom:
     secretKeyRef:
@@ -35,7 +35,7 @@
     {{- end }}
 {{- end }}
 
-{{- if .Values.bitbucket.auth.enabled) }}
+{{- if .Values.bitbucket.auth.enabled }}
 - name: BITBUCKET_APP_ID
   valueFrom:
     secretKeyRef:
@@ -48,7 +48,7 @@
       key: {{ .Values.secret.bitbucketAppSecret }}
 {{- end }}
 
-{{- if .Values.saml.enabled) }}
+{{- if .Values.saml.enabled }}
 - name: SAML_ENTRY_POINT
   valueFrom:
     secretKeyRef:
