@@ -157,10 +157,12 @@ azure:
 useCosmosDb: false
 
 gitlab:
+  apiUrl: ''
+  projectId: ''
+  auth:
+    enabled: false
   mr:
     enabled: false
-    apiUrl: ''
-    projectId: ''
 
 github:
   auth:
@@ -170,6 +172,14 @@ github:
     enabled: false
     mode: 'webhook'
     apiUrl: ''
+
+bitbucket:
+  auth:
+    enabled: false
+
+saml:
+  auth:
+    enabled: false
 
 secret:
   name: ''
