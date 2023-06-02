@@ -11,7 +11,7 @@
   valueFrom:
     secretKeyRef:
       name: {{ .Values.secret.name }}
-      key: {{ .Values.secret.githubAuthClientId }}
+      key: {{ .Values.secret.githubAuthClientSecret }}
     {{ if .Values.github.pr.apiUrl }}
 - name: GITHUB_API_URL
   value: {{ .Values.github.pr.apiUrl }}
