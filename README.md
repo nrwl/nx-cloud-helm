@@ -197,29 +197,9 @@ secret:
 
 Note that the secret for setting up Azure must contain `AZURE_CONNECTION_STRING`.
 
-### GitHub Auth
+### Auth
 
-To use GitHub for user authentication, you can use the following configuration:
-
-```yaml
-global:
-  imageTag: 'latest'
-
-nxCloudAppURL: 'https://nx-cloud.myorg.com'
-
-github:
-  auth:
-    enabled: true
-
-secret:
-  name: 'cloudsecret'
-  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
-  githubAuthClientId: 'GITHUB_AUTH_CLIENT_ID'
-  githubAuthClientSecret: 'GITHUB_AUTH_CLIENT_SECRET'
-```
-
-Note that the secret must contain `GITHUB_AUTH_CLIENT_ID` and `GITHUB_AUTH_CLIENT_SECRET`.
-Read [here](https://nx.dev/nx-cloud/private-cloud/auth-github) on how to get those values.
+Please refer to [this guide](./AUTH-GUIDE.md).
 
 ### GitHub Integration
 
