@@ -86,7 +86,7 @@ spec:
             - name: ACTIVEMQ_ADDRESS
               value: tcp://nx-cloud-messagequeue:61616
           {{- end }}
-          {{- if .Values.nxCloudWorkflows.enabled }}
+          {{- if or .Values.nxCloudWorkflows.enabled .Values.nxCloudWorkflows.externalNameService }}
             - name: NX_CLOUD_CI_SERVER_ADDRESS
               value: http://nx-cloud-workflow-controller-service:9000
           {{- end }}

@@ -14,4 +14,16 @@ spec:
   ports:
     - port: 9000
       targetPort: 9000
+{{- else if .Values.nxCloudWorkflows.externalNameService }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-workflow-controller-service
+  labels:
+    app: nx-cloud-workflow-controller
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.nxCloudWorkflows.externalService }}
 {{- end }}
