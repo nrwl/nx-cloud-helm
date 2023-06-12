@@ -25,5 +25,5 @@ metadata:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   type: ExternalName
-  externalName: {{ .Values.nxCloudWorkflows.externalService }}
+  externalName: {{ .Values.nxCloudWorkflows.externalNameService }}
 {{- end }}
