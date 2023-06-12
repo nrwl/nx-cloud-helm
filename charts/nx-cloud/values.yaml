@@ -124,6 +124,7 @@ nxCloudWorkflowController:
 nxCloudWorkflows:
   enabled: false
   namespace: nx-cloud-workflows
+  externalNameService: ''
 
 replicas:
   frontend: 1
