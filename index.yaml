@@ -3,6 +3,19 @@ entries:
   nx-cloud:
   - apiVersion: v2
     appVersion: helm-dev
+    created: "2023-06-16T15:26:58.37081139Z"
+    description: Nx Cloud Helm Chart
+    digest: c15775d95690b911018828fe1e73f26d8c3a1846d266941b0e22b0845cb5918d
+    maintainers:
+    - name: nx
+      url: https://nx.app/
+    name: nx-cloud
+    type: application
+    urls:
+    - https://github.com/nrwl/nx-cloud-helm/releases/download/nx-cloud-0.10.8/nx-cloud-0.10.8.tgz
+    version: 0.10.8
+  - apiVersion: v2
+    appVersion: helm-dev
     created: "2023-06-12T13:50:19.778501817Z"
     description: Nx Cloud Helm Chart
     digest: 97ead509667990bd45c77a7355cc73c4b3d74b32894946861c551ebd4219bc7c
@@ -512,4 +525,4 @@ entries:
     urls:
     - helm-charts/nx-cloud-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-12T13:50:19.778907955Z"
+generated: "2023-06-16T15:26:58.371045904Z"
