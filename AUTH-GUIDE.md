@@ -102,7 +102,7 @@ stringData:
 
 ### SAML Auth
 
-To use GitHub for user authentication, you will need two values: `GITHUB_AUTH_CLIENT_ID` and `GITHUB_AUTH_CLIENT_SECRET`. Read [here](https://nx.dev/nx-cloud/private-cloud/auth-saml) on how to get
+To use SAML for user authentication, you will need two values: `SAML_ENTRY_POINT` and `SAML_CERT`. Read [here](https://nx.dev/nx-cloud/private-cloud/auth-saml) on how to get
 those values.
 
 Then update your `helm-values.yaml` and `secrets.yaml`:
