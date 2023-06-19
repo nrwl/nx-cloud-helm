@@ -16,6 +16,7 @@ nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
 enableMessageQueue: true
+useNewFrontend: false
 
 frontend:
   image:
