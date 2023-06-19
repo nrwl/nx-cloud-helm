@@ -1,6 +1,4 @@
 {{- define "nxCloud.api.auth" }}
-# TODO update docs
-# TODO test by adding different env vars and see if they get added on the deployment
 {{- if .Values.github.auth.enabled }}
 - name: GITHUB_AUTH_CLIENT_ID
   valueFrom:
