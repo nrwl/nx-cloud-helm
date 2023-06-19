@@ -97,3 +97,15 @@ Below are various little env snippets that multiple mainifests make use of
   value: 'DEBUG'
 {{- end }}
 {{- end }}
+
+{{- define "nxCloud.env.seqValues" }}
+{{- if and .Values.seqServerAddress (.Values.secret).seqApiKey }}
+- name: NX_CLOUD_SEQ_ADDRESS
+  value: {{ .Values.seqServerAddress | quote }}
+- name: NX_CLOUD_SEQ_KEY
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.secret.name }}
+      key: {{ .Values.secret.seqApiKey }}
+{{- end }}
+{{- end }}
