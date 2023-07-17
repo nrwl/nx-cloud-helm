@@ -1,3 +1,45 @@
+{{- define "nxCloud.aggregator.template" }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: nx-cloud-aggregator
+          image: {{ include "nxCloud.images.aggregator.image" . }}
+          imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | quote }}
+            {{- if .Values.aggregator.resources }}
+          resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
+            {{- end }}
+          env:
+          {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
+          {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
+          {{- include "nxCloud.env.mode" . | indent 12 }}
+          {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
+          {{- if .Values.clearRecordsOlderThanDays }}
+            - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
+              value: '{{ .Values.clearRecordsOlderThanDays }}'
+            - name: NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS
+              value: '{{ .Values.clearRecordsOlderThanDays }}'
+            - name: NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS
+              value: '{{ .Values.clearRecordsOlderThanDays }}'
+          {{- end }}
+          {{- if .Values.secret.adminPassword }}
+            {{- if .Values.secret.name }}
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: {{ .Values.secret.adminPassword }}
+            {{- else }}
+            - name: SECRET_FILE_ADMIN_PASSWORD
+              value: {{ .Values.secret.adminPassword }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.useCosmosDb }}
+            - name: NX_CLOUD_USE_MONGO42
+              value: 'false'
+          {{- end }}
+      restartPolicy: OnFailure
+{{- end }}
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -9,43 +51,14 @@ spec:
   schedule: '*/10 * * * *'
   concurrencyPolicy: Forbid
   jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-            - name: nx-cloud-aggregator
-              image: {{ include "nxCloud.images.aggregator.image" . }}
-              imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | quote }}
-              {{- if .Values.aggregator.resources }}
-              resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
-              {{- end }}
-              env:
-            {{- include "nxCloud.env.mongoSecrets" . | indent 16 }}
-            {{- include "nxCloud.env.verboseLogging" . | indent 16 }}
-            {{- include "nxCloud.env.mode" . | indent 16 }}
-            {{- include "nxCloud.env.verboseMongoLogging" . | indent 16 }}
-            {{- if .Values.clearRecordsOlderThanDays }}
-                - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
-                  value: '{{ .Values.clearRecordsOlderThanDays }}'
-                - name: NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS
-                  value: '{{ .Values.clearRecordsOlderThanDays }}'
-                - name: NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS
-                  value: '{{ .Values.clearRecordsOlderThanDays }}'
-            {{- end }}
-            {{- if .Values.secret.adminPassword }}
-              {{- if .Values.secret.name }}
-                - name: ADMIN_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: {{ .Values.secret.name }}
-                      key: {{ .Values.secret.adminPassword }}
-              {{- else }}
-                - name: SECRET_FILE_ADMIN_PASSWORD
-                  value: {{ .Values.secret.adminPassword }}
-              {{- end }}
-            {{- end }}
-            {{- if .Values.useCosmosDb }}
-                - name: NX_CLOUD_USE_MONGO42
-                  value: 'false'
-            {{- end }}
-          restartPolicy: OnFailure
+    {{- include "nxCloud.aggregator.template" . | indent 4 }}
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nx-cloud-initial-aggregation
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+{{- include "nxCloud.aggregator.template" . }}
+
