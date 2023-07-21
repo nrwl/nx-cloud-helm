@@ -41,7 +41,7 @@ spec:
             {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
             {{- if .Values.clearRecordsOlderThanDays }}
             - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
-              value: '{{ .Values.clearRecordsOlderThanDays }}'
+              value: '{{ add .Values.clearRecordsOlderThanDays 1 }}'
             {{- end }}
           ports:
             - containerPort: 5000
