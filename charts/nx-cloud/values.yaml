@@ -15,7 +15,7 @@ mode: private-enterprise
 nxCloudAppURL: ''
 verboseLogging: false
 verboseMongoLogging: false
-enableMessageQueue: false
+enableMessageQueue: true
 
 frontend:
   image:
