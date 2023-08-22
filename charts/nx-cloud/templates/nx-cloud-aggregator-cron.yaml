@@ -54,6 +54,7 @@ spec:
     {{- include "nxCloud.aggregator.template" . | indent 4 }}
 
 ---
+{{- if .Release.IsInstall }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -61,4 +62,4 @@ metadata:
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 {{- include "nxCloud.aggregator.template" . }}
-
+{{- end }}
