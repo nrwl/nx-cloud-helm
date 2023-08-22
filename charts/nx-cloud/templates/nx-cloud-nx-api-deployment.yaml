@@ -82,6 +82,7 @@ spec:
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
+          {{- include "nxCloud.env.seqValues" . | indent 12 }}
           {{- if .Values.enableMessageQueue }}
             - name: ACTIVEMQ_ADDRESS
               value: tcp://nx-cloud-messagequeue:61616
