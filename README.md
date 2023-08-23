@@ -8,6 +8,19 @@ This repo contains:
 * Instructions on how to install Nx Cloud using Helm
 * Instructions on how to install Nx Cloud using kubectl. See [here](./no-helm/README.md).
 
+## An important note on updates!
+
+Please note, as of version `0.11.0` this helm chart is no longer compatible with legacy frontend containers by default. 
+
+**To avoid issues, please ensure the container version you are targeting is >=** `2308.22.7`.
+
+### Compatibility Matrix
+
+| Chart Version | Compatible Images                  |
+|---------------|------------------------------------|
+| <= `0.10.11`  | `2306.01.2.patch4` **and earlier** |
+| >= `0.11.0`   | `2308.22.7` **and later**          |
+
 ## Deployments on AWS/EKS
 
 If you're deploying on EKS, check out our [AWS Guide](./aws-guide/AWS-GUIDE.md). Otherwise, continue reading below.

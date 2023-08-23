@@ -1,4 +1,4 @@
-{{- if .Values.useNewFrontend }}
+{{- if not .Values.useLegacyFrontend }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
