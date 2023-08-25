@@ -1,3 +1,4 @@
+{{- if .Values.useLegacyFrontend }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,3 +35,4 @@ spec:
           env:
         {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
         {{- include "nxCloud.env.mode" . | indent 12 }}
+{{- end }}

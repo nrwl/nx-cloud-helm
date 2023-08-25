@@ -14,6 +14,7 @@ spec:
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
+          {{- include "nxCloud.env.seqValues" . | indent 12 }}
           {{- if .Values.clearRecordsOlderThanDays }}
             - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
               value: '{{ .Values.clearRecordsOlderThanDays }}'
@@ -52,14 +53,3 @@ spec:
   concurrencyPolicy: Forbid
   jobTemplate:
     {{- include "nxCloud.aggregator.template" . | indent 4 }}
-
----
-{{- if .Release.IsInstall }}
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: nx-cloud-initial-aggregation
-  labels:
-    {{- include "nxCloud.app.labels" . | indent 4 }}
-{{- include "nxCloud.aggregator.template" . }}
-{{- end }}
