@@ -78,6 +78,10 @@
 {{- define "nxCloud.api.scm.all" }}
 {{- include "nxCloud.api.scm.github" . }}
 {{- include "nxCloud.api.scm.gitlab" . }}
+    {{- if .Values.vcsHttpsProxy }}
+- name: VERSION_CONTROL_HTTPS_PROXY
+  value: {{ .Values.vcsHttpsProxy }}
+    {{- end }}
 {{- end }}
 
 {{- define "nxCloud.api.scm.githubAppEnv" }}
