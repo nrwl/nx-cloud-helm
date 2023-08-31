@@ -51,6 +51,10 @@ spec:
               name: self-signed-certs-volume
           {{- end}}
           env:
+            {{- if .Values.vcsHttpsProxy }}
+            - name: VERSION_CONTROL_HTTPS_PROXY
+              value: {{ .Values.vcsHttpsProxy }}
+            {{- end }}
             {{- if .Values.selfSignedCertConfigMap }}
             - name: NODE_EXTRA_CA_CERTS
               value: /self-signed-certs/self-signed-cert.crt
