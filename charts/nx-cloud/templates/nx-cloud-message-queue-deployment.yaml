@@ -21,6 +21,9 @@ spec:
         - name: nx-cloud-messagequeue
           image: {{ include "nxCloud.images.messagequeue.image" . }}
           imagePullPolicy: {{ .Values.messagequeue.image.pullPolicy | quote }}
+          {{- if .Values.messagequeue.resources }}
+          resources: {{- toYaml .Values.messagequeue.resources | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 61616
               name: tcp
