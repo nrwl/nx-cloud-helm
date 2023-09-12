@@ -24,13 +24,20 @@ spec:
           {{- if .Values.messagequeue.resources }}
           resources: {{- toYaml .Values.messagequeue.resources | nindent 12 }}
           {{- end }}
+          env:
+            - name: ACTIVEMQ_TMP
+              value: /opt/activemq/tmp
           ports:
             - containerPort: 61616
               name: tcp
           volumeMounts:
             - mountPath: /opt/activemq/data
               name: data
+            - mountPath: /opt/activemq/tmp
+              name: tmp
       volumes:
         - emptyDir: {}
           name: data
+        - emptyDir: {}
+          name: tmp
 {{- end }}
