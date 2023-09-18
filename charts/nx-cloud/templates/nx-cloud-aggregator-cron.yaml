@@ -9,6 +9,18 @@ spec:
             {{- if .Values.aggregator.resources }}
           resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
             {{- end }}
+          {{- if .Values.selfSignedCertConfigMap }}
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - ./srv/import-all-java-certs.sh /self-signed-certs/self-signed-cert.crt
+          volumeMounts:
+            - mountPath: /self-signed-certs
+              name: self-signed-certs-volume
+          {{- end}}
           env:
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
@@ -39,6 +51,16 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
           {{- end }}
+          {{- if .Values.selfSignedCertConfigMap }}
+            - name: NX_CLOUD_STARTUP_DELAY_SECONDS
+              value: '90'
+          {{- end }}
+      {{- if .Values.selfSignedCertConfigMap }}
+      volumes:
+        - configMap:
+            name: {{ .Values.selfSignedCertConfigMap }}
+          name: self-signed-certs-volume
+      {{- end }}
       restartPolicy: OnFailure
 {{- end }}
 ---
