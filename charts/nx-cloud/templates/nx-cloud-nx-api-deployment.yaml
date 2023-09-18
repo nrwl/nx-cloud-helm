@@ -149,7 +149,7 @@ spec:
               value: 'false'
         {{- end }}
         {{- if .Values.selfSignedCertConfigMap }}
-            - name: NX_CLOUD_NX_API_STARTUP_DELAY_SECONDS
+            - name: NX_CLOUD_STARTUP_DELAY_SECONDS
               value: '90'
         {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
