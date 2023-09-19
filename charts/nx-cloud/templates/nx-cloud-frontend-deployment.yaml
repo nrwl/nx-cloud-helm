@@ -35,4 +35,8 @@ spec:
           env:
         {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
         {{- include "nxCloud.env.mode" . | indent 12 }}
+        {{- if or .Values.nxCloudWorkflows.enabled .Values.nxCloudWorkflows.externalNameService }}
+          - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
+            value: http://nx-cloud-workflow-controller-service:9000
+        {{- end }}
 {{- end }}
