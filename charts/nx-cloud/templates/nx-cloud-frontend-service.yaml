@@ -7,7 +7,7 @@ metadata:
     app: nx-cloud-frontend
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: nx-cloud-frontend
   ports:

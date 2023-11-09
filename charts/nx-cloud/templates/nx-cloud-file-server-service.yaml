@@ -8,7 +8,7 @@ metadata:
     app: nx-cloud-file-server
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: nx-cloud-file-server
   ports:
