@@ -2,7 +2,7 @@ Thank you for installing {{ .Chart.Name }}
 
 The version you installed is {{ .Chart.Version }}
 
-Please note that as of version 0.11.0, the compatibility with nx-cloud images has changed and
+Please note that as of version 0.12.0, the compatibility with nx-cloud images has changed and
 only image tag 2308.22.7 and later are supported. 
 
 At the time of install, you used version {{ .Values.global.imageTag }}, if you experience
