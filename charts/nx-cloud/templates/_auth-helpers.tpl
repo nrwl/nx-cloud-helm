@@ -1,4 +1,4 @@
-{{- define "nxCloud.api.auth" }}
+{{- define "nxCloud.frontend.auth" }}
 {{- if .Values.github.auth.enabled }}
 - name: GITHUB_AUTH_CLIENT_ID
   valueFrom:

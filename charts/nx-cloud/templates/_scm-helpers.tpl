@@ -1,4 +1,4 @@
-{{- define "nxCloud.api.scm.github" }}
+{{- define "nxCloud.frontend.scm.github" }}
 {{- if .Values.github.pr.enabled }}
   {{- if eq .Values.github.pr.mode "webhook" }}
 - name: NX_CLOUD_VCS_INTEGRATION_TYPE
@@ -48,7 +48,7 @@
 {{- end }}
 {{- end }}
 
-{{- define "nxCloud.api.scm.gitlab" }}
+{{- define "nxCloud.frontend.scm.gitlab" }}
 {{- if .Values.gitlab.mr.enabled }}
 - name: NX_CLOUD_VCS_INTEGRATION_TYPE
   value: "GITLAB_EVENTLESS"
@@ -75,16 +75,16 @@
 {{- end }}
 {{- end }}
 
-{{- define "nxCloud.api.scm.all" }}
-{{- include "nxCloud.api.scm.github" . }}
-{{- include "nxCloud.api.scm.gitlab" . }}
+{{- define "nxCloud.frontend.scm.all" }}
+{{- include "nxCloud.frontend.scm.github" . }}
+{{- include "nxCloud.frontend.scm.gitlab" . }}
     {{- if .Values.vcsHttpsProxy }}
 - name: VERSION_CONTROL_HTTPS_PROXY
   value: {{ .Values.vcsHttpsProxy }}
     {{- end }}
 {{- end }}
 
-{{- define "nxCloud.api.scm.githubAppEnv" }}
+{{- define "nxCloud.frontend.scm.githubAppEnv" }}
 {{- if .Values.secret.name }}
     {{- if .Values.secret.githubAuthToken }}
 - name: NX_CLOUD_GITHUB_AUTH_TOKEN
