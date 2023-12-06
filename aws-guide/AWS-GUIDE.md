@@ -107,7 +107,7 @@ We recommend setting up HTTPS for your NxCloud cluster, but you can skip this st
       1. for HTTPS: `nxCloudAppURL: 'https://your-new-nx-cloud-url.com'`
       2. or for HTTP: `nxCloudAppURL: 'http://k8s-default-nxcloudi-f36cd47328-1606205137.us-east-1.elb.amazonaws.com'`
    5. Re-apply the changes: `helm upgrade --install nx-cloud nx-cloud/nx-cloud --values=./helm-values.yml`
-   6. You might need to restart your deployments as well so they can pick up the new URL `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
+   6. You might need to restart your deployments as well so they can pick up the new URL `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-frontend`
 
 6. In your Nx workspace, enable NxCloud and point it to the above URL: `NX_CLOUD_API=https://your-nx-cloud-url.com nx connect`
 7. Run a command, you should start seeing NxCloud Run URLs at the end
@@ -242,7 +242,7 @@ eksctl create iamserviceaccount \
 9. Check the status of the secrets:
    1. Check if secret keys are being retrieved correctly: `kubectl get secrets nx-cloud-k8s-secret -o json`
    2. You can see any errors by `kubectl describe externalsecrets.external-secrets.io nx-cloud-external-secret`
-10. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-api`
+10. You might need to restart your deployments as well so they can pick up the new secret values `kubectl rollout restart deployment nx-cloud-nx-api nx-cloud-frontend`
 
 
 ## Common Issues

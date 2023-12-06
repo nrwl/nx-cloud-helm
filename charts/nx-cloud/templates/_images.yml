@@ -35,13 +35,6 @@ Return proper frontend image name
 {{- end }}
 
 {{/*
-Return proper api image name
-*/}}
-{{- define "nxCloud.images.api.image" }}
-{{- include "nxCloud.images.common" (dict "imageRoot" .Values.api.image "global" .Values.global "image" .Values.image) }}
-{{- end }}
-
-{{/*
 Return proper nx-api image name
 */}}
 {{- define "nxCloud.images.nxApi.image" }}

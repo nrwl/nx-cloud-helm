@@ -21,13 +21,6 @@ frontend:
       memory: '0.5Mi'
       cpu: '0.1'
 
-api:
-  skipLiveness: 'true'
-  resources:
-    requests:
-      memory: '0.5Mi'
-      cpu: '0.1'
-
 nxApi:
   resources:
     requests:
