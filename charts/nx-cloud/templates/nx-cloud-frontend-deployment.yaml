@@ -48,7 +48,7 @@ spec:
         {{- include "nxCloud.env.mode" . | indent 12 }}
         {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
         {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
-        {{- include "nxCloud.api.auth" . | indent 12 }}
+        {{- include "nxCloud.frontend.auth" . | indent 12 }}
         {{- with .Values.secret }}
           {{- if .name }}
             {{- if .githubPrivateKey }}
