@@ -60,7 +60,6 @@ If you only applied the secret from Step 3, the only thing you will need to chan
 The installation will create the following:
 
 1. nx-cloud-frontend (deployment)
-2. nx-cloud-api (deployment)
 3. nx-cloud-nx-api (deployment)
 4. nx-cloud-file-server (deployment)
 5. nx-cloud-aggregator (cron job)
@@ -141,35 +140,6 @@ spec:
                 name: nx-cloud-nx-api-service
                 port:
                   number: 4203
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: nx-cloud-nrwl-api-service
-                port:
-                  number: 4000
-          - path: /graphql
-            pathType: Prefix
-            backend:
-              service:
-                name: nx-cloud-nrwl-api-service
-                port:
-                  number: 4000
-          - path: /auth
-            pathType: Prefix
-            backend:
-              service:
-                name: nx-cloud-nrwl-api-service
-                port:
-                  number: 4000
-          - path: /download
-            pathType: Prefix
-            backend:
-              service:
-                name: nx-cloud-nrwl-api-service
-                port:
-                  number: 4000
-                             - path: /download
           - pathType: Prefix
             backend:
                service:

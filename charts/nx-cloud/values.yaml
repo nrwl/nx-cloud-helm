@@ -32,20 +32,6 @@ frontend:
       memory: '0.5Gi'
       cpu: '0.5'
 
-api:
-  image:
-    registry: ''
-    imageName: nx-cloud-api
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  resources:
-    limits: {}
-    requests:
-      memory: '1Gi'
-      cpu: '0.5'
-
 nxApi:
   image:
     registry: ''
@@ -129,7 +115,6 @@ nxCloudWorkflows:
 
 replicas:
   frontend: 1
-  api: 1
   nxApi: 1
 
 ingress:
