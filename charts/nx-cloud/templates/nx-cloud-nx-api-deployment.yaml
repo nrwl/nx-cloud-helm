@@ -92,6 +92,10 @@ spec:
               value: http://nx-cloud-workflow-controller-service:9000
           {{- end }}
           {{- with .Values.awsS3 }}
+            {{- if .enablePathStyleAccess }}
+            - name: AWS_S3_ENABLE_PATH_STYLE_ACCESS
+              value: 'TRUE'
+            {{- end }}
             {{- if .accelerated }}
             - name: AWS_S3_ACCELERATED
               value: 'TRUE'

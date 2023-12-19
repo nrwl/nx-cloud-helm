@@ -135,6 +135,7 @@ awsS3:
   bucket: ''
   accelerated: false
   endpoint: ''
+  enablePathStyleAccess: false
 
 azure:
   enabled: false
