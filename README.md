@@ -17,9 +17,10 @@ Please note, as of version `0.11.0` this helm chart is no longer compatible with
 ### Compatibility Matrix
 
 | Chart Version | Compatible Images                  |
-|---------------|------------------------------------|
+|---------------| ---------------------------------- |
 | <= `0.10.11`  | `2306.01.2.patch4` **and earlier** |
 | >= `0.11.0`   | `2308.22.7` **and later**          |
+| >= `0.12.0`   | `2312.11.7` **and later**          |
 
 ## Deployments on AWS/EKS
 
