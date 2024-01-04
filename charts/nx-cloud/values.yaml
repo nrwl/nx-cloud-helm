@@ -113,6 +113,7 @@ nxCloudWorkflows:
   externalNameService: ''
   buildToolsImageTag: '2401.04.1'
   executorEnv: {}
+  controllerEnv: {}
 
 replicas:
   frontend: 1
