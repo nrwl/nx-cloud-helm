@@ -89,7 +89,7 @@ spec:
           {{- end }}
           {{- if or .Values.nxCloudWorkflows.enabled .Values.nxCloudWorkflows.externalNameService }}
             - name: NX_CLOUD_CI_SERVER_ADDRESS
-              value: http://nx-cloud-workflow-controller-service:9000
+              value: http://nx-cloud-workflow-controller-service.{{ .Values.nxCloudWorkflows.namespace }}.svc.cluster.local:9000
           {{- end }}
           {{- with .Values.awsS3 }}
             {{- if .enablePathStyleAccess }}

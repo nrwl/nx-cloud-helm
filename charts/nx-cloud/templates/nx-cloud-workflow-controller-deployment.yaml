@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-workflow-controller
+  namespace: {{ .Values.nxCloudWorkflows.namespace | quote }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
@@ -20,9 +21,14 @@ spec:
         runAsNonRoot: true
       containers:
         - command:
-            - /nx-cloud-workflow-controller
-            - --namespace={{ .Values.nxCloudWorkflows.namespace }}
-            - --in-cluster=true
+          - /nx-cloud-workflow-controller
+          - --namespace={{ .Values.nxCloudWorkflows.namespace }}
+          - --in-cluster=true
+          - --image=nxprivatecloud/nx-cloud-build-tools:{{ .Values.nxCloudWorkflows.buildToolsImageTag }}
+          {{- range $key, $value := .Values.nxCloudWorkflows.executorEnv }}
+          - --executor-env={{ $key }}={{ $value | quote }}
+          {{- end }}
+          - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
           image: {{ include "nxCloud.images.nxCloudWorkflowController.image" . }}
           imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
           {{- if .Values.nxApi.resources }}

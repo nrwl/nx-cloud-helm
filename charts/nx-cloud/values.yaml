@@ -111,6 +111,8 @@ nxCloudWorkflows:
   enabled: false
   namespace: nx-cloud-workflows
   externalNameService: ''
+  buildToolsImageTag: '2401.04.1'
+  executorEnv: {}
 
 replicas:
   frontend: 1
