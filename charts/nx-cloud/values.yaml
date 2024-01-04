@@ -96,7 +96,7 @@ nxCloudWorkflowController:
     registry: ''
     imageName: nx-cloud-workflow-controller
     repository: ''
-    tag: latest
+    tag: ''
     digest: ''
     pullPolicy: Always
   resources:
