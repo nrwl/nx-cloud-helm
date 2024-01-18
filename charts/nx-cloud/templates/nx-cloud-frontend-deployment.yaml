@@ -99,3 +99,7 @@ spec:
             - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
               value: http://nx-cloud-workflow-controller-service.{{ .Values.nxCloudWorkflows.namespace }}.svc.cluster.local:9000
         {{- end }}
+        {{- if or .Values.nxCloudWorkflows.enabled .Values.nxCloudWorkflows.externalNameService }}
+            - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
+              value: http://nx-cloud-workflow-controller-service:9000
+        {{- end }}
