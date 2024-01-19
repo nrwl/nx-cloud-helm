@@ -95,7 +95,7 @@ spec:
                     {{- end }}
                   {{- end }}
         {{- end }}
-        {{- if and .Values.nxCloudWorkflows.enabled .Values.nxCloudWorkflows.externalNameService }}
+        {{- if .Values.nxCloudWorkflows.externalNameService }}
             - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
               value: http://nx-cloud-workflow-controller-service:9000
         {{- else if .Values.nxCloudWorkflows.enabled }}
