@@ -11,6 +11,12 @@ naming:
 controller:
   deployment:
     port: 9000
+    annotations: {}
+  service:
+    port: 9000
+    type: ClusterIP
+    loadBalancerIP: ''
+    annotations: {}
   env: {}
   image:
     registry: ''
