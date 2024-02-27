@@ -32,7 +32,7 @@ controller:
     tag: latest
     pullPolicy: Always
   resources:
-    limits: 
+    limits:
       memory: '1Gi'
       cpu: '1.0'
     requests:
