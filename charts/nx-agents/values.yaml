@@ -8,6 +8,12 @@ naming:
   nameOverride: ''
   fullNameOverride: ''
 
+serviceAccounts:
+  controller:
+    annotations: {}
+  runner:
+    annotations: {}
+
 controller:
   deployment:
     port: 9000
@@ -16,6 +22,7 @@ controller:
     port: 9000
     type: ClusterIP
     loadBalancerIP: ''
+    loadBalancerSourceRanges: []
     annotations: {}
   env: {}
   image:

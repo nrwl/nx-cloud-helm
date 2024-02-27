@@ -16,6 +16,10 @@ spec:
   {{- if and .Values.controller.service.loadBalancerIP (eq .Values.controller.service.type "LoadBalancer")}}
   loadBalancerIP: {{ .Values.controller.service.loadBalancerIP }}
   {{- end }}
+  {{- if gt (len .Values.controller.service.loadBalancerSourceRanges) 0 }}
+  loadBalancerSourceRanges:
+    {{- toYaml .Values.controller.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
   selector:
     app: nx-cloud-workflow-controller
   ports:

@@ -9,7 +9,7 @@ metadata:
   {{- if .Values.controller.deployment.annotations }}
   annotations:
     {{- toYaml .Values.controller.deployment.annotations | nindent 4 }}
-  {{- end
+  {{- end }}
 spec:
   selector:
     matchLabels:
@@ -43,18 +43,26 @@ spec:
             capabilities:
               drop:
                 - 'ALL'
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           livenessProbe:
             httpGet:
               path: /healthz
               port: {{ .Values.controller.deployment.port }}
+              scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
           readinessProbe:
             httpGet:
               path: /readyz
               port: {{ .Values.controller.deployment.port }}
+              scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           {{- if gt (len .Values.controller.env) 0 }}
           env:
           {{- range $key, $value := .Values.controller.env }}
