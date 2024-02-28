@@ -67,18 +67,6 @@ spec:
                   name: {{ .name }}
                   key: {{ .githubAppId }}
             {{- end }}
-            {{- if .githubAppClientId }}
-            - name: NX_CLOUD_GITHUB_APP_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .githubAppClientSecret }}
-            - name: NX_CLOUD_GITHUB_APP_CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .githubAppClientId }}
-            {{- end }}
             {{- if .hubspotApiKey }}
             - name: HUBSPOT_API_KEY
               valueFrom:
