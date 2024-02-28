@@ -50,6 +50,7 @@ spec:
         {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
         {{- include "nxCloud.frontend.auth" . | indent 12 }}
         {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
+        {{- include "nxCloud.frontend.nxApiTarget" . | indent 12 }}
         {{- with .Values.secret }}
           {{- if .name }}
             {{- if .githubPrivateKey }}
@@ -58,15 +59,15 @@ spec:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .githubPrivateKey }}
-                    {{- end }}
-                    {{- if .githubAppId }}
+            {{- end }}
+            {{- if .githubAppId }}
             - name: NX_CLOUD_GITHUB_APP_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .githubAppId }}
-                    {{- end }}
-                    {{- if .githubAppClientId }}
+            {{- end }}
+            {{- if .githubAppClientId }}
             - name: NX_CLOUD_GITHUB_APP_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -77,8 +78,8 @@ spec:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .githubAppClientId }}
-                    {{- end }}
-                    {{- if .hubspotApiKey }}
+            {{- end }}
+            {{- if .hubspotApiKey }}
             - name: HUBSPOT_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -86,7 +87,7 @@ spec:
                   key: {{ .hubspotApiKey }}
                     {{- end }}
                   {{- else }}
-                    {{- if .githubPrivateKey }}
+            {{- if .githubPrivateKey }}
             - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
               value: {{ .githubPrivateKey }}
                     {{- end }}

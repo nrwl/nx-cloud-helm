@@ -94,6 +94,7 @@ messagequeue:
 
 nxCloudWorkflows:
   namespace: ''
+  createNamespace: false
   service:
     enabled: false
     name: ''

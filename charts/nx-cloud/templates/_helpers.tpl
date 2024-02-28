@@ -121,3 +121,10 @@ Below are various little env snippets that multiple mainifests make use of
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{- define "nxCloud.frontend.nxApiTarget" }}
+- name: NX_API_INTERNAL_PORT
+  value: 4203
+- name: NX_API_INTERNAL_BASE_URL
+  value: http://nx-cloud-nx-api-service
+{{- end }}

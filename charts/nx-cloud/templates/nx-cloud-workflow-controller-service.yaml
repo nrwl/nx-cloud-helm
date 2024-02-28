@@ -23,3 +23,12 @@ spec:
         targetPort: 9000
   {{- end }}
 {{- end }}
+{{- if .Values.nxCloudWorkflows.createNamespace }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.nxCloudWorkflows.namespace }}
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+{{- end }}
