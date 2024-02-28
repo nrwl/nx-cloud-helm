@@ -109,3 +109,15 @@ Below are various little env snippets that multiple mainifests make use of
       key: {{ .Values.secret.seqApiKey }}
 {{- end }}
 {{- end }}
+
+{{- define "nxCloud.workflows.serviceTarget" }}
+{{- if .Values.nxCloudWorkflows.service.enabled}}
+{{- if.Values.nxCloudWorkflows.namespace }}
+- name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
+  value: http://{{ .Values.nxCloudWorkflows.service.name }}.{{ .Values.nxCloudWorkflows.namespace }}.svc.cluster.local:9000
+{{- else }}
+- name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
+  value: http://{{ .Values.nxCloudWorkflows.service.name }}:9000
+{{- end }}
+{{- end }}
+{{- end }}

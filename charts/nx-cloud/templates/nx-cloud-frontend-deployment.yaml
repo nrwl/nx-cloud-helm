@@ -49,6 +49,7 @@ spec:
         {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
         {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
         {{- include "nxCloud.frontend.auth" . | indent 12 }}
+        {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
         {{- with .Values.secret }}
           {{- if .name }}
             {{- if .githubPrivateKey }}
@@ -94,11 +95,4 @@ spec:
               value: {{ .githubAppId }}
                     {{- end }}
                   {{- end }}
-        {{- end }}
-        {{- if .Values.nxCloudWorkflows.externalNameService }}
-            - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
-              value: http://nx-cloud-workflow-controller-service:9000
-        {{- else if .Values.nxCloudWorkflows.enabled }}
-            - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
-              value: http://nx-cloud-workflow-controller-service.{{ .Values.nxCloudWorkflows.namespace }}.svc.cluster.local:9000
         {{- end }}

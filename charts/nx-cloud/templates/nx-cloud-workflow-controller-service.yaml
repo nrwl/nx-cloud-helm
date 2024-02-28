@@ -1,30 +1,25 @@
-{{- if .Values.nxCloudWorkflows.enabled }}
+{{- if .Values.nxCloudWorkflows.service.enabled }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: nx-cloud-workflow-controller-service
-  namespace: {{ .Values.nxCloudWorkflows.namespace | quote }}
+  name: {{ .Values.nxCloudWorkflows.service.name }}
+  {{- if .Values.nxCloudWorkflows.namespace }}
+  namespace: {{ .Values.nxCloudWorkflows.namespace }}
+  {{- end }}
   labels:
     app: nx-cloud-workflow-controller
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
+  {{- if .Values.nxCloudWorkflows.service.externalName }}
+  type: ExternalName
+  externalName: {{ .Values.nxCloudWorkflows.service.externalName }}
+  {{- else }}
   type: ClusterIP
   selector:
     app: nx-cloud-workflow-controller
-  ports:
-    - port: 9000
-      targetPort: 9000
-{{- else if .Values.nxCloudWorkflows.externalNameService }}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nx-cloud-workflow-controller-service
-  labels:
-    app: nx-cloud-workflow-controller
-    {{- include "nxCloud.app.labels" . | indent 4 }}
-spec:
-  type: ExternalName
-  externalName: {{ .Values.nxCloudWorkflows.externalNameService }}
+    ports:
+      - port: 9000
+        targetPort: 9000
+  {{- end }}
 {{- end }}

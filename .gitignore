@@ -1,2 +1,6 @@
 .idea
 .DS_Store
+
+# We copy this over on automated testing but for local we need to copy it in so ignore
+# if someone forgets to delete before pushing
+charts/nx-cloud/templates/secret.yml

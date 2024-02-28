@@ -1,7 +1,7 @@
 global:
-  imageRegistry: ''
+  imageRegistry: 'us-east1-docker.pkg.dev/nxcloudoperations'
   imageTag: ''
-  imageRepository: 'nxprivatecloud'
+  imageRepository: 'nx-cloud-enterprise-public'
   namespace: 'nx-cloud-workflows'
 
 naming:
@@ -29,7 +29,7 @@ controller:
     registry: ''
     imageName: nx-cloud-workflow-controller
     repository: ''
-    tag: latest
+    tag: test.0219162846
     pullPolicy: Always
   resources:
     limits:
@@ -57,6 +57,6 @@ daemonset:
     cat /proc/sys/fs/inotify/max_user_watches
 
 secret:
-  name: 'SPECIALSECRET'
+  name: 'cloudsecret'
   awsS3AccessKeyId: 'ABC123556'
   awsS3SecretAccessKey: 'BBBAAA1234'
