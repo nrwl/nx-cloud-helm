@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nx-cloud-workflow-controller-service
+  namespace: {{ .Values.global.namespace | quote }}
+  labels:
+    app: nx-cloud-workflow-controller
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+  {{- if .Values.controller.service.annotations }}
+  annotations:
+    {{- toYaml .Values.controller.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.controller.service.type }}
+  {{- if and .Values.controller.service.loadBalancerIP (eq .Values.controller.service.type "LoadBalancer")}}
+  loadBalancerIP: {{ .Values.controller.service.loadBalancerIP }}
+  {{- end }}
+  {{- if gt (len .Values.controller.service.loadBalancerSourceRanges) 0 }}
+  loadBalancerSourceRanges:
+    {{- toYaml .Values.controller.service.loadBalancerSourceRanges | nindent 4 }}
+  {{- end }}
+  selector:
+    app: nx-cloud-workflow-controller
+  ports:
+    - port: {{ .Values.controller.service.port }}
+      targetPort: {{ .Values.controller.deployment.port }}
+      protocol: TCP  

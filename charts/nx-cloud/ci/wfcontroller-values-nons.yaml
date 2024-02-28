@@ -1,0 +1,43 @@
+global:
+  imageTag: '2308.22.7'
+
+nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
+
+secret:
+  name: 'cloudsecret'
+  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+  adminPassword: 'ADMIN_PASSWORD'
+
+# When creating new values files for testing, bring over the lines below. The generated environment is quite resource
+# constrained and with the default settings from values.yaml some of the pods will fail to schedule.
+frontend:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxApi:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+fileServer:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+aggregator:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxCloudWorkflows:
+  namespace: ''
+  createNamespace: false
+  service:
+    enabled: true
+    name: 'nx-cloud-workflow-controller-service'
+    externalName: '192.168.1.2'

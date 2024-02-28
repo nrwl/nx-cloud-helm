@@ -1,0 +1,43 @@
+{{- if .Values.daemonset.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nx-cloud-workflows-daemon
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    k8s-app: nx-cloud-workflows-daemon
+spec:
+  selector:
+    matchLabels:
+      name: nx-cloud-workflows-daemon
+  template:
+    metadata:
+      labels:
+        name: nx-cloud-workflows-daemon
+    spec:
+      containers:
+      - name: nx-cloud-workflows-daemon
+        image: ubuntu:22.04
+        command: ["/bin/sh","-c"]
+        args: ["/script/daemon.sh; while true; do echo Sleeping && sleep 3600; done"]
+        volumeMounts:
+          - name: nx-cloud-workflows-daemon-script
+            mountPath: /script
+        securityContext:
+          allowPrivilegeEscalation: true
+          privileged: true
+      volumes:
+        - name: nx-cloud-workflows-daemon-script
+          configMap:
+            name: nx-cloud-workflows-daemon-script
+            defaultMode: 0755
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nx-cloud-workflows-daemon-script
+  namespace: {{ .Values.global.namespace }}
+data:
+  daemon.sh: |
+  {{- .Values.daemonset.script | nindent 4 }}
+{{- end }}

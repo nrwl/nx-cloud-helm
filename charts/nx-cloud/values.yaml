@@ -5,6 +5,7 @@ global:
   imageRegistry: ''
   imageTag: ''
   imageRepository: 'nxprivatecloud'
+  namespace: default
 
 naming:
   nameOverride: ''
@@ -91,29 +92,13 @@ messagequeue:
     limits: {}
     requests: {}
 
-nxCloudWorkflowController:
-  image:
-    registry: ''
-    imageName: nx-cloud-workflow-controller
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  resources:
-    limits:
-      cpu: 500m
-      memory: 128Mi
-    requests:
-      cpu: 10m
-      memory: 64Mi
-
 nxCloudWorkflows:
-  enabled: false
-  namespace: nx-cloud-workflows
-  externalNameService: ''
-  buildToolsImageTag: '2401.04.1'
-  executorEnv: {}
-  controllerEnv: {}
+  namespace: ''
+  createNamespace: false
+  service:
+    enabled: false
+    name: ''
+    externalName: ''
 
 replicas:
   frontend: 1

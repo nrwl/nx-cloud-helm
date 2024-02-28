@@ -1,12 +1,15 @@
-{{- if .Values.nxCloudWorkflows.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-workflow-controller
-  namespace: {{ .Values.nxCloudWorkflows.namespace | quote }}
+  namespace: {{ .Values.global.namespace | quote }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
+  {{- if .Values.controller.deployment.annotations }}
+  annotations:
+    {{- toYaml .Values.controller.deployment.annotations | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
@@ -22,17 +25,16 @@ spec:
       containers:
         - command:
           - /nx-cloud-workflow-controller
-          - --namespace={{ .Values.nxCloudWorkflows.namespace }}
+          - --namespace={{ .Values.global.namespace }}
           - --in-cluster=true
-          - --image=nxprivatecloud/nx-cloud-build-tools:{{ .Values.nxCloudWorkflows.buildToolsImageTag }}
-          {{- range $key, $value := .Values.nxCloudWorkflows.executorEnv }}
+          {{- range $key, $value := .Values.executor.env }}
           - --executor-env={{ $key }}={{ $value }}
           {{- end }}
           - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
-          image: {{ include "nxCloud.images.nxCloudWorkflowController.image" . }}
-          imagePullPolicy: {{ .Values.nxApi.image.pullPolicy | quote }}
-          {{- if .Values.nxApi.resources }}
-          resources: {{- toYaml .Values.nxApi.resources | nindent 12 }}
+          image: {{ include "nxCloud.images.workflowController.image" . }}
+          imagePullPolicy: {{ .Values.controller.image.pullPolicy | quote }}
+          {{- if .Values.controller.resources }}
+          resources: {{- toYaml .Values.controller.resources | nindent 12 }}
           {{- end }}
           name: nx-cloud-workflow-controller
           securityContext:
@@ -41,21 +43,29 @@ spec:
             capabilities:
               drop:
                 - 'ALL'
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 9000
+              port: {{ .Values.controller.deployment.port }}
+              scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 20
+            successThreshold: 1
+            timeoutSeconds: 1
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 9000
+              port: {{ .Values.controller.deployment.port }}
+              scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 10
-          {{- if gt (len .Values.nxCloudWorkflows.controllerEnv) 0 }}
+            successThreshold: 1
+            timeoutSeconds: 1
+          {{- if gt (len .Values.controller.env) 0 }}
           env:
-          {{- range $key, $value := .Values.nxCloudWorkflows.controllerEnv }}
+          {{- range $key, $value := .Values.controller.env }}
           - name: {{ $key | quote }}
             value: {{ $value | quote }}
           {{- end }}
@@ -72,15 +82,9 @@ spec:
               secretKeyRef:
                 name: {{ .name }}
                 key: {{ .awsS3SecretAccessKey }}
-          {{- else }}
-          - name: SECRET_FILE_AWS_S3_ACCESS_KEY_ID
-            value: {{ .awsS3AccessKeyId }}
-          - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
-            value: {{ .awsS3SecretAccessKey }}
           {{- end }}
           {{- end }}
           {{- end }}
           {{- end }}
       serviceAccountName: nx-cloud-workflow-controller
       terminationGracePeriodSeconds: 10
-{{- end }}

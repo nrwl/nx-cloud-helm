@@ -1,0 +1,62 @@
+global:
+  imageRegistry: ''
+  imageTag: ''
+  imageRepository: 'nxprivatecloud'
+  namespace: 'nx-cloud-workflows'
+
+naming:
+  nameOverride: ''
+  fullNameOverride: ''
+
+serviceAccounts:
+  controller:
+    annotations: {}
+  runner:
+    annotations: {}
+
+controller:
+  deployment:
+    port: 9000
+    annotations: {}
+  service:
+    port: 9000
+    type: ClusterIP
+    loadBalancerIP: ''
+    loadBalancerSourceRanges: []
+    annotations: {}
+  env: {}
+  image:
+    registry: ''
+    imageName: nx-cloud-workflow-controller
+    repository: ''
+    tag: latest
+    pullPolicy: Always
+  resources:
+    limits:
+      memory: '1Gi'
+      cpu: '1.0'
+    requests:
+      memory: '0.5Gi'
+      cpu: '0.5'
+
+executor:
+  env: {}
+
+daemonset:
+  enabled: true
+  script: |
+    #!/bin/bash
+    set -e
+
+    # change the file-watcher max-count on each node to 1048576
+
+    # insert the new value into the system config
+    sysctl -w fs.inotify.max_user_watches=1048576
+
+    # check that the new value was applied
+    cat /proc/sys/fs/inotify/max_user_watches
+
+secret:
+  name: ''
+  awsS3AccessKeyId: ''
+  awsS3SecretAccessKey: ''
