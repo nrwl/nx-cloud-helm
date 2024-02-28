@@ -18,6 +18,10 @@ controller:
   deployment:
     port: 9000
     annotations: {}
+    affinity: {}
+    tolerations: {}
+    nodeSelector: {}
+    args: {}
   service:
     port: 9000
     type: ClusterIP

@@ -22,6 +22,18 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+      {{- if .Values.controller.deployment.affinity }}
+      affinity:
+        {{- toYaml .Values.controller.deployment.affinity | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.deployment.tolerations }}
+      tolerations:
+        {{- toYaml .Values.controller.deployment.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if .Values.controller.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.controller.deployment.nodeSelector | nindent 8 }}
+      {{- end }}
       containers:
         - command:
           - /nx-cloud-workflow-controller
@@ -31,6 +43,9 @@ spec:
           - --executor-env={{ $key }}={{ $value }}
           {{- end }}
           - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
+          {{- range $key, $value := .Values.controller.deployment.args }}
+          - --{{ $key }}={{ $value }}
+          {{- end }}
           image: {{ include "nxCloud.images.workflowController.image" . }}
           imagePullPolicy: {{ .Values.controller.image.pullPolicy | quote }}
           {{- if .Values.controller.resources }}
