@@ -3,6 +3,19 @@ entries:
   nx-agents:
   - apiVersion: v2
     appVersion: v1.alpha
+    created: "2024-02-29T03:11:19.287458141Z"
+    description: Nx Cloud Agents Helm Chart
+    digest: 3462f73e82e8edcbe6e8fa59eaa7692c13f8acd6f22b7ac9b068eab9fcc26937
+    maintainers:
+    - name: nx
+      url: https://nx.app/
+    name: nx-agents
+    type: application
+    urls:
+    - https://github.com/nrwl/nx-cloud-helm/releases/download/nx-agents-1.0.0-rc.5/nx-agents-1.0.0-rc.5.tgz
+    version: 1.0.0-rc.5
+  - apiVersion: v2
+    appVersion: v1.alpha
     created: "2024-02-29T02:52:59.0734676Z"
     description: Nx Cloud Agents Helm Chart
     digest: 17082444d84b2d820684ad077b16b0157bd8186d9e3390f627860848f33f77ff
@@ -864,4 +877,4 @@ entries:
     urls:
     - helm-charts/nx-cloud-0.1.0.tgz
     version: 0.1.0
-generated: "2024-02-29T02:52:59.073723938Z"
+generated: "2024-02-29T03:11:19.287719218Z"
