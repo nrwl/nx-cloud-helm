@@ -1,7 +1,4 @@
 global:
-  imageRegistry: 'us-east1-docker.pkg.dev/nxcloudoperations'
-  imageTag: ''
-  imageRepository: 'nx-cloud-enterprise-public'
   namespace: 'nx-cloud-workflows'
 
 naming:
@@ -35,9 +32,9 @@ controller:
     loadBalancerSourceRanges: []
     annotations: {}
   image:
-    registry: ''
+    registry: 'us-east1-docker.pkg.dev/nxcloudoperations'
     imageName: nx-cloud-workflow-controller
-    repository: ''
+    repository: 'nx-cloud-enterprise-public'
     tag: test.0219162846
     pullPolicy: Always
   resources:
