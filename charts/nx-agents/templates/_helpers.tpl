@@ -1,5 +1,5 @@
 {{- define "nxCloud.app.name" }}
-{{- default .Chart.Name .Values.naming.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- .Chart.Name | default .Values.naming.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
