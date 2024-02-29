@@ -18,7 +18,16 @@ controller:
   deployment:
     port: 9000
     annotations: {}
-    env: {}
+    env:
+      - name: value-one
+        value: nx-cloud-workflows
+      - name: value-two
+        value: nx-cloud-workflows2
+    envFrom:
+      - configMapRef:
+          name: configmap
+      - secretRef:
+          name: secret
   service:
     port: 9000
     type: ClusterIP

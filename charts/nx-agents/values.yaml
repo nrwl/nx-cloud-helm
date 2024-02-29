@@ -24,13 +24,19 @@ controller:
     tolerations: {}
     nodeSelector: {}
     args: {}
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    envFrom: []
+    env: {}
   service:
     port: 9000
     type: ClusterIP
     loadBalancerIP: ''
     loadBalancerSourceRanges: []
     annotations: {}
-  env: {}
   image:
     registry: ''
     imageName: nx-cloud-workflow-controller
