@@ -101,5 +101,5 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
-      serviceAccountName: nx-cloud-workflow-controller
+      serviceAccountName: {{ .Values.serviceAccounts.controller.name }}
       terminationGracePeriodSeconds: 10
