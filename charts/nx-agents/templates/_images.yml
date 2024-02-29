@@ -6,10 +6,10 @@ and modified to support global imageTag
 */}}
 {{- define "nxCloud.images.common" }}
 {{- $registryName := .imageRoot.registry }}
-{{- $repositoryName := default .imageRoot.repository .global.imageRepository }}
+{{- $repositoryName := .imageRoot.repository | default .global.imageRepository }}
 {{- $imageName := .imageRoot.imageName }}
 {{- $separator := ":" }}
-{{- $termination := default .global.imageTag .imageRoot.tag | toString }}
+{{- $termination := .global.imageTag | default .imageRoot.tag | toString }}
 {{- if .global }}
     {{- if .global.imageRegistry }}
      {{- $registryName = .global.imageRegistry }}
