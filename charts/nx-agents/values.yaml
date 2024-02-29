@@ -11,7 +11,7 @@ naming:
 # which is more constrained
 # Each Service Account definition allows you to attach additional annotations that can be applied to the controller service
 # account. For instance, if you use workload identity on a platform such as GCP, you can add the annotation to the service
-# account here as we do internally (please see your provider's docuemtnation for more information on workload
+# account here as we do internally (please see your provider's documentation for more information on workload
 # identity and how to use it):
 # `iam.gke.io/gcp-service-account: <SA_ID>@<PROJECT>.iam.gserviceaccount.com`
 serviceAccounts:
