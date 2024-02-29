@@ -26,6 +26,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
       {{- if .Values.controller.deployment.affinity }}
       affinity:
         {{- toYaml .Values.controller.deployment.affinity | nindent 8 }}
@@ -107,5 +109,6 @@ spec:
           {{- end }}
           {{- end }}
           {{- end }}
+      serviceAccount: {{ .Values.serviceAccounts.controller.name }}
       serviceAccountName: {{ .Values.serviceAccounts.controller.name }}
       terminationGracePeriodSeconds: 10

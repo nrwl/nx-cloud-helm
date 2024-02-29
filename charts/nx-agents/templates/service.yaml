@@ -23,6 +23,7 @@ spec:
   selector:
     app: nx-cloud-workflow-controller
   ports:
-    - port: {{ .Values.controller.service.port }}
+    - name: nx-cloud-workflow-controller
+      port: {{ .Values.controller.service.port }}
       targetPort: {{ .Values.controller.deployment.port }}
-      protocol: TCP  
+      protocol: TCP
