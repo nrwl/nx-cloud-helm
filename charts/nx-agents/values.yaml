@@ -10,8 +10,10 @@ naming:
 
 serviceAccounts:
   controller:
+    name: nx-cloud-workflow-controller
     annotations: {}
   runner:
+    name: nx-cloud-workflow-runner
     annotations: {}
 
 controller:
