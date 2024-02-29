@@ -15,6 +15,10 @@ spec:
     matchLabels:
       app: nx-cloud-workflow-controller
   replicas: 1
+  {{- if .Values.controller.deployment.strategy }}
+  strategy:
+    {{- toYaml .Values.controller.deployment.strategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
@@ -69,6 +73,7 @@ spec:
             periodSeconds: 20
             successThreshold: 1
             timeoutSeconds: 1
+            failureThreshold: 10
           readinessProbe:
             httpGet:
               path: /readyz
@@ -78,26 +83,27 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
-          {{- if gt (len .Values.controller.env) 0 }}
-          env:
-          {{- range $key, $value := .Values.controller.env }}
-          - name: {{ $key | quote }}
-            value: {{ $value | quote }}
+          {{- if gt (len .Values.controller.deployment.envFrom) 0 }}
+          envFrom:
+            {{- toYaml .Values.controller.deployment.envFrom | nindent 12}}
           {{- end }}
+          env:
+          {{- if gt (len .Values.controller.deployment.env) 0 }}
+            {{- toYaml .Values.controller.deployment.env | nindent 12 }}
+          {{- end }}          
           {{- with .Values.secret }}
           {{- if .awsS3AccessKeyId }}
           {{- if .name }}
-          - name: AWS_S3_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ .name }}
-                key: {{ .awsS3AccessKeyId }}
-          - name: AWS_S3_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ .name }}
-                key: {{ .awsS3SecretAccessKey }}
-          {{- end }}
+            - name: AWS_S3_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .awsS3AccessKeyId }}
+            - name: AWS_S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .awsS3SecretAccessKey }}
           {{- end }}
           {{- end }}
           {{- end }}

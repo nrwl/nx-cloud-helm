@@ -18,13 +18,13 @@ controller:
   deployment:
     port: 9000
     annotations: {}
+    env: {}
   service:
     port: 9000
     type: ClusterIP
     loadBalancerIP: ''
     loadBalancerSourceRanges: []
     annotations: {}
-  env: {}
   image:
     registry: ''
     imageName: nx-cloud-workflow-controller
@@ -58,5 +58,5 @@ daemonset:
 
 secret:
   name: 'cloudsecret'
-  awsS3AccessKeyId: 'ABC123556'
-  awsS3SecretAccessKey: 'BBBAAA1234'
+  awsS3AccessKeyId: 'AWS_KEY'
+  awsS3SecretAccessKey: 'AWS_SECRET'
