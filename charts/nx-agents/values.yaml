@@ -1,13 +1,19 @@
 global:
-  imageRegistry: ''
-  imageTag: ''
-  imageRepository: 'nxprivatecloud'
+  # This is the namespace for all workflow resources, it will be where all items from this chart are
+  # created as well as where your agents run.
   namespace: 'nx-cloud-workflows'
 
 naming:
+  # Overrides the app name (defined in _helpers.tpl) used when installing the chart
   nameOverride: ''
-  fullNameOverride: ''
 
+# Our workflow agents use 2 service accounts: 1 for the controller itself that has more permissions and 1 for the runner
+# which is more constrained
+# Each Service Account definition allows you to attach additional annotations that can be applied to the controller service
+# account. For instance, if you use workload identity on a platform such as GCP, you can add the annotation to the service
+# account here as we do internally (please see your provider's docuemtnation for more information on workload
+# identity and how to use it):
+# `iam.gke.io/gcp-service-account: <SA_ID>@<PROJECT>.iam.gserviceaccount.com`
 serviceAccounts:
   controller:
     name: nx-cloud-workflow-controller
@@ -16,13 +22,28 @@ serviceAccounts:
     name: nx-cloud-workflow-runner
     annotations: {}
 
+# The controller is the main component of the workflow system. It is responsible for managing the state of workflows, starting
+# new runs in your cluster, and managing the agents that run your workflows. It should be internally accessible from both
+# your nx-api and frontend deployments in your application cluster. Within Nx, we accomplish this with a service of type
+# LoadBalancer using a reserved internal IP address.
 controller:
+  # Options specifically for the controller deployment object
   deployment:
     port: 9000
     annotations: {}
+
+    # If you wish to steer placement of the controller pod(s) these will be applied to the pod spec. Currently, we recommend
+    # using taints and tolerations at this time to isolate your controller from the runner pods.
     affinity: {}
+
+    # While we will be expanding future support for node affinity, the most reliable way to keep your controller pods and
+    # agent pods separate is to use taints and tolerations.
     tolerations: {}
     nodeSelector: {}
+
+    # These are additional args that will be passed to the controller binary when it starts. This is useful for passing
+    # certain configuration options to the controller. Available options are documented in the controller's help output.
+    # e.g. `docker run --rm -it <PATH_TO_CONTROLLER_IMAGE> /nx-cloud-workflow-controller --help`
     args: {}
     strategy:
       rollingUpdate:
@@ -30,19 +51,34 @@ controller:
         maxUnavailable: 25%
       type: RollingUpdate
     envFrom: []
-    env: {}
+    # Specific ENV vars that will be passed to the controller binary when it starts. This is useful for passing certain
+    # configuration options to the controller. For instance, when using GCS object storage, you can set
+    # NX_CLOUD_GCS_BUCKET and NX_CLOUD_GCS_PROJECT_ID to the appropriate values which will trigger the controller to
+    # target gcs. Please note, in this case the executor will also need to be configured to use GCS which can be done
+    # via the executor.env field.
+    env: []
   service:
     port: 9000
+    # We support ClusterIP and LoadBalancer service types.
     type: ClusterIP
+    # If using LoadBalancer, you can specify a reserved internal IP address.
     loadBalancerIP: ''
+    # If using LoadBalancer, you can specify a list of CIDRs that are allowed to access the LoadBalancer internally
     loadBalancerSourceRanges: []
+    # Additional annotations to pass to the service. For instance, in our GKE setups we use things like
+    # `networking.gke.io/load-balancer-type: Internal` to ensure the load balancer is internal and
+    # `networking.gke.io/internal-load-balancer-allow-global-access: "true"` to allow access from subnets in other regions
     annotations: {}
+  # If you are using internal images for your controller instead of our publicly available ones, feel free to set
+  # the values here.
   image:
     registry: ''
     imageName: nx-cloud-workflow-controller
     repository: ''
     tag: latest
     pullPolicy: Always
+  # These are our recommended resources for the controller. However we have noted that a request as low as 0.2 CPU and 0.5Gi
+  # memory can work for many cases
   resources:
     limits:
       memory: '1Gi'
@@ -51,9 +87,19 @@ controller:
       memory: '0.5Gi'
       cpu: '0.5'
 
+# These values will be passed as `--executor-env` flags to the controller. This is useful for passing certain configuration options
+# to each agent pod. For instance, when using GCS object storage above, you can set NX_CLOUD_GCS_BUCKET and NX_CLOUD_GCS_PROJECT_ID
+# here to ensure each executor can upload to the correct bucket. These values are interpreted AFTER the controller.deployment.env values meaning
+# you can refer to the ENV you set above (e.g. `NX_CLOUD_GCS_BUCKET: "$(NX_CLOUD_GCS_BUCKET)"`). Unlike controller.deployment.env, these values
+# should be set as a set of key-value pairs and not the literal name/value setting you would use in controller.deployment.env.
 executor:
   env: {}
 
+# The daemonset is used to ensure file watch limits are set correctly on each node in the cluster. This can ensure that your
+# agents will not fail due to shared resources being exhausted. This is especially important if you are running many agents.
+# However if you have the ability to set these values on the actual nodes in your cluster, you can disable this feature.
+# Additionally this feature can be retained, and you can update the provided script to run other things you would like on
+# each node in your cluster.
 daemonset:
   enabled: true
   script: |
@@ -68,6 +114,9 @@ daemonset:
     # check that the new value was applied
     cat /proc/sys/fs/inotify/max_user_watches
 
+# Currently, we support AWS S3 (in addition to GCS) as a storage backend for your workflow artifacts if the key and secret are provided.
+# If set, ensure to provide the proper ENV mappings that aws client libararies expect such as AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+# for both the controller and executor. Additionally point the controller to the correct bucket and region with the NX_CLOUD_AWS_BUCKET variable
 secret:
   name: ''
   awsS3AccessKeyId: ''

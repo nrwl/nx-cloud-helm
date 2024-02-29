@@ -1,20 +1,14 @@
 {{/*
 Return the proper image name
 Helper copied from bitnami/common: https://github.com/bitnami/charts/blob/main/bitnami/common/templates/_images.tpl
-and modified to support global imageTag
-{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" .Values.global "image" .Values.image ) }}
+with the entire global option removed
 */}}
 {{- define "nxCloud.images.common" }}
 {{- $registryName := .imageRoot.registry }}
-{{- $repositoryName := .imageRoot.repository | default .global.imageRepository }}
+{{- $repositoryName := .imageRoot.repository  }}
 {{- $imageName := .imageRoot.imageName }}
 {{- $separator := ":" }}
-{{- $termination := .global.imageTag | default .imageRoot.tag | toString }}
-{{- if .global }}
-    {{- if .global.imageRegistry }}
-     {{- $registryName = .global.imageRegistry }}
-    {{- end }}
-{{- end }}
+{{- $termination := .imageRoot.tag | toString }}
 {{- if .imageRoot.digest }}
     {{- $separator = "@" }}
     {{- $termination = .imageRoot.digest | toString }}
@@ -31,5 +25,5 @@ and modified to support global imageTag
 Return proper nx-cloud-workflow-controller image name
 */}}
 {{- define "nxCloud.images.workflowController.image" }}
-{{- include "nxCloud.images.common" (dict "imageRoot" .Values.controller.image "global" .Values.global) }}
+{{- include "nxCloud.images.common" (dict "imageRoot" .Values.controller.image) }}
 {{- end }}
