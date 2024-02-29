@@ -85,6 +85,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+            failureThreshold: 10
           {{- if gt (len .Values.controller.deployment.envFrom) 0 }}
           envFrom:
             {{- toYaml .Values.controller.deployment.envFrom | nindent 12}}
