@@ -5,6 +5,9 @@ kind: Ingress
 metadata:
   name: nx-cloud-ingress
   annotations:
+    {{- if .Values.ingress.annotations }}
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- end }}
     {{- with .Values.ingress }}
     {{- if .globalStaticIpName }}
     kubernetes.io/ingress.global-static-ip-name: {{ .globalStaticIpName }}
