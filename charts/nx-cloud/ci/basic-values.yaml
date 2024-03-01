@@ -41,7 +41,7 @@ fileServer:
     env:
       - name: TEST_VARIABLE
         value: 'test'
-    port: 5001
+    port: 5000
   service:
     port: 5000
     annotations:

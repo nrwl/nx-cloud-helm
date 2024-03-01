@@ -2,7 +2,7 @@ apiVersion: v2
 name: nx-agents
 description: Nx Cloud Agents Helm Chart
 type: application
-version: 1.0.2-rc.2
+version: 1.0.2-rc.3
 maintainers:
   - name: nx
     url: "https://nx.app/"
