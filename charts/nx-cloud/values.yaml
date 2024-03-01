@@ -32,7 +32,7 @@ frontend:
     env: []
   service:
     name: nx-cloud-frontend-service
-    type: NodePort
+    type: ClusterIP
     port: 8080
     annotations: {}
   resources:
@@ -55,7 +55,7 @@ nxApi:
     env: []
   service:
     name: nx-cloud-nx-api-service
-    type: NodePort
+    type: ClusterIP
     port: 4203
     annotations: {}
   resources:
@@ -77,7 +77,7 @@ fileServer:
     env: []
   service:
     name: nx-cloud-file-server-service
-    type: NodePort
+    type: ClusterIP
     port: 8080
     annotations: {}
   resources:
@@ -116,6 +116,14 @@ messagequeue:
     tag: latest
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 61616
+    env: []
+  service:
+    name: nx-cloud-messagequeue
+    type: ClusterIP
+    port: 61616
+    annotations: {}
   resources:
     limits: {}
     requests: {}
@@ -184,6 +192,10 @@ bitbucket:
 saml:
   auth:
     enabled: false
+
+# If you plan to deploy using your own self-signed certs, add them to a config map and provide the name here
+# We will mount the configmap to the pods and import the certs contained within at `self-signed-cert.crt`
+selfSignedCertConfigMap: ''
 
 secret:
   name: ''

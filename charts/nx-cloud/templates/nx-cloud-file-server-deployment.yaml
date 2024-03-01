@@ -47,7 +47,7 @@ spec:
             {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
             {{- end }}
           ports:
-            - containerPort: 5000
+            - containerPort: {{ .Values.fileServer.deployment.port }}
           livenessProbe:
             httpGet:
               path: /file/uptime-check

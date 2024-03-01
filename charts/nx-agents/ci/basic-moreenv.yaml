@@ -67,7 +67,7 @@ secret:
   awsS3AccessKeyId: 'AWS_KEY'
   awsS3SecretAccessKey: 'AWS_SECRET'
 
-additionalManifests:
+extraManifests:
   secret:
     apiVersion: v1
     kind: Secret

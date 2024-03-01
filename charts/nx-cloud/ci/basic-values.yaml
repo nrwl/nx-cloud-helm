@@ -61,6 +61,12 @@ aggregator:
       memory: '0.5Mi'
       cpu: '0.1'
 
+messagequeue:
+  deployment:
+    port: 61616
+  service:
+    port: 61616
+
 extraManifests:
   secret:
     apiVersion: v1
