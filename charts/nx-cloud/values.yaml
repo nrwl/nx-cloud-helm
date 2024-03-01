@@ -27,6 +27,7 @@ frontend:
     digest: ''
     pullPolicy: Always
   deployment:
+    replicas: 1
     port: 4202
     env: []
   service:
@@ -49,6 +50,7 @@ nxApi:
     digest: ''
     pullPolicy: Always
   deployment:
+    replicas: 1
     port: 4203
     env: []
   service:
@@ -126,6 +128,7 @@ nxCloudWorkflows:
     name: ''
     externalName: ''
 
+# Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas
 replicas:
   frontend: 1
   nxApi: 1

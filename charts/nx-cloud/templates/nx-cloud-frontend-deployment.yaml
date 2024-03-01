@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicas.frontend }}
+  replicas: {{ .Values.frontend.deployment.replicas | default .Values.replicas.frontend }}
   selector:
     matchLabels:
       app: nx-cloud-frontend

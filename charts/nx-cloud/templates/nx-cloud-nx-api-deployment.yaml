@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicas.nxApi }}
+  replicas: {{ .Values.nxApi.deployment.replicas | default .Values.replicas.nxApi }}
   selector:
     matchLabels:
       app: nx-cloud-nx-api
