@@ -43,17 +43,20 @@ spec:
             - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
               value: '{{ add .Values.clearRecordsOlderThanDays 1 }}'
             {{- end }}
+            {{- if .Values.fileServer.deployment.env }}
+            {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
+            {{- end }}
           ports:
             - containerPort: 5000
           livenessProbe:
             httpGet:
               path: /file/uptime-check
-              port: 5000
+              port: {{ .Values.fileServer.deployment.port }}
             initialDelaySeconds: 10
           startupProbe:
             httpGet:
               path: /file/uptime-check
-              port: 5000
+              port: {{ .Values.fileServer.deployment.port }}
             failureThreshold: 10
             periodSeconds: 5
           volumeMounts:

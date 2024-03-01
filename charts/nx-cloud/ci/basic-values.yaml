@@ -15,6 +15,9 @@ frontend:
     env:
       - name: TEST_VARIABLE
         value: 'test'
+  service:
+    annotations:
+      my.special-annotation: "annotated"
   resources:
     requests:
       memory: '0.5Mi'
@@ -27,6 +30,15 @@ nxApi:
       cpu: '0.1'
 
 fileServer:
+  deployment:
+    env:
+      - name: TEST_VARIABLE
+        value: 'test'
+    port: 5001
+  service:
+    port: 5000
+    annotations:
+      my.special-annotation: "annotated"
   resources:
     requests:
       memory: '0.5Mi'

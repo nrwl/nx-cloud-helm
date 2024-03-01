@@ -62,6 +62,14 @@ fileServer:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 5000
+    env: []
+  service:
+    name: nx-cloud-file-server-service
+    type: NodePort
+    port: 8080
+    annotations: {}
   resources:
     limits: {}
     requests:

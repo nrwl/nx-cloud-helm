@@ -3,15 +3,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nx-cloud-file-server-service
+  name: {{ .Values.fileServer.service.name }}
   labels:
     app: nx-cloud-file-server
     {{- include "nxCloud.app.labels" . | indent 4 }}
+  {{- if .Values.fileServer.service.annotations }}
+  annotations:
+    {{- toYaml .Values.fileServer.service.annotations | nindent 4 }}
+  {{- end }}
 spec:
-  type: NodePort
+  type: {{ .Values.fileServer.service.type }}
   selector:
     app: nx-cloud-file-server
   ports:
-    - port: 5000
-      targetPort: 5000
+    - port: {{ .Values.fileServer.service.port }}
+      targetPort: {{ .Values.fileServer.deployment.port }}
 {{- end }}
