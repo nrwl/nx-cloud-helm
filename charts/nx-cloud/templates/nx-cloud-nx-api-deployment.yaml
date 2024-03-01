@@ -74,8 +74,8 @@ spec:
               port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 30
           {{- end}}
-          {{- if .Values.nxApi.readinessProbe }}
-          readinessProbe: {{- toYaml .Values.nxApi.readinessProbe | nindent 12 }}
+          {{- if .Values.nxApi.deployment.readinessProbe }}
+          readinessProbe: {{- toYaml .Values.nxApi.deployment.readinessProbe | nindent 12 }}
           {{- end }}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
