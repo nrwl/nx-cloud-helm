@@ -53,6 +53,7 @@ nxApi:
     replicas: 1
     port: 4203
     env: []
+    readinessProbe: {}
   service:
     name: nx-cloud-nx-api-service
     type: ClusterIP
@@ -78,7 +79,7 @@ fileServer:
   service:
     name: nx-cloud-file-server-service
     type: ClusterIP
-    port: 8080
+    port: 5000
     annotations: {}
   resources:
     limits: {}
