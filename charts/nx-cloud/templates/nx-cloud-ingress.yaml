@@ -40,22 +40,22 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nx-cloud-file-server-service
+                name: {{ .Values.fileServer.service.name }}
                 port:
-                  number: 5000
+                  number: {{ .Values.fileServer.service.port }}
           {{- end }}
           - path: /nx-cloud
             pathType: Prefix
             backend:
               service:
-                name: nx-cloud-nx-api-service
+                name: {{ .Values.nxApi.service.name }}
                 port:
-                  number: 4203
+                  number: {{ .Values.nxApi.service.port }}
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: nx-cloud-frontend-service
+                name: {{ .Values.frontend.service.name }}
                 port:
-                  number: 8080
+                  number: {{ .Values.frontend.service.port }}
 {{- end }}

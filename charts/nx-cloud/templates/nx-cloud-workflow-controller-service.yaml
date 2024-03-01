@@ -18,9 +18,9 @@ spec:
   type: ClusterIP
   selector:
     app: nx-cloud-workflow-controller
-    ports:
-      - port: 9000
-        targetPort: 9000
+  ports:
+    - port: 9000
+      targetPort: 9000
   {{- end }}
 {{- end }}
 {{- if .Values.nxCloudWorkflows.createNamespace }}
