@@ -11,6 +11,10 @@ secret:
 # When creating new values files for testing, bring over the lines below. The generated environment is quite resource
 # constrained and with the default settings from values.yaml some of the pods will fail to schedule.
 frontend:
+  deployment:
+    env:
+      - name: TEST_VARIABLE
+        value: 'test'
   resources:
     requests:
       memory: '0.5Mi'

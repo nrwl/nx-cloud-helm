@@ -3,7 +3,7 @@ image:
 
 global:
   imageRegistry: ''
-  imageTag: ''
+  imageTag: 'latest'
   imageRepository: 'nxprivatecloud'
   namespace: default
 
@@ -26,6 +26,14 @@ frontend:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 4202
+    env: []
+  service:
+    name: nx-cloud-frontend-service
+    type: NodePort
+    port: 8080
+    annotations: {}
   resources:
     limits: {}
     requests:
