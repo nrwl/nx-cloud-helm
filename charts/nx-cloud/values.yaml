@@ -143,12 +143,17 @@ replicas:
 
 ingress:
   skip: false
+
+  # deprecated, use ingress.annotations
   globalStaticIpName: ''
   managedCertificates: ''
   albScheme: ''
   albListenPorts: ''
   albCertificateArn: ''
   class: ''
+
+  annotations:
+    nx.app/installed-by: 'helm'
 
 fileStorage:
   storageClassName: ''
