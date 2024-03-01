@@ -125,6 +125,11 @@ spec:
                 secretKeyRef:
                   name: {{ .name }}
                   key: {{ .awsS3SecretAccessKey }}
+              {{- else }}
+            - name: SECRET_FILE_AWS_S3_ACCESS_KEY_ID
+              value: {{ .awsS3AccessKeyId }}
+            - name: SECRET_FILE_AWS_S3_SECRET_ACCESS_KEY
+              value: {{ .awsS3SecretAccessKey }}
               {{- end }}
             {{- end }}
           {{- end }}
@@ -137,6 +142,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.azureConnectionString }}
+            {{- else }}
+            - name: SECRET_FILE_AZURE_CONNECTION_STRING
+              value: {{ .Values.secret.azureConnectionString }}
             {{- end }}
           {{- end }}
         {{- if .Values.fixedBatchSize }}

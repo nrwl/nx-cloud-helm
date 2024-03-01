@@ -22,8 +22,13 @@
     secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.githubAuthToken }}
-{{- end }}
-{{- if .Values.github.pr.defaultWorkspaceId }}
+    {{- else }}
+- name: SECRET_FILE_GITHUB_WEBHOOK_SECRET
+  value: {{ .Values.secret.githubWebhookSecret }}
+- name: SECRET_FILE_GITHUB_AUTH_TOKEN
+  value: {{ .Values.secret.githubAuthToken }}
+    {{- end }}
+    {{- if .Values.github.pr.defaultWorkspaceId }}
 - name: NX_CLOUD_INTEGRATION_DEFAULT_WORKSPACE_ID
   value: {{ .Values.github.pr.defaultWorkspaceId }}
     {{- end }}
@@ -63,6 +68,9 @@
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.gitlabAccessToken }}
     {{- end }}
+  {{- else }}
+- name: SECRET_FILE_NX_CLOUD_GITLAB_ACCESS_TOKEN
+  value: {{ .Values.secret.gitlabAccessToken }}
   {{- end }}
 {{- end }}
 {{- end }}
@@ -98,6 +106,19 @@
     secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.githubPrivateKey }}
+    {{- end }}
+{{- else }}
+    {{- if .Values.secret.githubAuthToken }}
+- name: SECRET_FILE_NX_CLOUD_GITHUB_AUTH_TOKEN
+  value: {{ .Values.secret.githubAuthToken }}
+    {{- end }}
+    {{- if .Values.secret.githubAppId }}
+- name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
+  value: {{ .Values.secret.githubAppId }}
+    {{- end }}
+    {{- if .Values.secret.githubPrivateKey }}
+- name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
+  value: {{ .Values.secret.githubPrivateKey }}
     {{- end }}
 {{- end }}
 {{- end }}

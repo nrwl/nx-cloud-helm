@@ -45,6 +45,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.adminPassword }}
+            {{- else }}
+            - name: SECRET_FILE_ADMIN_PASSWORD
+              value: {{ .Values.secret.adminPassword }}
             {{- end }}
           {{- end }}
           {{- if .Values.useCosmosDb }}
