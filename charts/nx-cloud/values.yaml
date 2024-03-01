@@ -196,3 +196,5 @@ secret:
   githubAppId: ''
   githubPrivateKey: ''
   gitlabAccessToken: ''
+
+extraManifests: {}
