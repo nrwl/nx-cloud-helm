@@ -11,7 +11,7 @@ metadata:
       {{- toYaml .Values.nxApi.service.annotations | nindent 4 }}
   {{- end }}
 spec:
-  type: NodePort
+  type: {{ .Values.nxApi.service.type }}
   selector:
     app: nx-cloud-nx-api
   ports:

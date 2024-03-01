@@ -32,7 +32,7 @@ frontend:
     env: []
   service:
     name: nx-cloud-frontend-service
-    type: NodePort
+    type: ClusterIP
     port: 8080
     annotations: {}
   resources:
