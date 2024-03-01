@@ -77,14 +77,5 @@ spec:
                   name: {{ .name }}
                   key: {{ .hubspotApiKey }}
                     {{- end }}
-                  {{- else }}
-            {{- if .githubPrivateKey }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
-              value: {{ .githubPrivateKey }}
-            {{- end }}
-            {{- if .githubAppId }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
-              value: {{ .githubAppId }}
-            {{- end }}
             {{- end }}
         {{- end }}
