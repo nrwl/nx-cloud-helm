@@ -52,6 +52,10 @@ fileServer:
       cpu: '0.1'
 
 aggregator:
+  schedule: "*/10 * * * *"
+  env:
+    - name: TEST_VARIABLE
+      value: 'test'
   resources:
     requests:
       memory: '0.5Mi'

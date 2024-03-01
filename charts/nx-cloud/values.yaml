@@ -91,6 +91,7 @@ fileServer:
     fsGroupChangePolicy: "OnRootMismatch"
 
 aggregator:
+  schedule: '*/10 * * * *'
   image:
     registry: ''
     imageName: nx-cloud-aggregator
@@ -98,6 +99,7 @@ aggregator:
     tag: ''
     digest: ''
     pullPolicy: Always
+  env: []
   resources:
     limits: {}
     requests:
