@@ -57,3 +57,15 @@ secret:
   name: 'cloudsecret'
   awsS3AccessKeyId: 'AWS_KEY'
   awsS3SecretAccessKey: 'AWS_SECRET'
+
+additionalManifests:
+  secret:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cloudsecret
+      namespace: nx-cloud-workflows
+    type: Opaque
+    stringData:
+      AWS_KEY: "MYAWSKEY"
+      AWS_SECRET: "SUPER_SECRET_AWS_SECRET"
