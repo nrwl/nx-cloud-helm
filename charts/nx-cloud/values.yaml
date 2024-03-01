@@ -48,6 +48,14 @@ nxApi:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 4203
+    env: []
+  service:
+    name: nx-cloud-nx-api-service
+    type: NodePort
+    port: 4203
+    annotations: {}
   resources:
     limits: {}
     requests:

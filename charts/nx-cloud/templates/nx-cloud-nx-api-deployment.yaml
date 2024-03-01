@@ -34,7 +34,7 @@ spec:
           resources: {{- toYaml .Values.nxApi.resources | nindent 12 }}
           {{- end }}
           ports:
-            - containerPort: 4203
+            - containerPort: {{ .Values.nxApi.deployment.port }}
           {{- if .Values.selfSignedCertConfigMap }}
           # if they have certificates and we need to wait on a post-start hook
           lifecycle:
@@ -50,30 +50,33 @@ spec:
           startupProbe:
             httpGet:
               path: /nx-cloud/uptime-check
-              port: 4203
+              port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 60
             failureThreshold: 5
             periodSeconds: 30
           livenessProbe:
             httpGet:
               path: /nx-cloud/uptime-check
-              port: 4203
+              port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 120
           {{- else}}
           # if we don't need on a post-start hook
           startupProbe:
             httpGet:
               path: /nx-cloud/uptime-check
-              port: 4203
+              port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 10
             failureThreshold: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /nx-cloud/uptime-check
-              port: 4203
+              port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 30
           {{- end}}
+          {{- if .Values.nxApi.readinessProbe }}
+          readinessProbe: {{- toYaml .Values.nxApi.readinessProbe | nindent 12 }}
+          {{- end }}
           env:
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
@@ -84,6 +87,9 @@ spec:
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.seqValues" . | indent 12 }}
           {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
+          {{- if .Values.nxApi.deployment.env }}
+            {{- toYaml .Values.nxApi.deployment.env | nindent 12 }}
+          {{- end }}
           {{- if .Values.enableMessageQueue }}
             - name: ACTIVEMQ_ADDRESS
               value: tcp://nx-cloud-messagequeue:61616

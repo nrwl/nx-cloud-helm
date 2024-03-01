@@ -24,6 +24,13 @@ frontend:
       cpu: '0.1'
 
 nxApi:
+  deployment:
+    env:
+      - name: TEST_VARIABLE
+        value: 'test'
+  service:
+    annotations:
+      my.special-annotation: "annotated"
   resources:
     requests:
       memory: '0.5Mi'
