@@ -3,9 +3,9 @@ kind: Deployment
 metadata:
   name: nx-cloud-frontend
   labels:
-      {{- include "nxCloud.app.labels" . | indent 4 }}
+    {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.replicas.frontend }}
+  replicas: {{ .Values.frontend.deployment.replicas | default .Values.replicas.frontend }}
   selector:
     matchLabels:
       app: nx-cloud-frontend
@@ -30,17 +30,17 @@ spec:
           resources: {{- toYaml .Values.frontend.resources | nindent 12 }}
           {{- end }}
           ports:
-            - containerPort: 4202
+            - containerPort: {{ .Values.frontend.deployment.port }}
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 4202
+              port: {{ .Values.frontend.deployment.port }}
             initialDelaySeconds: 15
             periodSeconds: 20
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 4202
+              port: {{ .Values.frontend.deployment.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
           env:
@@ -51,6 +51,9 @@ spec:
         {{- include "nxCloud.frontend.auth" . | indent 12 }}
         {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
         {{- include "nxCloud.frontend.nxApiTarget" . | indent 12 }}
+        {{- if .Values.frontend.deployment.env }}
+          {{- toYaml .Values.frontend.deployment.env | nindent 12 }}
+        {{- end }}
         {{- with .Values.secret }}
           {{- if .name }}
             {{- if .githubPrivateKey }}
@@ -74,14 +77,5 @@ spec:
                   name: {{ .name }}
                   key: {{ .hubspotApiKey }}
                     {{- end }}
-                  {{- else }}
-            {{- if .githubPrivateKey }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_PRIVATE_KEY
-              value: {{ .githubPrivateKey }}
-                    {{- end }}
-                    {{- if .githubAppId }}
-            - name: SECRET_FILE_NX_CLOUD_GITHUB_APP_ID
-              value: {{ .githubAppId }}
-                    {{- end }}
-                  {{- end }}
+            {{- end }}
         {{- end }}

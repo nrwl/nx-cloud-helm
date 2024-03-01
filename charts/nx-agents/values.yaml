@@ -121,3 +121,10 @@ secret:
   name: ''
   awsS3AccessKeyId: ''
   awsS3SecretAccessKey: ''
+
+
+# If you would like to manage additional resources with this helm chart you can add additional manifests here.
+# Basic structure is:
+# name: <manifest>
+# name will be ignored when rendering out the manifest. See the testing files for this chart for an example
+extraManifests: {}

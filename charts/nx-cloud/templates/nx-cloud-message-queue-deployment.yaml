@@ -27,8 +27,11 @@ spec:
           env:
             - name: ACTIVEMQ_TMP
               value: /opt/activemq/tmp
+            {{- if .Values.messagequeue.deployment.env }}
+            {{- toYaml .Values.messagequeue.deployment.env | nindent 12 }}
+            {{- end }}
           ports:
-            - containerPort: 61616
+            - containerPort: {{ .Values.messagequeue.deployment.port }}
               name: tcp
           volumeMounts:
             - mountPath: /opt/activemq/data

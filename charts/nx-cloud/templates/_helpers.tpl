@@ -71,9 +71,6 @@ Below are various little env snippets that multiple mainifests make use of
     secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.nxCloudMongoServerEndpoint }}
-{{- else }}
-- name: SECRET_FILE_NX_CLOUD_MONGO_SERVER_ENDPOINT
-  value: {{ .Values.secret.nxCloudMongoServerEndpoint }}
 {{- end }}
 {{- end }}
 

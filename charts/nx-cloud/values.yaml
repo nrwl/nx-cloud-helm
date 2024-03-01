@@ -3,7 +3,7 @@ image:
 
 global:
   imageRegistry: ''
-  imageTag: ''
+  imageTag: 'latest'
   imageRepository: 'nxprivatecloud'
   namespace: default
 
@@ -26,6 +26,15 @@ frontend:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    replicas: 1
+    port: 4202
+    env: []
+  service:
+    name: nx-cloud-frontend-service
+    type: ClusterIP
+    port: 8080
+    annotations: {}
   resources:
     limits: {}
     requests:
@@ -40,6 +49,15 @@ nxApi:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    replicas: 1
+    port: 4203
+    env: []
+  service:
+    name: nx-cloud-nx-api-service
+    type: ClusterIP
+    port: 4203
+    annotations: {}
   resources:
     limits: {}
     requests:
@@ -54,6 +72,14 @@ fileServer:
     tag: ''
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 5000
+    env: []
+  service:
+    name: nx-cloud-file-server-service
+    type: ClusterIP
+    port: 8080
+    annotations: {}
   resources:
     limits: {}
     requests:
@@ -67,6 +93,7 @@ fileServer:
     fsGroupChangePolicy: "OnRootMismatch"
 
 aggregator:
+  schedule: '*/10 * * * *'
   image:
     registry: ''
     imageName: nx-cloud-aggregator
@@ -74,6 +101,7 @@ aggregator:
     tag: ''
     digest: ''
     pullPolicy: Always
+  env: []
   resources:
     limits: {}
     requests:
@@ -88,6 +116,14 @@ messagequeue:
     tag: latest
     digest: ''
     pullPolicy: Always
+  deployment:
+    port: 61616
+    env: []
+  service:
+    name: nx-cloud-messagequeue
+    type: ClusterIP
+    port: 61616
+    annotations: {}
   resources:
     limits: {}
     requests: {}
@@ -100,6 +136,7 @@ nxCloudWorkflows:
     name: ''
     externalName: ''
 
+# Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas
 replicas:
   frontend: 1
   nxApi: 1
@@ -156,6 +193,10 @@ saml:
   auth:
     enabled: false
 
+# If you plan to deploy using your own self-signed certs, add them to a config map and provide the name here
+# We will mount the configmap to the pods and import the certs contained within at `self-signed-cert.crt`
+selfSignedCertConfigMap: ''
+
 secret:
   name: ''
   nxCloudMongoServerEndpoint: ''
@@ -170,3 +211,5 @@ secret:
   githubAppId: ''
   githubPrivateKey: ''
   gitlabAccessToken: ''
+
+extraManifests: {}

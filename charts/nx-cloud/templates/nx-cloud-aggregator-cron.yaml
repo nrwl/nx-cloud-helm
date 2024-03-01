@@ -27,6 +27,9 @@ spec:
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
           {{- include "nxCloud.env.seqValues" . | indent 12 }}
+          {{- if .Values.aggregator.env}}
+            {{- toYaml .Values.aggregator.env | nindent 12 }}
+          {{- end }}
           {{- if .Values.clearRecordsOlderThanDays }}
             - name: NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS
               value: '{{ .Values.clearRecordsOlderThanDays }}'
@@ -42,9 +45,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: {{ .Values.secret.adminPassword }}
-            {{- else }}
-            - name: SECRET_FILE_ADMIN_PASSWORD
-              value: {{ .Values.secret.adminPassword }}
             {{- end }}
           {{- end }}
           {{- if .Values.useCosmosDb }}
@@ -71,7 +71,7 @@ metadata:
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
-  schedule: '*/10 * * * *'
+  schedule: {{ .Values.aggregator.schedule | quote }}
   concurrencyPolicy: Forbid
   jobTemplate:
     {{- include "nxCloud.aggregator.template" . | indent 4 }}

@@ -3,16 +3,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nx-cloud-messagequeue
+  name: {{ .Values.messagequeue.service.name }}
   labels:
     app: nx-cloud-messagequeue
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
   selector:
     app: nx-cloud-messagequeue
-  type: ClusterIP
+  type: {{ .Values.messagequeue.service.type }}
   ports:
     - name: tcp
-      port: 61616
-      targetPort: 61616
+      port: {{ .Values.messagequeue.service.port }}
+      targetPort: {{ .Values.messagequeue.deployment.port }}
 {{- end }}
