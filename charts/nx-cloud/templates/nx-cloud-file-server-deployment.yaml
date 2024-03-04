@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-file-server
+  namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:

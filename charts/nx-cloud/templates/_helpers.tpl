@@ -95,26 +95,14 @@ Below are various little env snippets that multiple mainifests make use of
 {{- end }}
 {{- end }}
 
-{{- define "nxCloud.env.seqValues" }}
-{{- if and .Values.seqServerAddress (.Values.secret).seqApiKey }}
-- name: NX_CLOUD_SEQ_ADDRESS
-  value: {{ .Values.seqServerAddress | quote }}
-- name: NX_CLOUD_SEQ_KEY
-  valueFrom:
-    secretKeyRef:
-      name: {{ .Values.secret.name }}
-      key: {{ .Values.secret.seqApiKey }}
-{{- end }}
-{{- end }}
-
 {{- define "nxCloud.workflows.serviceTarget" }}
-{{- if .Values.nxCloudWorkflows.service.enabled}}
-{{- if.Values.nxCloudWorkflows.namespace }}
+{{- if .Values.nxCloudWorkflows.enabled}}
+{{- if eq .Values.nxCloudWorkflows.externalName ""}}
 - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
-  value: http://{{ .Values.nxCloudWorkflows.service.name }}.{{ .Values.nxCloudWorkflows.namespace }}.svc.cluster.local:9000
+  value: http://{{ .Values.nxCloudWorkflows.name }}.{{ .Values.nxCloudWorkflows.workflowsNamespace }}.svc.cluster.local:{{ .Values.nxCloudWorkflows.port }}
 {{- else }}
 - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
-  value: http://{{ .Values.nxCloudWorkflows.service.name }}:9000
+  value: http://{{ .Values.nxCloudWorkflows.name }}:{{ .Values.nxCloudWorkflows.port }}
 {{- end }}
 {{- end }}
 {{- end }}

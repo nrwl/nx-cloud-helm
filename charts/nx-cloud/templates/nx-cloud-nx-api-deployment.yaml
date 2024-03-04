@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nx-cloud-nx-api
+  namespace: {{ .Values.global.namespace }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
 spec:
@@ -85,7 +86,6 @@ spec:
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
-          {{- include "nxCloud.env.seqValues" . | indent 12 }}
           {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
           {{- if .Values.nxApi.deployment.env }}
             {{- toYaml .Values.nxApi.deployment.env | nindent 12 }}

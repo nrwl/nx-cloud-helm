@@ -26,7 +26,6 @@ spec:
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.env.verboseMongoLogging" . | indent 12 }}
-          {{- include "nxCloud.env.seqValues" . | indent 12 }}
           {{- if .Values.aggregator.env}}
             {{- toYaml .Values.aggregator.env | nindent 12 }}
           {{- end }}
