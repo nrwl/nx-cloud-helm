@@ -130,12 +130,20 @@ messagequeue:
     requests: {}
 
 nxCloudWorkflows:
-  namespace: ''
-  createNamespace: false
-  service:
-    enabled: false
-    name: ''
-    externalName: ''
+  enabled: false
+  port: 9000
+  name: 'nx-cloud-workflow-controller-service'
+  workflowsNamespace: 'nx-cloud-workflows'
+
+
+  # If externalName is left unset, the applications will look for ane existing service with the name defined
+  # by `nxCloudWorkflows.name` in the namespace `nxCloudWorkflows.workflowsNamespace`. Use this option if you are
+  # also running the nx-agents chart in the same cluster as this nx-cloud chart
+  #
+  # If externalName is set, an additional service will be created with the name `nxCloudWorkflows.name`
+  # in the global namespace of this chart, and applications will use that service to connect to the workflow controller.
+  # Use this option if your nx-agents are running in a different cluster than this nx-cloud chart
+  externalName: ''
 
 # Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas
 replicas:

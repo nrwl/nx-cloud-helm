@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.nxApi.service.name }}
+  namespace: {{ .Values.global.namespace }}
   labels:
     app: nx-cloud-nx-api
     {{- include "nxCloud.app.labels" . | indent 4 }}

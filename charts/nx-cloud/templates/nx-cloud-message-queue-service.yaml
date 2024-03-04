@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.messagequeue.service.name }}
+  namespace: {{ .Values.global.namespace }}
   labels:
     app: nx-cloud-messagequeue
     {{- include "nxCloud.app.labels" . | indent 4 }}

@@ -35,12 +35,13 @@ aggregator:
       cpu: '0.1'
 
 nxCloudWorkflows:
-  namespace: ''
-  createNamespace: false
-  service:
-    enabled: true
-    name: 'nx-cloud-workflow-controller-service'
-    externalName: '192.168.1.2'
+  enabled: true
+  port: 9000
+  name: 'nx-cloud-workflow-controller-service'
+  workflowsNamespace: 'nx-cloud-workflows'
+
+  externalName: '10.0.0.64'
+
 
 extraManifests:
   secret:
@@ -48,6 +49,7 @@ extraManifests:
     kind: Secret
     metadata:
       name: cloudsecret
+      namespace: default
     type: Opaque
     stringData:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: "mongodb://127.0.0.1"
