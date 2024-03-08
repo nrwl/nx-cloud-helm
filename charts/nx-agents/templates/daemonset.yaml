@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: nx-cloud-workflows-daemon
-        image: ubuntu:22.04
+        image: {{ include "nxCloud.images.daemonset.image" . }}
         command: ["/bin/sh","-c"]
         args: ["/script/daemon.sh; while true; do echo Sleeping && sleep 3600; done"]
         volumeMounts:

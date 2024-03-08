@@ -1,5 +1,6 @@
 global:
   namespace: 'nx-cloud-workflows'
+  createNamespace: false
 
 naming:
   nameOverride: ''
@@ -42,7 +43,7 @@ executor:
 daemonset:
   enabled: true
   image:
-    registry: ''
+    registry: 'private.registry.example.com'
     imageName: ubuntu
     repository: ''
     tag: 22.04
@@ -74,3 +75,10 @@ extraManifests:
     stringData:
       AWS_KEY: "MYAWSKEY"
       AWS_SECRET: "SUPER_SECRET_AWS_SECRET"
+  namespace:
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: nx-cloud-workflows
+      labels:
+        my.lbael: "true"
