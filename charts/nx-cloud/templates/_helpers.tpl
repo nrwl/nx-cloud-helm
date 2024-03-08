@@ -100,8 +100,12 @@ Below are various little env snippets that multiple mainifests make use of
 {{- if eq .Values.nxCloudWorkflows.externalName ""}}
 - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
   value: http://{{ .Values.nxCloudWorkflows.name }}.{{ .Values.nxCloudWorkflows.workflowsNamespace }}.svc.cluster.local:{{ .Values.nxCloudWorkflows.port }}
+- name: NX_CLOUD_CI_SERVER_ADDRESS
+  value: http://{{ .Values.nxCloudWorkflows.name }}.{{ .Values.nxCloudWorkflows.workflowsNamespace }}.svc.cluster.local:{{ .Values.nxCloudWorkflows.port }}
 {{- else }}
 - name: NX_CLOUD_WORKFLOW_CONTROLLER_ADDRESS
+  value: http://{{ .Values.nxCloudWorkflows.name }}:{{ .Values.nxCloudWorkflows.port }}
+- name: NX_CLOUD_CI_SERVER_ADDRESS
   value: http://{{ .Values.nxCloudWorkflows.name }}:{{ .Values.nxCloudWorkflows.port }}
 {{- end }}
 {{- end }}
