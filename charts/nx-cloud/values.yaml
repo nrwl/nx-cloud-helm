@@ -135,7 +135,6 @@ nxCloudWorkflows:
   name: 'nx-cloud-workflow-controller-service'
   workflowsNamespace: 'nx-cloud-workflows'
 
-
   # If externalName is left unset, the applications will look for ane existing service with the name defined
   # by `nxCloudWorkflows.name` in the namespace `nxCloudWorkflows.workflowsNamespace`. Use this option if you are
   # also running the nx-agents chart in the same cluster as this nx-cloud chart
@@ -144,6 +143,10 @@ nxCloudWorkflows:
   # in the global namespace of this chart, and applications will use that service to connect to the workflow controller.
   # Use this option if your nx-agents are running in a different cluster than this nx-cloud chart
   externalName: ''
+
+  # If you find that an externalName service is not working as expected, you can set this to true to create a headless service
+  # which will create an endpoint group as an alternative
+  headless: false
 
 # Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas
 replicas:
