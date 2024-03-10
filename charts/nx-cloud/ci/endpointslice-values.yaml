@@ -1,0 +1,69 @@
+global:
+  imageTag: '2308.22.7'
+
+nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
+
+secret:
+  name: 'cloudsecret'
+  nxCloudMongoServerEndpoint: 'NX_CLOUD_MONGO_SERVER_ENDPOINT'
+  adminPassword: 'ADMIN_PASSWORD'
+
+# When creating new values files for testing, bring over the lines below. The generated environment is quite resource
+# constrained and with the default settings from values.yaml some of the pods will fail to schedule.
+frontend:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxApi:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+fileServer:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+aggregator:
+  resources:
+    requests:
+      memory: '0.5Mi'
+      cpu: '0.1'
+
+nxCloudWorkflows:
+  enabled: true
+  port: 9000
+  name: 'nx-cloud-workflow-controller-service'
+  workflowsNamespace: 'nx-cloud-workflows'
+
+  externalName: '192.0.2.22'
+  headless: true
+
+extraManifests:
+  secret:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cloudsecret
+      namespace: default
+    type: Opaque
+    stringData:
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: "mongodb://127.0.0.1"
+      ADMIN_PASSWORD: "SOME_ADMIN_PASSWORD"
+      GITHUB_SECRET: "I_AM_A_SECRET_VALUE"
+      GH_CLIENT_ID: "I_AM_A_SECRET_VALUE"
+      GH_CLIENT_SECRET_VALUE: "I_AM_A_SECRET_VALUE"
+      SOME_SECRET_TOKEN: "I_AM_A_SECRET_VALUE"
+      GITLAB_ACCESS_TOKEN: "I_AM_A_SECRET_VALUE"
+      GITHUB_AUTH_CLIENT_ID: "A_GITHUB_ID"
+      GITHUB_AUTH_CLIENT_SECRET: "A_GITHUB_CLIENT_SECRET"
+      GITHUB_WEBHOOK_SECRET: "A_GITHUB_SECRET_VALUE"
+      GITHUB_AUTH_TOKEN: "A_GITHUB_SECRET_VALUE"
+      GITHUB_APP_PRIVATE_KEY: "A_GITHUB_SECRET_VALUE"
+      GITHUB_APP_ID: "A_GITHUB_SECRET_VALUE"
+      AWS_KEY: "MYAWSKEY"
+      AWS_SECRET: "SUPER_SECRET_AWS_SECRET"
