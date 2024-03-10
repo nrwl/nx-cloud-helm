@@ -33,7 +33,7 @@ ports:
   port: {{ .Values.nxCloudWorkflows.port }}
 endpoints:
 - addresses:
-  - {{ .Values.nxCloudWorkflows.externalName }}
+  - {{ .Values.nxCloudWorkflows.externalName | quote }}
 {{- else }}
 ---
 apiVersion: v1
