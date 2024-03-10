@@ -145,7 +145,8 @@ nxCloudWorkflows:
   externalName: ''
 
   # If you find that an externalName service is not working as expected, you can set this to true to create a headless service
-  # which will create an endpoint group as an alternative
+  # which will create an endpoint group as an alternative. Please continue to set `externalName` to the IP address
+  # you wish to direct traffic to as we will use it to populate the endpoint slice.
   headless: false
 
 # Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas

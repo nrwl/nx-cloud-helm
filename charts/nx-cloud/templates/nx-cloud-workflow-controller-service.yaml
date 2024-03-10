@@ -16,7 +16,7 @@ spec:
     protocol: TCP
     targetPort: {{ .Values.nxCloudWorkflows.port }}
 ---
-apiVersion: v1
+apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
   name: {{ printf "%s-1" .Values.nxCloudWorkflows.name }}
