@@ -3,6 +3,10 @@ global:
   # created as well as where your agents run.
   namespace: 'nx-cloud-workflows'
 
+  # If you are deploying your the above namespace yourself (e.g. for secrets or other resources), you can
+  # tell this chart not to try and create it for you.
+  createNamespace: true
+
 naming:
   # Overrides the app name (defined in _helpers.tpl) used when installing the chart
   nameOverride: ''
@@ -101,6 +105,11 @@ executor:
 # Additionally this feature can be retained, and you can update the provided script to run other things you would like on
 # each node in your cluster.
 daemonset:
+  image:
+    registry: ''
+    imageName: ubuntu
+    repository: ''
+    tag: 22.04
   enabled: true
   script: |
     #!/bin/bash

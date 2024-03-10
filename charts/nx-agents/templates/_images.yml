@@ -13,10 +13,12 @@ with the entire global option removed
     {{- $separator = "@" }}
     {{- $termination = .imageRoot.digest | toString }}
 {{- end }}
-{{- if $registryName }}
+{{- if and $registryName $repositoryName }}
     {{- printf "%s/%s/%s%s%s" $registryName $repositoryName $imageName $separator $termination }}
+{{- else if $repositoryName }}
+    {{- printf "%s/%s%s%s" $repositoryName $imageName $separator $termination }}
 {{- else }}
-    {{- printf "%s/%s%s%s"  $repositoryName $imageName $separator $termination }}
+    {{- printf "%s%s%s"  $imageName $separator $termination }}
 {{- end }}
 {{- end }}
 
@@ -26,4 +28,8 @@ Return proper nx-cloud-workflow-controller image name
 */}}
 {{- define "nxCloud.images.workflowController.image" }}
 {{- include "nxCloud.images.common" (dict "imageRoot" .Values.controller.image) }}
+{{- end }}
+
+{{- define "nxCloud.images.daemonset.image" }}
+{{- include "nxCloud.images.common" (dict "imageRoot" .Values.daemonset.image) }}
 {{- end }}
