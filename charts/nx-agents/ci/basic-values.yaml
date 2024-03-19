@@ -15,7 +15,7 @@ controller:
   deployment:
     port: 9000
     annotations: {}
-    env: {}
+    env: []
   service:
     port: 9000
     type: ClusterIP
@@ -41,6 +41,13 @@ executor:
 
 daemonset:
   enabled: true
+  tolerations:
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      value: arm64
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      value: amd64
   image:
     registry: ''
     imageName: ubuntu

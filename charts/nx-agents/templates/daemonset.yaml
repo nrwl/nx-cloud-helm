@@ -15,6 +15,10 @@ spec:
       labels:
         name: nx-cloud-workflows-daemon
     spec:
+      {{- with .Values.daemonset.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: nx-cloud-workflows-daemon
         image: {{ include "nxCloud.images.daemonset.image" . }}
