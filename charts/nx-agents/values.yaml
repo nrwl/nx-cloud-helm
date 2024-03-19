@@ -105,6 +105,7 @@ executor:
 # Additionally this feature can be retained, and you can update the provided script to run other things you would like on
 # each node in your cluster.
 daemonset:
+  tolerations: []
   image:
     registry: ''
     imageName: ubuntu
