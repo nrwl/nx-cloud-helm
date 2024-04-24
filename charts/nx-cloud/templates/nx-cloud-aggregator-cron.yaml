@@ -10,13 +10,6 @@ spec:
           resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
             {{- end }}
           {{- if .Values.selfSignedCertConfigMap }}
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - ./srv/import-all-java-certs.sh /self-signed-certs/self-signed-cert.crt
           volumeMounts:
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
@@ -49,10 +42,6 @@ spec:
           {{- if .Values.useCosmosDb }}
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
-          {{- end }}
-          {{- if .Values.selfSignedCertConfigMap }}
-            - name: NX_CLOUD_STARTUP_DELAY_SECONDS
-              value: '90'
           {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
