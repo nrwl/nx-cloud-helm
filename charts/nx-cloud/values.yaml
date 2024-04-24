@@ -114,7 +114,7 @@ messagequeue:
     registry: ''
     imageName: nx-cloud-messagequeue
     repository: ''
-    tag: latest
+    tag: ''
     digest: ''
     pullPolicy: Always
   deployment:
