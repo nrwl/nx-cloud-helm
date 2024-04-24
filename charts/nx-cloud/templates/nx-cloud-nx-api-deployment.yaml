@@ -37,29 +37,9 @@ spec:
           ports:
             - containerPort: {{ .Values.nxApi.deployment.port }}
           {{- if .Values.selfSignedCertConfigMap }}
-          # if they have certificates and we need to wait on a post-start hook
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - ./srv/import-all-java-certs.sh /self-signed-certs/self-signed-cert.crt
           volumeMounts:
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
-          startupProbe:
-            httpGet:
-              path: /nx-cloud/uptime-check
-              port: {{ .Values.nxApi.deployment.port }}
-            initialDelaySeconds: 60
-            failureThreshold: 5
-            periodSeconds: 30
-          livenessProbe:
-            httpGet:
-              path: /nx-cloud/uptime-check
-              port: {{ .Values.nxApi.deployment.port }}
-            initialDelaySeconds: 120
           {{- else}}
           # if we don't need on a post-start hook
           startupProbe:
@@ -146,10 +126,6 @@ spec:
         {{- if .Values.useCosmosDb }}
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
-        {{- end }}
-        {{- if .Values.selfSignedCertConfigMap }}
-            - name: NX_CLOUD_STARTUP_DELAY_SECONDS
-              value: '90'
         {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
