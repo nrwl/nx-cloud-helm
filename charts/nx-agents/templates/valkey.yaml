@@ -404,7 +404,7 @@ spec:
               value: "no"
             - name: VALKEY_PORT
               value: "6379"
-          image: valkey/valkey:7.2
+          image: {{ .Values.valkey.image }}
           imagePullPolicy: IfNotPresent
           livenessProbe:
             exec:
@@ -597,7 +597,7 @@ spec:
               value: "no"
             - name: VALKEY_PORT
               value: "6379"
-          image: valkey/valkey:7.2
+          image: {{ .Values.valkey.image }}
           imagePullPolicy: IfNotPresent
           livenessProbe:
             exec:

@@ -92,7 +92,7 @@ controller:
       cpu: '0.5'
 
 valkey:
-  image: valkey/valkey:7.2
+  image: "valkey/valkey:7.2"
 
   # If provided, this is the reference to the secret that contains a master password for Valkey
   # The controller will also use this secret to authenticate with Valkey
