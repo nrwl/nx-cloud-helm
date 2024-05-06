@@ -101,7 +101,7 @@ extraManifests:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: valkey
         app.kubernetes.io/version: 7.2.4VALKEY
-      name: valkey-admin-password
+      name: valkey-custom-admin-password
       namespace: "nx-cloud-workflows"
     type: Opaque
   valkey-custom-connection-string:
