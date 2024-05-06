@@ -45,6 +45,15 @@ controller:
     tolerations: {}
     nodeSelector: {}
 
+    # Valkey Connection String Secret Ref
+    # If provided, this is the reference to the secret that contains the connection string for Valkey
+    # Leave this blank if valkey.secretKeyRef is also blank
+    # e.g.
+#    valkeySecretKeyRef:
+#      name: 'custom-valkey-connection-string-secret'
+#      key: 'custom-connection-string-key'
+    valkeySecretKeyRef: {}
+
     # These are additional args that will be passed to the controller binary when it starts. This is useful for passing
     # certain configuration options to the controller. Available options are documented in the controller's help output.
     # e.g. `docker run --rm -it <PATH_TO_CONTROLLER_IMAGE> /nx-cloud-workflow-controller --help`
