@@ -374,8 +374,10 @@ spec:
         app.kubernetes.io/version: 7.2.4
         helm.sh/chart: valkey-19.1.1
     spec:
+      {{- if .Values.valkey.nodeSelector }}
       nodeSelector:
-        nx.app/node-role: controller
+        {{- toYaml .Values.valkey.nodeSelector | nindent 8 }}
+      {{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -553,8 +555,10 @@ spec:
         app.kubernetes.io/version: 7.2.4
         helm.sh/chart: valkey-19.1.1
     spec:
+      {{- if .Values.valkey.nodeSelector }}
       nodeSelector:
-        nx.app/node-role: controller
+        {{- toYaml .Values.valkey.nodeSelector | nindent 8 }}
+      {{- end }}
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:

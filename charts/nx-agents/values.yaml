@@ -114,6 +114,8 @@ valkey:
   # key: 'valkey-password'
   secretKeyRef: {}
 
+  nodeSelector: ""
+
 # These values will be passed as `--executor-env` flags to the controller. This is useful for passing certain configuration options
 # to each agent pod. For instance, when using GCS object storage above, you can set NX_CLOUD_GCS_BUCKET and NX_CLOUD_GCS_PROJECT_ID
 # here to ensure each executor can upload to the correct bucket. These values are interpreted AFTER the controller.deployment.env values meaning
