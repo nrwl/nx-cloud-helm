@@ -91,6 +91,20 @@ controller:
       memory: '0.5Gi'
       cpu: '0.5'
 
+valkey:
+  image: valkey/valkey:7.2
+
+  # If provided, this is the reference to the secret that contains a master password for Valkey
+  # The controller will also use this secret to authenticate with Valkey
+  #
+  # If left blank, a secret will be created for you
+  #
+  # e.g.
+  #secretKeyRef:
+  # name: 'custom-valkey-password'
+  # key: 'valkey-password'
+  secretKeyRef: {}
+
 # These values will be passed as `--executor-env` flags to the controller. This is useful for passing certain configuration options
 # to each agent pod. For instance, when using GCS object storage above, you can set NX_CLOUD_GCS_BUCKET and NX_CLOUD_GCS_PROJECT_ID
 # here to ensure each executor can upload to the correct bucket. These values are interpreted AFTER the controller.deployment.env values meaning

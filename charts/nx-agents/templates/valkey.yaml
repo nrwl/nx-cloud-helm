@@ -1,0 +1,734 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: valkey
+---
+{{- if not .Values.valkey.secretKeyRef }}
+apiVersion: v1
+data:
+  valkey-password: ZzlLUGJnOTcwUA==
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-admin-password
+  namespace: valkey
+type: Opaque
+---
+{{- end }}
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-master
+  namespace: valkey
+---
+apiVersion: v1
+automountServiceAccountToken: false
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-replica
+  namespace: valkey
+---
+apiVersion: v1
+data:
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  valkey.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://valkey.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  replica.conf: |-
+    dir /data
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-configuration
+  namespace: valkey
+---
+apiVersion: v1
+data:
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-health
+  namespace: valkey
+---
+apiVersion: v1
+data:
+  start-master.sh: |
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    if [[ -f /opt/nx/valkey/mounted-etc/master.conf ]];then
+        cp /opt/nx/valkey/mounted-etc/master.conf /opt/nx/valkey/etc/master.conf
+    fi
+    if [[ -f /opt/nx/valkey/mounted-etc/valkey.conf ]];then
+        cp /opt/nx/valkey/mounted-etc/valkey.conf /opt/nx/valkey/etc/valkey.conf
+    fi
+    ARGS=("--port" "${VALKEY_PORT}")
+    ARGS+=("--requirepass" "${VALKEY_PASSWORD}")
+    ARGS+=("--masterauth" "${VALKEY_PASSWORD}")
+    ARGS+=("--include" "/opt/nx/valkey/etc/valkey.conf")
+    ARGS+=("--include" "/opt/nx/valkey/etc/master.conf")
+    exec valkey-server "${ARGS[@]}"
+  start-replica.sh: |
+    #!/bin/bash
+
+    get_port() {
+        hostname="$1"
+        type="$2"
+
+        port_var=$(echo "${hostname^^}_SERVICE_PORT_$type" | sed "s/-/_/g")
+        port=${!port_var}
+
+        if [ -z "$port" ]; then
+            case $type in
+                "SENTINEL")
+                    echo 26379
+                    ;;
+                "VALKEY")
+                    echo 6379
+                    ;;
+            esac
+        else
+            echo $port
+        fi
+    }
+
+    get_full_hostname() {
+        hostname="$1"
+        full_hostname="${hostname}.${HEADLESS_SERVICE}"
+        echo "${full_hostname}"
+    }
+
+    VALKEYPORT=$(get_port "$HOSTNAME" "VALKEY")
+    HEADLESS_SERVICE="valkey-headless.valkey.svc.cluster.local"
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    if [[ -f /opt/nx/valkey/mounted-etc/replica.conf ]];then
+        cp /opt/nx/valkey/mounted-etc/replica.conf /opt/nx/valkey/etc/replica.conf
+    fi
+    if [[ -f /opt/nx/valkey/mounted-etc/valkey.conf ]];then
+        cp /opt/nx/valkey/mounted-etc/valkey.conf /opt/nx/valkey/etc/valkey.conf
+    fi
+
+    echo "" >> /opt/nx/valkey/etc/replica.conf
+    echo "replica-announce-port $VALKEYPORT" >> /opt/nx/valkey/etc/replica.conf
+    echo "replica-announce-ip $(get_full_hostname "$HOSTNAME")" >> /opt/nx/valkey/etc/replica.conf
+    ARGS=("--port" "${VALKEY_PORT}")
+    ARGS+=("--replicaof" "${VALKEY_MASTER_HOST}" "${VALKEY_MASTER_PORT_NUMBER}")
+    ARGS+=("--requirepass" "${VALKEY_PASSWORD}")
+    ARGS+=("--masterauth" "${VALKEY_MASTER_PASSWORD}")
+    ARGS+=("--include" "/opt/nx/valkey/etc/valkey.conf")
+    ARGS+=("--include" "/opt/nx/valkey/etc/replica.conf")
+    exec valkey-server "${ARGS[@]}"
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-scripts
+  namespace: valkey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-headless
+  namespace: valkey
+spec:
+  clusterIP: None
+  ports:
+    - name: tcp-valkey
+      port: 6379
+      targetPort: valkey
+  selector:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/name: valkey
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-master
+  namespace: valkey
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: tcp-valkey
+      port: 6379
+      targetPort: valkey
+  selector:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/name: valkey
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: replica
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-replicas
+  namespace: valkey
+spec:
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: tcp-valkey
+      port: 6379
+      targetPort: valkey
+  selector:
+    app.kubernetes.io/component: replica
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/name: valkey
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: master
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-master
+  namespace: valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: master
+      app.kubernetes.io/instance: valkey
+      app.kubernetes.io/name: valkey
+  serviceName: valkey-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 86bcc953bb473748a3d3dc60b7c11f34e60c93519234d4c37f42e22ada559d47
+        checksum/health: aff24913d801436ea469d8d374b2ddb3ec4c43ee7ab24663d5f8ff1a1b6991a9
+        checksum/scripts: b032d0a9786b34ea89cf23766468aa85a6963199094c6da9b17a186cb2e72c33
+        checksum/secret: 817bae14cacdbc67da0674b7200bc5546aa9e4de8c7a93a7a129469583378460
+      labels:
+        app.kubernetes.io/component: master
+        app.kubernetes.io/instance: valkey
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/version: 7.2.4
+        helm.sh/chart: valkey-19.1.1
+    spec:
+      nodeSelector:
+        nx.app/node-role: controller
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: master
+                    app.kubernetes.io/instance: valkey
+                    app.kubernetes.io/name: valkey
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      automountServiceAccountToken: false
+      containers:
+        - args:
+            - -c
+            - /opt/nx/scripts/start-scripts/start-master.sh
+          command:
+            - /bin/bash
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: VALKEY_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                {{- if .Values.valkey.secretKeyRef }}
+                secretKeyRef:
+                  {{- toYaml .Values.valkey.secretKeyRef | nindent 18 }}
+                {{- else }}
+                secretKeyRef:
+                  key: valkey-password
+                  name: valkey-admin-password
+                {{- end }}
+            - name: VALKEY_TLS_ENABLED
+              value: "no"
+            - name: VALKEY_PORT
+              value: "6379"
+          image: valkey/valkey:7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 6
+          name: valkey
+          ports:
+            - containerPort: 6379
+              name: valkey
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 1024Mi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - mountPath: /opt/nx/scripts/start-scripts
+              name: start-scripts
+            - mountPath: /health
+              name: health
+            - mountPath: /data
+              name: valkey-data
+            - mountPath: /opt/nx/valkey/mounted-etc
+              name: config
+            - mountPath: /opt/nx/valkey/etc/
+              name: empty-dir
+              subPath: app-conf-dir
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp-dir
+      enableServiceLinks: true
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: valkey-master
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 493
+            name: valkey-scripts
+          name: start-scripts
+        - configMap:
+            defaultMode: 493
+            name: valkey-health
+          name: health
+        - configMap:
+            name: valkey-configuration
+          name: config
+        - emptyDir: {}
+          name: empty-dir
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        labels:
+          app.kubernetes.io/component: master
+          app.kubernetes.io/instance: valkey
+          app.kubernetes.io/name: valkey
+        name: valkey-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: replica
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey-replicas
+  namespace: valkey
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: replica
+      app.kubernetes.io/instance: valkey
+      app.kubernetes.io/name: valkey
+  serviceName: valkey-headless
+  template:
+    metadata:
+      annotations:
+        checksum/configmap: 86bcc953bb473748a3d3dc60b7c11f34e60c93519234d4c37f42e22ada559d47
+        checksum/health: aff24913d801436ea469d8d374b2ddb3ec4c43ee7ab24663d5f8ff1a1b6991a9
+        checksum/scripts: b032d0a9786b34ea89cf23766468aa85a6963199094c6da9b17a186cb2e72c33
+        checksum/secret: 910ae2bba66595754dc72637882c74aa89f8ecd2bf4e1c6250b9452594db1392
+      labels:
+        app.kubernetes.io/component: replica
+        app.kubernetes.io/instance: valkey
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/version: 7.2.4
+        helm.sh/chart: valkey-19.1.1
+    spec:
+      nodeSelector:
+        nx.app/node-role: controller
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/component: replica
+                    app.kubernetes.io/instance: valkey
+                    app.kubernetes.io/name: valkey
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+      automountServiceAccountToken: false
+      containers:
+        - args:
+            - -c
+            - /opt/nx/scripts/start-scripts/start-replica.sh
+          command:
+            - /bin/bash
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: VALKEY_REPLICATION_MODE
+              value: replica
+            - name: VALKEY_MASTER_HOST
+              value: valkey-master-0.valkey-headless.valkey.svc.cluster.local
+            - name: VALKEY_MASTER_PORT_NUMBER
+              value: "6379"
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "no"
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                {{- if .Values.valkey.secretKeyRef }}
+                secretKeyRef:
+                  {{- toYaml .Values.valkey.secretKeyRef | nindent 18 }}
+                {{- else }}
+                secretKeyRef:
+                  key: valkey-password
+                  name: valkey-admin-password
+                {{- end }}
+            - name: VALKEY_MASTER_PASSWORD
+              valueFrom:
+                {{- if .Values.valkey.secretKeyRef }}
+                secretKeyRef:
+                  {{- toYaml .Values.valkey.secretKeyRef | nindent 18 }}
+                {{- else }}
+                secretKeyRef:
+                  key: valkey-password
+                  name: valkey-admin-password
+                {{- end }}
+            - name: VALKEY_TLS_ENABLED
+              value: "no"
+            - name: VALKEY_PORT
+              value: "6379"
+          image: valkey/valkey:7.2
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local_and_master.sh 5
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 6
+          name: valkey
+          ports:
+            - containerPort: 6379
+              name: valkey
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local_and_master.sh 1
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 150m
+              ephemeral-storage: 1024Mi
+              memory: 192Mi
+            requests:
+              cpu: 100m
+              ephemeral-storage: 50Mi
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          startupProbe:
+            failureThreshold: 22
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: valkey
+            timeoutSeconds: 5
+          volumeMounts:
+            - mountPath: /opt/nx/scripts/start-scripts
+              name: start-scripts
+            - mountPath: /health
+              name: health
+            - mountPath: /data
+              name: valkey-data
+            - mountPath: /opt/nx/valkey/mounted-etc
+              name: config
+            - mountPath: /opt/nx/valkey/etc
+              name: empty-dir
+              subPath: app-conf-dir
+            - mountPath: /tmp
+              name: empty-dir
+              subPath: tmp-dir
+      enableServiceLinks: true
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: valkey-replica
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - configMap:
+            defaultMode: 493
+            name: valkey-scripts
+          name: start-scripts
+        - configMap:
+            defaultMode: 493
+            name: valkey-health
+          name: health
+        - configMap:
+            name: valkey-configuration
+          name: config
+        - emptyDir: {}
+          name: empty-dir
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        labels:
+          app.kubernetes.io/component: replica
+          app.kubernetes.io/instance: valkey
+          app.kubernetes.io/name: valkey
+        name: valkey-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: valkey
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/version: 7.2.4VALKEY
+  name: valkey
+  namespace: valkey
+spec:
+  egress:
+    - {}
+  ingress:
+    - ports:
+        - port: 6379
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: valkey
+      app.kubernetes.io/name: valkey
+  policyTypes:
+    - Ingress
+    - Egress
