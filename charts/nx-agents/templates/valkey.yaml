@@ -240,7 +240,7 @@ data:
     }
 
     VALKEYPORT=$(get_port "$HOSTNAME" "VALKEY")
-    HEADLESS_SERVICE="valkey-headless.valkey.svc.cluster.local"
+    HEADLESS_SERVICE="valkey-headless.{{ .Values.global.namespace }}.svc.cluster.local"
 
     [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
     [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
@@ -583,7 +583,7 @@ spec:
             - name: VALKEY_REPLICATION_MODE
               value: replica
             - name: VALKEY_MASTER_HOST
-              value: valkey-master-0.valkey-headless.valkey.svc.cluster.local
+              value: valkey-master-0.valkey-headless.{{ .Values.global.namespace }}.svc.cluster.local
             - name: VALKEY_MASTER_PORT_NUMBER
               value: "6379"
             - name: ALLOW_EMPTY_PASSWORD
