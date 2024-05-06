@@ -1,0 +1,120 @@
+global:
+  namespace: 'nx-cloud-workflows'
+
+naming:
+  nameOverride: ''
+  fullNameOverride: ''
+
+serviceAccounts:
+  controller:
+    annotations: {}
+  runner:
+    annotations: {}
+
+controller:
+  deployment:
+    port: 9000
+    annotations: {}
+    env: []
+    valkeySecretKeyRef:
+      name: 'custom-valkey-connection-string'
+      key: 'custom-connection-string'
+  service:
+    port: 9000
+    type: ClusterIP
+    loadBalancerIP: ''
+    loadBalancerSourceRanges: []
+    annotations: {}
+  image:
+    registry: 'us-east1-docker.pkg.dev/nxcloudoperations'
+    imageName: nx-cloud-workflow-controller
+    repository: 'nx-cloud-enterprise-public'
+    tag: test.0219162846
+    pullPolicy: Always
+  resources:
+    limits:
+      memory: '1Gi'
+      cpu: '1.0'
+    requests:
+      memory: '0.5Gi'
+      cpu: '0.5'
+
+valkey:
+  image: "valkey/valkey:7.2"
+  secretKeyRef:
+   name: 'valkey-custom-admin-password'
+   key: 'custom-valkey-password'
+
+executor:
+  env: {}
+
+daemonset:
+  enabled: true
+  tolerations:
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      value: arm64
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      value: amd64
+  image:
+    registry: ''
+    imageName: ubuntu
+    repository: ''
+    tag: 22.04
+  script: |
+    #!/bin/bash
+    set -e
+
+    # change the file-watcher max-count on each node to 1048576
+
+    # insert the new value into the system config
+    sysctl -w fs.inotify.max_user_watches=1048576
+
+    # check that the new value was applied
+    cat /proc/sys/fs/inotify/max_user_watches
+
+secret:
+  name: 'cloudsecret'
+  awsS3AccessKeyId: 'AWS_KEY'
+  awsS3SecretAccessKey: 'AWS_SECRET'
+
+extraManifests:
+  secret:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cloudsecret
+      namespace: nx-cloud-workflows
+    type: Opaque
+    stringData:
+      AWS_KEY: "MYAWSKEY"
+      AWS_SECRET: "SUPER_SECRET_AWS_SECRET"
+  valkey-custom-admin-password:
+    apiVersion: v1
+    data:
+      custom-valkey-password: ZzlLUGJnOTcwUA==
+    kind: Secret
+    metadata:
+      labels:
+        app.kubernetes.io/instance: valkey
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/version: 7.2.4VALKEY
+      name: valkey-admin-password
+      namespace: "nx-cloud-workflows"
+    type: Opaque
+  valkey-custom-connection-string:
+    apiVersion: v1
+    data:
+      custom-connection-string: dmFsa2V5Oi8vOmc5S1BiZzk3MFBAdmFsa2V5LW1hc3Rlci52YWxrZXkuc3ZjLmNsdXN0ZXIubG9jYWw6NjM3OQ==
+    kind: Secret
+    metadata:
+      labels:
+        app.kubernetes.io/instance: valkey
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/version: 7.2.4VALKEY
+      name: custom-valkey-connection-string
+      namespace: "nx-cloud-workflows"
+    type: Opaque
