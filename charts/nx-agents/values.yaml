@@ -109,9 +109,9 @@ valkey:
   # If left blank, a secret will be created for you
   #
   # e.g.
-  #secretKeyRef:
-  # name: 'custom-valkey-password'
-  # key: 'valkey-password'
+  # secretKeyRef:
+  #  name: 'custom-valkey-password'
+  #  key: 'valkey-password'
   secretKeyRef: {}
 
   nodeSelector: ""
