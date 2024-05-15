@@ -45,6 +45,15 @@ controller:
     tolerations: {}
     nodeSelector: {}
 
+    # Valkey Connection String Secret Ref
+    # If provided, this is the reference to the secret that contains the connection string for Valkey
+    # Leave this blank if valkey.secretKeyRef is also blank
+    # e.g.
+#    valkeySecretKeyRef:
+#      name: 'custom-valkey-connection-string-secret'
+#      key: 'custom-connection-string-key'
+    valkeySecretKeyRef: {}
+
     # These are additional args that will be passed to the controller binary when it starts. This is useful for passing
     # certain configuration options to the controller. Available options are documented in the controller's help output.
     # e.g. `docker run --rm -it <PATH_TO_CONTROLLER_IMAGE> /nx-cloud-workflow-controller --help`
@@ -90,6 +99,22 @@ controller:
     requests:
       memory: '0.5Gi'
       cpu: '0.5'
+
+valkey:
+  image: "valkey/valkey:7.2"
+
+  # If provided, this is the reference to the secret that contains a master password for Valkey
+  # The controller will also use this secret to authenticate with Valkey
+  #
+  # If left blank, a secret will be created for you
+  #
+  # e.g.
+  # secretKeyRef:
+  #  name: 'custom-valkey-password'
+  #  key: 'valkey-password'
+  secretKeyRef: {}
+
+  nodeSelector: ""
 
 # These values will be passed as `--executor-env` flags to the controller. This is useful for passing certain configuration options
 # to each agent pod. For instance, when using GCS object storage above, you can set NX_CLOUD_GCS_BUCKET and NX_CLOUD_GCS_PROJECT_ID
