@@ -129,7 +129,7 @@ daemonset:
 # for both the controller and executor. Additionally point the controller to the correct bucket and region with the NX_CLOUD_AWS_BUCKET variable
 secret:
   # the name of the secret needs to match the name of the secret provided to valkey (see AGENTS-GUIDE.md)
-  name: 'nx-cloud-agents-secret'
+  name: ''
   awsS3AccessKeyId: ''
   awsS3SecretAccessKey: ''
   # this needs to remain as is. It is used by the controller to load the password for valkey from the provided secret.
