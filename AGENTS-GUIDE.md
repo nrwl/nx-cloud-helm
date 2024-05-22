@@ -4,7 +4,7 @@ We recommend deploying Nx Agents onto a new cluster, but you can also deploy ont
 
 ### Install Valkey
 
-Valkey is an in-memory DB (like Redis) that is used by the workflow controller to store temporary state.
+Valkey is an in-memory key-value store (like Redis) that is used by the workflow controller to hold temporary state.
 
 1. Create a secret similar to `agents-guide/agents-secrets.yml` and create a valkey password in there.
    - Important: the key `valkey-password` needs to be remain unchanged
