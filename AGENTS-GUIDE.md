@@ -6,9 +6,9 @@ We recommend deploying Nx Agents onto a new cluster, but you can also deploy ont
 
 Valkey is an in-memory key-value store (like Redis) that is used by the workflow controller to hold temporary state.
 
-1. Create a secret similar to `agents-guide/agents-secrets.yml` and create a valkey password in there.
-   - Important: the key `valkey-password` needs to be remain unchanged
-   - You do not need to set the secret values for the S3 bucket yet. They are there as an example. Please refer to `charts/nx-agents/values.yaml` for examples on what Agent storage options we support.
+1. Create a secret similar to `agents-guide/agents-secrets.yml` and set your valkey password in there.
+   - Important: the key `valkey-password` itself shouldn't be changed, only its value 
+   - You do not need to set the secret values for the S3 bucket yet. They are there as an example. Please refer to `charts/nx-agents/values.yaml` for info on what Agent storage options we support.
 2. Apply the secret: `kubectl apply -f agents-secrets.yml`
 3. Now let's deploy Valkey:
     ```bash
