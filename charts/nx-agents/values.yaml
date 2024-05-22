@@ -133,7 +133,7 @@ secret:
   awsS3AccessKeyId: ''
   awsS3SecretAccessKey: ''
   # this needs to remain as is. It is used by the controller to load the password for valkey from the provided secret.
-  valkeyPassword: 'valkey-password'
+  valkeyPassword: ''
 
 
 # If you would like to manage additional resources with this helm chart you can add additional manifests here.
