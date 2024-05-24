@@ -18,13 +18,21 @@ Valkey is an in-memory key-value store (like Redis) that is used by the workflow
 
 ### Deploy the Agents chart onto your cluster
 
+Modify you `nx-agents.yml` values file, and make sure the secrets we created above are linked up:
+1. Ensure `secret.name: nx-cloud-agents-secret` (see [here](https://github.com/nrwl/nx-cloud-helm/blob/main/charts/nx-agents/values.yaml#L132))
+2. Ensure `secret.valkeyPassword: 'valkey-password'`. The name needs to match the exact key you declared in the secret above (example [here](https://github.com/nrwl/nx-cloud-helm/blob/main/charts/nx-agents/values.yaml#L132)).
+
+Now you can push your chart changes so your controller can connect to valkey:
+
 ```bash
 helm repo add nx-cloud https://nrwl.github.io/nx-cloud-helm
 helm repo update nx-cloud
 helm upgrade --install nx-agents nx-cloud/nx-agents --values=nx-agents.yml
 ```
 
-Use the values file in `charts/nx-agents/values.yaml` as an example.
+Again, you can use the values file in `charts/nx-agents/values.yaml` as an example.
+
+Note: If you deployed valkey in a custom location, you can set [this env var on your controller to tell it where to connect](https://github.com/nrwl/nx-cloud-helm/blob/main/charts/nx-agents/templates/deployment.yaml#L94): `VALKEY_CONNECTION_STRING`.
 
 Note on storage: 
 1. The Agents need a storage bucket for storing logs as well as cached folders (such as `node_modules`)
