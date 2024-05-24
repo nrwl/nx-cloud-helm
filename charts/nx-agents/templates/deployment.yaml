@@ -91,8 +91,10 @@ spec:
             {{- toYaml .Values.controller.deployment.envFrom | nindent 12}}
           {{- end }}
           env:
+          {{- if .Values.controller.useDefaultValkeyAddress }}
             - name: VALKEY_CONNECTION_STRING
               value: valkey://valkey-master.{{ .Values.global.namespace }}.svc.cluster.local:6379
+          {{- end }}
           {{- if gt (len .Values.controller.deployment.env) 0 }}
             {{- toYaml .Values.controller.deployment.env | nindent 12 }}
           {{- end }}

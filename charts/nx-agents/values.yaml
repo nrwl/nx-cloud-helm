@@ -83,6 +83,7 @@ controller:
     pullPolicy: Always
   # These are our recommended resources for the controller. However we have noted that a request as low as 0.2 CPU and 0.5Gi
   # memory can work for many cases
+  useDefaultValkeyAddress: true
   resources:
     limits:
       memory: '1Gi'
