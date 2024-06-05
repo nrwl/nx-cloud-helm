@@ -90,7 +90,7 @@ kubectl get service nx-cloud-workflow-controller-service
 
 ## Connect your NxCloud cluster to your Nx Agents cluster
 
-Continue following the instructions here for instructions on how to connect your NxCloud cluster to the above address.
+Continue following the instructions [here](./AGENTS-GUIDE.md#connect-nxcloud-to-your-nx-agents-deployment) for instructions on how to connect your NxCloud cluster to the above address.
 
 ## Other resources
 
