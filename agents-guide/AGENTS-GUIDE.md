@@ -54,8 +54,13 @@ controller:
 ```
 ---
 Note on storage:
-1. The Agents need a storage bucket for storing logs as well as cached folders (such as `node_modules`)
+1. The Agents need a storage bucket for storing logs and cached items (such as `node_modules`)
 2. You do not need to use S3, we also support Azure Blob Storage and GCloud buckets
+3. To choose a storage service you can configure the below values:
+   - `NX_CLOUD_GCS_BUCKET=...`
+   - `NX_CLOUD_AWS_BUCKET=...`
+   - `AZURE_CONNECTION_STRING=...`
+4. You'll then need to make sure your pods either have the correct service account attached for interacting with the above buckets (see [the AWS example](./AWS-AGENTS-GUIDE.md#connecting-an-s3-bucket))
 
 ### Connect NxCloud to your Nx Agents deployment
 
@@ -83,7 +88,7 @@ nxCloudWorkflows:
    headless: false
 ```
 
-Please see `charts/nx-cloud/values.yaml` for up to date docs on the above options.
+Please see `charts/nx-cloud/values.yaml` for up to date documentation on the above options.
 
 Finally, push the updates to your NxCloud cluster:
 
