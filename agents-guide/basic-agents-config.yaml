@@ -1,0 +1,52 @@
+global:
+  namespace: default
+  createNamespace: false
+
+controller:
+  deployment:
+    port: 9000
+    env:
+      - name: AWS_REGION
+        value: 'us-east-1'
+      - name: NX_CLOUD_EXECUTOR_BINARY_BUCKET
+        value: 'https://s3.amazonaws.com/your-custom-location-for-storing-the-executor'
+      - name: NX_CLOUD_AWS_BUCKET
+        value: "nx-cloud-agents-s3-bucket"
+  service:
+    port: 9000
+    type: LoadBalancer
+  image:
+    registry: 'us-east1-docker.pkg.dev/your-custom-registry'
+    imageName: nx-cloud-workflow-controller
+    repository: 'your-custom-nx-cloud-image-repo'
+
+executor:
+  env:
+    AWS_REGION: 'us-east-1'
+    NX_CLOUD_AWS_BUCKET: 'nx-cloud-agents-s3-bucket'
+
+daemonset:
+  tolerations: []
+  image:
+    registry: ''
+    imageName: ubuntu
+    repository: ''
+    tag: 22.04
+  enabled: true
+  script: |
+    #!/bin/bash
+    set -e
+
+    # change the file-watcher max-count on each node to 1048576
+
+    # insert the new value into the system config
+    sysctl -w fs.inotify.max_user_watches=1048576
+
+    # check that the new value was applied
+    cat /proc/sys/fs/inotify/max_user_watches
+
+secret:
+  name: 'nx-cloud-agents-secret'
+  valkeyPassword: 'valkey-password'
+  awsS3AccessKeyId: ''
+  awsS3SecretAccessKey: ''
