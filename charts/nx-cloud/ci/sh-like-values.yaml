@@ -1,5 +1,5 @@
 global:
-  imageTag: '2405.02.15'
+  imageTag: '2406.29.1'
 
 verboseLogging: 'true'
 
