@@ -44,6 +44,11 @@ spec:
               port: {{ .Values.frontend.deployment.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
+          {{- if .Values.selfSignedCertConfigMap }}
+          volumeMounts:
+            - mountPath: /self-signed-certs
+              name: self-signed-certs-volume
+          {{- end}}
           env:
         {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
         {{- include "nxCloud.env.mode" . | indent 12 }}
@@ -55,6 +60,10 @@ spec:
         {{- if .Values.frontend.deployment.env }}
           {{- toYaml .Values.frontend.deployment.env | nindent 12 }}
         {{- end }}
+        {{- if .Values.selfSignedCertConfigMap }}
+            - name: NODE_EXTRA_CA_CERTS
+              value: /self-signed-certs/self-signed-cert.crt
+        {{- end}}
         {{- with .Values.secret }}
           {{- if .name }}
             {{- if .githubPrivateKey }}
@@ -80,3 +89,9 @@ spec:
                     {{- end }}
             {{- end }}
         {{- end }}
+      {{- if .Values.selfSignedCertConfigMap }}
+      volumes:
+        - configMap:
+            name: {{ .Values.selfSignedCertConfigMap }}
+          name: self-signed-certs-volume
+      {{- end }}

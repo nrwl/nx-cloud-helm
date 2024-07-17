@@ -8,6 +8,8 @@ Then update your `helm-values.yaml` and `secrets.yaml`:
 ```yaml
 # helm-values.yml
 github:
+    pr:
+      apiUrl: 'if-using-self-hosted'
     auth:
         enabled: true
 
@@ -42,8 +44,10 @@ Then update your `helm-values.yaml` and `secrets.yaml`:
 ```yaml
 # helm-values.yml
 gitlab:
+    apiUrl: 'if-using-self-hosted'
     auth:
         enabled: true
+        
 
 secret:
   name: 'cloudsecret'
@@ -76,6 +80,7 @@ Then update your `helm-values.yaml` and `secrets.yaml`:
 ```yaml
 # helm-values.yml
 bitbucket:
+    apiUrl: 'if-using-self-hosted'
     auth:
         enabled: true
 

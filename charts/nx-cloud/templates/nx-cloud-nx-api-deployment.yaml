@@ -40,8 +40,7 @@ spec:
           volumeMounts:
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
-          {{- else}}
-          # if we don't need on a post-start hook
+          {{- end}}
           startupProbe:
             httpGet:
               path: /nx-cloud/uptime-check
@@ -54,7 +53,6 @@ spec:
               path: /nx-cloud/uptime-check
               port: {{ .Values.nxApi.deployment.port }}
             initialDelaySeconds: 30
-          {{- end}}
           {{- if .Values.nxApi.deployment.readinessProbe }}
           readinessProbe: {{- toYaml .Values.nxApi.deployment.readinessProbe | nindent 12 }}
           {{- end }}

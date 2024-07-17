@@ -83,6 +83,7 @@ controller:
     pullPolicy: Always
   # These are our recommended resources for the controller. However we have noted that a request as low as 0.2 CPU and 0.5Gi
   # memory can work for many cases
+  useDefaultValkeyAddress: true
   resources:
     limits:
       memory: '1Gi'
@@ -128,9 +129,12 @@ daemonset:
 # If set, ensure to provide the proper ENV mappings that aws client libararies expect such as AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 # for both the controller and executor. Additionally point the controller to the correct bucket and region with the NX_CLOUD_AWS_BUCKET variable
 secret:
+  # the name of the secret needs to match the name of the secret provided to valkey (see AGENTS-GUIDE.md)
   name: ''
   awsS3AccessKeyId: ''
   awsS3SecretAccessKey: ''
+  # this needs to remain as is. It is used by the controller to load the password for valkey from the provided secret.
+  valkeyPassword: ''
 
 
 # If you would like to manage additional resources with this helm chart you can add additional manifests here.

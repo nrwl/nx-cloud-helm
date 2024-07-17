@@ -44,6 +44,10 @@
     secretKeyRef:
       name: {{ .Values.secret.name }}
       key: {{ .Values.secret.bitbucketAppSecret }}
+    {{ if .Values.bitbucket.apiUrl }}
+- name: BITBUCKET_API_URL
+  value: {{ .Values.bitbucket.apiUrl }}
+    {{- end }}
 {{- end }}
 
 {{- if .Values.saml.enabled }}
