@@ -1,5 +1,5 @@
 global:
-  imageTag: '2312.11.7'
+  imageTag: '2402.27.3'
 
 nxCloudAppURL: 'URL_TO_ACCESS_INGRESS_FROM_DEV_MACHINES'
 
