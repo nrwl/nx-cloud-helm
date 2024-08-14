@@ -37,6 +37,10 @@ spec:
           ports:
             - containerPort: {{ .Values.nxApi.deployment.port }}
           {{- if .Values.selfSignedCertConfigMap }}
+          {{- if .Values.nxApi.securityContext }}
+          securityContext:
+          {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume

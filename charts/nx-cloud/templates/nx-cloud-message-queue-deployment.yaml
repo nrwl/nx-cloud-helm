@@ -34,6 +34,10 @@ spec:
           ports:
             - containerPort: {{ .Values.messagequeue.deployment.port }}
               name: tcp
+          {{- if .Values.messagequeue.securityContext }}
+          securityContext:
+          {{- toYaml .Values.messagequeue.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /opt/activemq/data
               name: data

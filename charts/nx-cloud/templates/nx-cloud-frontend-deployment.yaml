@@ -44,6 +44,10 @@ spec:
               port: {{ .Values.frontend.deployment.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
+          {{- if .Values.frontend.securityContext }}
+          securityContext:
+          {{- toYaml .Values.frontend.securityContext | nindent 12 }}
+          {{- end }}
           {{- if .Values.selfSignedCertConfigMap }}
           volumeMounts:
             - mountPath: /self-signed-certs
