@@ -10,6 +10,10 @@ spec:
           resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
             {{- end }}
           {{- if .Values.selfSignedCertConfigMap }}
+          {{- if .Values.aggregator.securityContext }}
+          securityContext:
+          {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume

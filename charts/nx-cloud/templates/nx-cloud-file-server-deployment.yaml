@@ -60,6 +60,10 @@ spec:
               port: {{ .Values.fileServer.deployment.port }}
             failureThreshold: 10
             periodSeconds: 5
+          {{- if .Values.fileServer.securityContext }}
+          securityContext:
+          {{- toYaml .Values.fileServer.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - mountPath: /data
               name: data
