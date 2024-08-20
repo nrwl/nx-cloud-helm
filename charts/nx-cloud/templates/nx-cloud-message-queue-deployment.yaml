@@ -26,10 +26,11 @@ spec:
           resources: {{- toYaml .Values.messagequeue.resources | nindent 12 }}
           {{- end }}
           env:
-            - name: ACTIVEMQ_TMP
-              value: /opt/activemq/tmp
             {{- if .Values.messagequeue.deployment.env }}
             {{- toYaml .Values.messagequeue.deployment.env | nindent 12 }}
+            {{- else }}
+            - name: ACTIVEMQ_TMP
+              value: /opt/activemq/tmp
             {{- end }}
           ports:
             - containerPort: {{ .Values.messagequeue.deployment.port }}
@@ -39,13 +40,21 @@ spec:
           {{- toYaml .Values.messagequeue.securityContext | nindent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if .Values.messagequeue.deployment.volumeMounts }}
+            {{- toYaml .Values.messagequeue.deployment.volumeMounts | nindent 12 }}
+            {{- else }}
             - mountPath: /opt/activemq/data
               name: data
             - mountPath: /opt/activemq/tmp
               name: tmp
+            {{- end }}
       volumes:
-        - emptyDir: {}
+        {{- if .Values.messagequeue.deployment.volumes }}
+        {{- toYaml .Values.messagequeue.deployment.volumes | nindent 8 }}
+        {{- else }}
+        - emptyDir: { }
           name: data
-        - emptyDir: {}
+        - emptyDir: { }
           name: tmp
+        {{- end }}
 {{- end }}
