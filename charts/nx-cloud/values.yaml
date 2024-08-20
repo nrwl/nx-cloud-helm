@@ -120,6 +120,8 @@ messagequeue:
   deployment:
     port: 61616
     env: []
+    volumes: {}
+    volumeMounts: {}
   service:
     name: nx-cloud-messagequeue
     type: ClusterIP
