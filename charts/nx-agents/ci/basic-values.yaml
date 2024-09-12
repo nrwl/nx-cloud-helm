@@ -8,8 +8,12 @@ naming:
 serviceAccounts:
   controller:
     annotations: {}
+    imagePullSecrets:
+      - "regcreds"
   runner:
     annotations: {}
+    imagePullSecrets:
+      - "regcreds"
 
 controller:
   deployment:

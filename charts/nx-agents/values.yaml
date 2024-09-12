@@ -22,9 +22,11 @@ serviceAccounts:
   controller:
     name: nx-cloud-workflow-controller
     annotations: {}
+    imagePullSecrets: {}
   runner:
     name: nx-cloud-workflow-runner
     annotations: {}
+    imagePullSecrets: {}
 
 # The controller is the main component of the workflow system. It is responsible for managing the state of workflows, starting
 # new runs in your cluster, and managing the agents that run your workflows. It should be internally accessible from both
