@@ -9,11 +9,11 @@ serviceAccounts:
   controller:
     annotations: {}
     imagePullSecrets:
-      - "regcreds"
+      - name: controller
   runner:
     annotations: {}
     imagePullSecrets:
-      - "regcreds"
+      - name: runner
 
 controller:
   deployment:
