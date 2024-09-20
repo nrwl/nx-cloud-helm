@@ -28,6 +28,22 @@ serviceAccounts:
     annotations: {}
     imagePullSecrets: []
 
+roles:
+  controller:
+    # when set to true, controller role will not be created and will use the existing role
+    existingRole: false
+  runner:
+    # when set to true, runner role will not be created and will use the existing role
+    existingRole: false
+
+roleBindings:
+  controller:
+    # when set to true, controller role binding will not be created and will use the existing role binding
+    existingRoleBinding: false
+  runner:
+    # when set to true, runner role binding will not be created and will use the existing role binding
+    existingRoleBinding: false
+
 # The controller is the main component of the workflow system. It is responsible for managing the state of workflows, starting
 # new runs in your cluster, and managing the agents that run your workflows. It should be internally accessible from both
 # your nx-api and frontend deployments in your application cluster. Within Nx, we accomplish this with a service of type
