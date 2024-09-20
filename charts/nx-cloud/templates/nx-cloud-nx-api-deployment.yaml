@@ -35,9 +35,9 @@ spec:
             - cp -r /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security /cacerts
           image: {{ include "nxCloud.images.nxApi.image" . }}
           name: copy-cacerts
-              {{- if .Values.aggregator.securityContext }}
+              {{- if .Values.nxApi.securityContext }}
           securityContext:
-              {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
+              {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
               {{- end }}
           volumeMounts:
             - mountPath: /cacerts
