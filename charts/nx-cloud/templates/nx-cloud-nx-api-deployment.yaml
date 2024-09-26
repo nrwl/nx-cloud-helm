@@ -27,6 +27,22 @@ spec:
       {{- if .Values.awsS3.serviceAccountName }}
       serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
       {{- end }}
+      {{- if .Values.selfSignedCertConfigMap }}
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - cp -r /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security /cacerts
+          image: {{ include "nxCloud.images.nxApi.image" . }}
+          name: copy-cacerts
+              {{- if .Values.nxApi.securityContext }}
+          securityContext:
+              {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
+              {{- end }}
+          volumeMounts:
+            - mountPath: /cacerts
+              name: cacerts
+      {{- end}}
       containers:
         - name: nx-cloud-nx-api
           image: {{ include "nxCloud.images.nxApi.image" . }}
@@ -36,12 +52,15 @@ spec:
           {{- end }}
           ports:
             - containerPort: {{ .Values.nxApi.deployment.port }}
-          {{- if .Values.selfSignedCertConfigMap }}
           {{- if .Values.nxApi.securityContext }}
           securityContext:
           {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
           {{- end }}
+          {{- if .Values.selfSignedCertConfigMap }}
           volumeMounts:
+            - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
+              name: cacerts
+              subPath: security
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
           {{- end}}
@@ -131,6 +150,8 @@ spec:
         {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
+        - emptyDir: { }
+          name: cacerts
         - configMap:
             name: {{ .Values.selfSignedCertConfigMap }}
           name: self-signed-certs-volume

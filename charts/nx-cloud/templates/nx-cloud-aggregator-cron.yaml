@@ -2,6 +2,22 @@
 spec:
   template:
     spec:
+      {{- if .Values.selfSignedCertConfigMap }}
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - cp -r /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security /cacerts
+          image: {{ include "nxCloud.images.aggregator.image" . }}
+          name: copy-cacerts
+          {{- if .Values.aggregator.securityContext }}
+          securityContext:
+          {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /cacerts
+              name: cacerts
+      {{- end}}
       containers:
         - name: nx-cloud-aggregator
           image: {{ include "nxCloud.images.aggregator.image" . }}
@@ -9,12 +25,15 @@ spec:
             {{- if .Values.aggregator.resources }}
           resources: {{- toYaml .Values.aggregator.resources | nindent 16 }}
             {{- end }}
-          {{- if .Values.selfSignedCertConfigMap }}
           {{- if .Values.aggregator.securityContext }}
           securityContext:
           {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
           {{- end }}
+          {{- if .Values.selfSignedCertConfigMap }}
           volumeMounts:
+            - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
+              name: cacerts
+              subPath: security
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
           {{- end}}
@@ -49,6 +68,8 @@ spec:
           {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
+        - emptyDir: { }
+          name: cacerts
         - configMap:
             name: {{ .Values.selfSignedCertConfigMap }}
           name: self-signed-certs-volume
