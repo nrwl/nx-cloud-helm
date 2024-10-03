@@ -24,6 +24,9 @@ spec:
       labels:
         app: nx-cloud-file-server
     spec:
+      {{- if .Values.fileServer.serviceAccountName }}
+      serviceAccountName: {{ .Values.fileServer.serviceAccountName }}
+      {{- end }}
       volumes:
         - name: data
           persistentVolumeClaim:

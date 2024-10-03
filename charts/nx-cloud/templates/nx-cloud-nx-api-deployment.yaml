@@ -24,7 +24,11 @@ spec:
         app: nx-cloud-nx-api
     spec:
       terminationGracePeriodSeconds: 60
-      {{- if .Values.awsS3.serviceAccountName }}
+      {{- if and .Values.nxApi.serviceAccountName .Values.awsS3.serviceAccountName }}
+      serviceAccountName: {{ .Values.nxApi.serviceAccountName }}
+      {{- else if .Values.nxApi.serviceAccountName }}
+      serviceAccountName: {{ .Values.nxApi.serviceAccountName }}
+      {{- else if .Values.awsS3.serviceAccountName }}
       serviceAccountName: {{ .Values.awsS3.serviceAccountName }}
       {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
