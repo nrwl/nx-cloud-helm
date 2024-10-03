@@ -18,6 +18,9 @@ spec:
       labels:
         app: nx-cloud-messagequeue
     spec:
+      {{- if .Values.messagequeue.serviceAccountName }}
+      serviceAccountName: {{ .Values.messagequeue.serviceAccountName }}
+      {{- end }}
       containers:
         - name: nx-cloud-messagequeue
           image: {{ include "nxCloud.images.messagequeue.image" . }}

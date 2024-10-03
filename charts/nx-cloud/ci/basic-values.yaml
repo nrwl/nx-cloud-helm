@@ -11,6 +11,7 @@ secret:
 # When creating new values files for testing, bring over the lines below. The generated environment is quite resource
 # constrained and with the default settings from values.yaml some of the pods will fail to schedule.
 frontend:
+  serviceAccountName: 'nx-cloud-sa'
   deployment:
     env:
       - name: TEST_VARIABLE
@@ -24,6 +25,7 @@ frontend:
       cpu: '0.1'
 
 nxApi:
+  serviceAccountName: 'nx-cloud-sa'
   deployment:
     env:
       - name: TEST_VARIABLE
@@ -37,6 +39,7 @@ nxApi:
       cpu: '0.1'
 
 fileServer:
+  serviceAccountName: 'nx-cloud-sa'
   deployment:
     env:
       - name: TEST_VARIABLE
@@ -52,6 +55,7 @@ fileServer:
       cpu: '0.1'
 
 aggregator:
+  serviceAccountName: 'nx-cloud-sa'
   schedule: "*/10 * * * *"
   env:
     - name: TEST_VARIABLE
@@ -62,12 +66,19 @@ aggregator:
       cpu: '0.1'
 
 messagequeue:
+  serviceAccountName: 'nx-cloud-sa'
   deployment:
     port: 61616
   service:
     port: 61616
 
 extraManifests:
+  serviceAccount:
+    apiVersion: v1
+    kind: ServiceAccount
+    metadata:
+      name: nx-cloud-sa
+      namespace: default
   secret:
     apiVersion: v1
     kind: Secret

@@ -2,6 +2,9 @@
 spec:
   template:
     spec:
+      {{- if .Values.aggregator.serviceAccountName }}
+      serviceAccountName: {{ .Values.aggregator.serviceAccountName }}
+      {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       initContainers:
         - command:

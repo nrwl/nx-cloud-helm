@@ -23,6 +23,9 @@ spec:
       labels:
         app: nx-cloud-frontend
     spec:
+      {{- if .Values.frontend.serviceAccountName }}
+      serviceAccountName: {{ .Values.frontend.serviceAccountName }}
+      {{- end }}
       containers:
         - name: nx-cloud-frontend
           image: {{ include "nxCloud.images.frontend.image" . }}
