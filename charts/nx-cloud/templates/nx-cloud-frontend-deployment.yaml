@@ -80,8 +80,22 @@ spec:
                   name: {{ .name }}
                   key: {{ .githubPrivateKey }}
             {{- end }}
+            {{- if .githubAppClientId }}
+            - name: NX_CLOUD_GITHUB_APP_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .githubAppClientId }}
+            {{- end }}
+            {{- if .githubAppClientSecret }}
+            - name: NX_CLOUD_GITHUB_APP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .name }}
+                  key: {{ .githubAppClientSecret }}
+            {{- end }}
             {{- if .githubAppId }}
-            - name: NX_CLOUD_GITHUB_APP_ID
+            - name: NX_CLOUD_GITHUB_APP_APP_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ .name }}
