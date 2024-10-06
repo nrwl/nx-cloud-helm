@@ -96,6 +96,10 @@ spec:
                     {{- end }}
             {{- end }}
         {{- end }}
+          {{- if .Values.frontend.deployment.envFrom }}
+          envFrom:
+            {{- toYaml .Values.frontend.deployment.envFrom | nindent 12 }}
+          {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
         - configMap:

@@ -152,6 +152,10 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
         {{- end }}
+          {{- if .Values.nxApi.deployment.envFrom }}
+          envFrom:
+            {{- toYaml .Values.nxApi.deployment.envFrom | nindent 12 }}
+          {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
         - emptyDir: { }

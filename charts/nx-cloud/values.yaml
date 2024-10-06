@@ -31,6 +31,7 @@ frontend:
     replicas: 1
     port: 4202
     env: []
+    envFrom: []
   service:
     name: nx-cloud-frontend-service
     type: ClusterIP
@@ -55,6 +56,7 @@ nxApi:
     replicas: 1
     port: 4203
     env: []
+    envFrom: []
     readinessProbe: {}
   service:
     name: nx-cloud-nx-api-service
@@ -233,6 +235,8 @@ secret:
   githubAuthClientSecret: ''
   githubWebhookSecret: ''
   githubAuthToken: ''
+  githubAppClientId: ''
+  githubAppClientSecret: ''
   githubAppId: ''
   githubPrivateKey: ''
   gitlabAccessToken: ''
