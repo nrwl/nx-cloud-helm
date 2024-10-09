@@ -4,10 +4,11 @@ image:
 nxCloudAppURL: 'https://your-domain-nx-cloud.com' # <-- if you are using HTTPS and you know your domain name, change this value now. Otherwise, we'll configure it later below.
 
 ingress:
-  class: 'alb'
-  albScheme: 'internet-facing'
-  albListenPorts: '[{"HTTPS":443}]' # this can also be "HTTP":80 if you skipped the certificate part above
-  albCertificateArn: 'arn:aws:acm:us-east-1:411686525067:certificate/8adf7812-a1af-4eae-af1b-ea425a238a67' # your certificate ARN here which you copied above. Remove this option if you only want HTTP.
+  kubernetes.io/ingress.class: alb
+  alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:411686525067:certificate/8adf7812-a1af-4eae-af1b-ea425a238a67
+  alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443, "HTTP": 80}]' # this can also be "HTTP":80 if you skipped the certificate part above
+  alb.ingress.kubernetes.io/scheme: internet-facing
+  alb.ingress.kubernetes.io/target-type: ip
 
 secret:
   name: 'nx-cloud-k8s-secret'
