@@ -64,6 +64,7 @@ spec:
         {{- include "nxCloud.frontend.auth" . | indent 12 }}
         {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
         {{- include "nxCloud.frontend.nxApiTarget" . | indent 12 }}
+        {{- include "nxCloud.frontend.scm.githubAppEnv" . | indent 12 }}
         {{- if .Values.frontend.deployment.env }}
           {{- toYaml .Values.frontend.deployment.env | nindent 12 }}
         {{- end }}
@@ -71,31 +72,6 @@ spec:
             - name: NODE_EXTRA_CA_CERTS
               value: /self-signed-certs/self-signed-cert.crt
         {{- end}}
-        {{- with .Values.secret }}
-          {{- if .name }}
-            {{- if .githubPrivateKey }}
-            - name: NX_CLOUD_GITHUB_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .githubPrivateKey }}
-            {{- end }}
-            {{- if .githubAppId }}
-            - name: NX_CLOUD_GITHUB_APP_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .githubAppId }}
-            {{- end }}
-            {{- if .hubspotApiKey }}
-            - name: HUBSPOT_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .name }}
-                  key: {{ .hubspotApiKey }}
-                    {{- end }}
-            {{- end }}
-        {{- end }}
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
         - configMap:

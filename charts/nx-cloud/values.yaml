@@ -221,6 +221,7 @@ saml:
 # If you plan to deploy using your own self-signed certs, add them to a config map and provide the name here
 # We will mount the configmap to the pods and import the certs contained within at `self-signed-cert.crt`
 selfSignedCertConfigMap: ''
+vcsHttpsProxy: ''
 
 secret:
   name: ''
@@ -235,6 +236,8 @@ secret:
   githubAuthToken: ''
   githubAppId: ''
   githubPrivateKey: ''
+  githubAppClientId: ''
+  githubAppClientSecret: ''
   gitlabAccessToken: ''
 
 extraManifests: {}
