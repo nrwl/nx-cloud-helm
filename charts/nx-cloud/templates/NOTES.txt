@@ -2,8 +2,8 @@ Thank you for installing {{ .Chart.Name }}
 
 The version you installed is {{ .Chart.Version }}
 
-Please note that as of version 0.12.0, the compatibility with nx-cloud images has changed and
-only image tag 2312.11.7 and later are supported.
+BREAKING CHANGE: As of Helm chart version 0.15.13 we have stopped using helm based VCS Integration configs. If you have defined
+any of the "github.pr" or "gitlab.mr" values in your config.yaml, please remove them and setup your VCS integration via your
+workspace "Settings" page.
 
-At the time of install, you used version {{ .Values.global.imageTag }}, if you experience
-any issues, please ensure you are using a compatible version.
+See https://nx.dev/ci/reference/release-notes for an expanded version of this note.
