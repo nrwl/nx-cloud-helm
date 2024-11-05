@@ -254,3 +254,6 @@ eksctl create iamserviceaccount \
 
 2. If you experience S3 permissions issues when trying to retrieve an artefact with the NxCloud runner:
    3. If your bucket is encrypted, you need to add the `kms:GenerateDataKey` to the S3 access policy
+
+3. If you don't see a Load Balancer EC2 instance being created, you might need crated in step 3.1. above [like this](https://github.com/kubernetes-sigs/aws-load-balancer-controller/issues/3399#issuecomment-1733186035)
+   - You can also try setting your [frontend service type to be NodePort](https://github.com/nrwl/nx-cloud-helm/blob/main/charts/nx-cloud/values.yaml#L35) as well as the [nx-api service type to be NodePort](https://github.com/nrwl/nx-cloud-helm/blob/main/charts/nx-cloud/values.yaml#L59) 
