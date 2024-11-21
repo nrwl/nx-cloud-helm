@@ -49,6 +49,11 @@ from the NxAPI to your S3 bucket. The same issue will happen with connection to 
 For that, you can try forcing the connection to bypass the proxy by setting the [`NO_PROXY=amazonaws.com,your-github-instance.com`](https://about.gitlab.com/blog/2021/01/27/we-need-to-talk-no-proxy/) env var on your
 NxAPI pods.
 
+If you need the calls to go through a proxy, you can define this at the root of your `helm-values.yaml`:
+
+```yaml
+vcsHttpsProxy: 'http://your-proxy.com:80'
+```
 
 ## Self-Signed SSL Certificates
 

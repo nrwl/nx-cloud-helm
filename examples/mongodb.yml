@@ -4,6 +4,17 @@ kind: MongoDBCommunity
 metadata:
   name: cloud-mongodb
 spec:
+  statefulSet:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mongod
+              resources:
+                limits:
+                  memory: "4Gi"
+                requests:
+                  memory: "2Gi"
   members: 3
   type: ReplicaSet
   version: '6.0.1'
