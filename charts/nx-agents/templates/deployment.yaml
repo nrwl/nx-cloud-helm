@@ -45,6 +45,7 @@ spec:
           - /nx-cloud-workflow-controller
           - --namespace={{ .Values.global.namespace }}
           - --in-cluster=true
+          - --log-level=DEBUG
           {{- range $key, $value := .Values.executor.env }}
           - --executor-env={{ $key }}={{ $value }}
           {{- end }}
