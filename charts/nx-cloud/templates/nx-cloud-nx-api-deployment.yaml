@@ -152,6 +152,8 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
         {{- end }}
+            - name: NX_CLOUD_ENABLE_ON_PREM_AGGREGATOR_QUERIES
+              value: 'true'
       {{- if .Values.selfSignedCertConfigMap }}
       volumes:
         - emptyDir: { }
