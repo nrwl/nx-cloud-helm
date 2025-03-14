@@ -40,17 +40,35 @@ spec:
       nodeSelector:
         {{- toYaml .Values.controller.deployment.nodeSelector | nindent 8 }}
       {{- end }}
+      {{- if .Values.enableLocalExecutorBinaryStorage }}
+      initContainers:
+        - name: load-executor-binaries
+          image: {{ include "nxCloud.images.workflowController.image" . }}
+          command: ['/create-executor-binary-pvc']
+          args:
+            - "--namespace={{ .Values.global.namespace }}"
+            - "--controller-image={{ include "nxCloud.images.workflowController.image" . }}"
+          securityContext:
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - 'ALL'
+      {{- end }}
       containers:
         - command:
-          - /nx-cloud-workflow-controller
-          - --namespace={{ .Values.global.namespace }}
-          - --in-cluster=true
+            - /nx-cloud-workflow-controller
+            - --namespace={{ .Values.global.namespace }}
+            - --in-cluster=true
           {{- range $key, $value := .Values.executor.env }}
-          - --executor-env={{ $key }}={{ $value }}
+            - --executor-env={{ $key }}={{ $value }}
           {{- end }}
-          - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
+            - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
+          {{- if .Values.enableLocalExecutorBinaryStorage }}
+            - --enable-volume-based-executor-deployments=true
+          {{- end }}
           {{- range $key, $value := .Values.controller.deployment.args }}
-          - --{{ $key }}={{ $value }}
+            - --{{ $key }}={{ $value }}
           {{- end }}
           image: {{ include "nxCloud.images.workflowController.image" . }}
           imagePullPolicy: {{ .Values.controller.image.pullPolicy | quote }}

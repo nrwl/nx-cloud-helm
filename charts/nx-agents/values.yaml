@@ -11,6 +11,10 @@ naming:
   # Overrides the app name (defined in _helpers.tpl) used when installing the chart
   nameOverride: ''
 
+# allows executor binaries to be loaded directly into a local volume by the controller init container
+# removes to need to maintain to deploy and download from a bucket
+enableLocalExecutorBinaryStorage: false
+
 # Our workflow agents use 2 service accounts: 1 for the controller itself that has more permissions and 1 for the runner
 # which is more constrained
 # Each Service Account definition allows you to attach additional annotations that can be applied to the controller service
