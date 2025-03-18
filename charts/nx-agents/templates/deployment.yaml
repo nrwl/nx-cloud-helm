@@ -57,18 +57,18 @@ spec:
       {{- end }}
       containers:
         - command:
-            - /nx-cloud-workflow-controller
-            - --namespace={{ .Values.global.namespace }}
-            - --in-cluster=true
-          {{- range $key, $value := .Values.executor.env }}
-            - --executor-env={{ $key }}={{ $value }}
-          {{- end }}
-            - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
-          {{- if .Values.localExecutorBinaryStorage.enabled }}
-            - --enable-volume-based-executor-deployments=true
-          {{- end }}
-          {{- range $key, $value := .Values.controller.deployment.args }}
-            - --{{ $key }}={{ $value }}
+          - /nx-cloud-workflow-controller
+          - --namespace={{ .Values.global.namespace }}
+          - --in-cluster=true
+        {{- range $key, $value := .Values.executor.env }}
+          - --executor-env={{ $key }}={{ $value }}
+        {{- end }}
+          - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
+        {{- if .Values.localExecutorBinaryStorage.enabled }}
+          - --enable-volume-based-executor-deployments=true
+        {{- end }}
+        {{- range $key, $value := .Values.controller.deployment.args }}
+          - --{{ $key }}={{ $value }}
           {{- end }}
           image: {{ include "nxCloud.images.workflowController.image" . }}
           imagePullPolicy: {{ .Values.controller.image.pullPolicy | quote }}
