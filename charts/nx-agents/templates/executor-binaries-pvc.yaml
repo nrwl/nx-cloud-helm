@@ -1,4 +1,4 @@
-{{- if .Values.localExecutorBinaryStorage.enabled }}
+{{- if .Values.controller.localExecutorBinaryStorage.enabled }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -11,11 +11,6 @@ naming:
   # Overrides the app name (defined in _helpers.tpl) used when installing the chart
   nameOverride: ''
 
-localExecutorBinaryStorage:
-  enabled: false
-  storageClassName: ''
-  annotations: {}
-  size: '1Gi'
 # Our workflow agents use 2 service accounts: 1 for the controller itself that has more permissions and 1 for the runner
 # which is more constrained
 # Each Service Account definition allows you to attach additional annotations that can be applied to the controller service
@@ -107,6 +102,11 @@ controller:
   # These are our recommended resources for the controller. However we have noted that a request as low as 0.2 CPU and 0.5Gi
   # memory can work for many cases
   useDefaultValkeyAddress: true
+  localExecutorBinaryStorage:
+    enabled: false
+    storageClassName: ''
+    annotations: {}
+    size: '1Gi'
   resources:
     limits:
       memory: '1Gi'

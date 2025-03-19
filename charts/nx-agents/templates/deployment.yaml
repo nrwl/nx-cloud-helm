@@ -40,7 +40,7 @@ spec:
       nodeSelector:
         {{- toYaml .Values.controller.deployment.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.localExecutorBinaryStorage.enabled }}
+      {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
       initContainers:
         - name: load-executor-binaries
           image: {{ include "nxCloud.images.workflowController.image" . }}
@@ -64,7 +64,7 @@ spec:
           - --executor-env={{ $key }}={{ $value }}
         {{- end }}
           - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
-        {{- if .Values.localExecutorBinaryStorage.enabled }}
+        {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
           - --enable-volume-based-executor-deployments=true
         {{- end }}
         {{- range $key, $value := .Values.controller.deployment.args }}
