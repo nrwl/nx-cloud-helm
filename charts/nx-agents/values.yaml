@@ -106,7 +106,7 @@ controller:
     enabled: false
     storageClassName: ''
     annotations: {}
-    size: '1Gi'
+    size: '8Gi'
   resources:
     limits:
       memory: '1Gi'
