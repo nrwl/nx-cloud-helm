@@ -145,3 +145,9 @@ spec:
       serviceAccount: {{ .Values.serviceAccounts.controller.name }}
       serviceAccountName: {{ .Values.serviceAccounts.controller.name }}
       terminationGracePeriodSeconds: 10
+      {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+      volumes:
+        - name: executor-binaries
+          persistentVolumeClaim:
+            claimName: executor-binaries-volume
+      {{- end }}
