@@ -26,6 +26,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       {{- if .Values.controller.deployment.affinity }}
@@ -40,16 +42,35 @@ spec:
       nodeSelector:
         {{- toYaml .Values.controller.deployment.nodeSelector | nindent 8 }}
       {{- end }}
+      {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+      initContainers:
+        - name: load-executor-binaries
+          image: {{ include "nxCloud.images.workflowController.image" . }}
+          command: ['/executor-loader']
+          volumeMounts:
+          - name: executor-binaries
+            mountPath: /executor-binaries
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - 'ALL'
+      {{- end }}
       containers:
         - command:
           - /nx-cloud-workflow-controller
           - --namespace={{ .Values.global.namespace }}
           - --in-cluster=true
-          {{- range $key, $value := .Values.executor.env }}
+        {{- range $key, $value := .Values.executor.env }}
           - --executor-env={{ $key }}={{ $value }}
-          {{- end }}
+        {{- end }}
           - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
-          {{- range $key, $value := .Values.controller.deployment.args }}
+        {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+          - --enable-volume-based-executor-deployments=true
+        {{- end }}
+        {{- range $key, $value := .Values.controller.deployment.args }}
           - --{{ $key }}={{ $value }}
           {{- end }}
           image: {{ include "nxCloud.images.workflowController.image" . }}

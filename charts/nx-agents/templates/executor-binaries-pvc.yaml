@@ -1,0 +1,23 @@
+{{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: executor-binaries-volume
+  namespace: {{ .Values.global.namespace }}
+  labels:
+    {{- include "nxCloud.app.labels" . | indent 4 }}
+  {{- if .Values.localExecutorBinaryStorage.annotations }}
+  annotations:
+    {{- toYaml .Values.controller.deployment.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.localExecutorBinaryStorage.storageClassName }}
+  storageClassName: {{ .Values.localExecutorBinaryStorage.storageClassName }}
+  {{- end}}
+  resources:
+    requests:
+      storage: {{ .Values.localExecutorBinaryStorage.size }}
+{{- end }}
