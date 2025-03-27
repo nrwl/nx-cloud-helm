@@ -42,21 +42,9 @@ spec:
       nodeSelector:
         {{- toYaml .Values.controller.deployment.nodeSelector | nindent 8 }}
       {{- end }}
-      {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+      {{- if gt (len .Values.controller.deployment.initContainers) 0 }}
       initContainers:
-        - name: load-executor-binaries
-          image: {{ include "nxCloud.images.workflowController.image" . }}
-          command: ['/executor-loader']
-          volumeMounts:
-          - name: executor-binaries
-            mountPath: /executor-binaries
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - 'ALL'
+        {{- toYaml .Values.controller.deployment.initContainers | nindent 8 }}
       {{- end }}
       containers:
         - command:
@@ -67,9 +55,6 @@ spec:
           - --executor-env={{ $key }}={{ $value }}
         {{- end }}
           - --workflow-service-address=http://nx-cloud-workflow-controller-service:9000
-        {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
-          - --enable-volume-based-executor-deployments=true
-        {{- end }}
         {{- range $key, $value := .Values.controller.deployment.args }}
           - --{{ $key }}={{ $value }}
           {{- end }}
@@ -79,6 +64,10 @@ spec:
           resources: {{- toYaml .Values.controller.resources | nindent 12 }}
           {{- end }}
           name: nx-cloud-workflow-controller
+          {{- if gt (len .Values.controller.deployment.volumeMounts) 0 }}
+          volumeMounts:
+            {{- toYaml .Values.controller.deployment.volumeMounts | nindent 12 }}
+          {{- end }}
           securityContext:
             runAsUser: 1000
             allowPrivilegeEscalation: false
@@ -145,9 +134,7 @@ spec:
       serviceAccount: {{ .Values.serviceAccounts.controller.name }}
       serviceAccountName: {{ .Values.serviceAccounts.controller.name }}
       terminationGracePeriodSeconds: 10
-      {{- if .Values.controller.localExecutorBinaryStorage.enabled }}
+      {{- if gt (len .Values.controller.deployment.volumes) 0 }}
       volumes:
-        - name: executor-binaries
-          persistentVolumeClaim:
-            claimName: executor-binaries-volume
+        {{- toYaml .Values.controller.deployment.volumes | nindent 8 }}
       {{- end }}
