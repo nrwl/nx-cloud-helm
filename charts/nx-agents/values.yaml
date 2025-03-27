@@ -63,6 +63,13 @@ controller:
     tolerations: {}
     nodeSelector: {}
 
+    # These are additional volumes that will be passed to the controller deployment
+    volumes: []
+    volumeMounts: []
+
+    # These are additional init containers that will be passed to the controller deployment
+    initContainers: []
+
     # These are additional args that will be passed to the controller binary when it starts. This is useful for passing
     # certain configuration options to the controller. Available options are documented in the controller's help output.
     # e.g. `docker run --rm -it <PATH_TO_CONTROLLER_IMAGE> /nx-cloud-workflow-controller --help`
