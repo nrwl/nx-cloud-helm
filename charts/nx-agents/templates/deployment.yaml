@@ -26,8 +26,6 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       {{- if .Values.controller.deployment.affinity }}
