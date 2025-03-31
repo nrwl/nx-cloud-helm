@@ -32,13 +32,19 @@ spec:
           securityContext:
           {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
           {{- end }}
-          {{- if .Values.selfSignedCertConfigMap }}
+          {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
           volumeMounts:
+            {{- if .Values.selfSignedCertConfigMap }}
             - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
               name: cacerts
               subPath: security
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
+            {{- end }}
+            {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+            - mountPath: /opt/nx-cloud/resource-classes
+              name: resource-class-config-volume
+            {{- end }}
           {{- end}}
           env:
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
@@ -56,6 +62,10 @@ spec:
             - name: NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS
               value: '{{ .Values.clearRecordsOlderThanDays }}'
           {{- end }}
+          {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+            - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+              value: '/opt/nx-cloud/resource-classes/agentConfigs.yaml'
+          {{- end }}
           {{- if .Values.secret.adminPassword }}
             {{- if .Values.secret.name }}
             - name: ADMIN_PASSWORD
@@ -69,13 +79,23 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
           {{- end }}
-      {{- if .Values.selfSignedCertConfigMap }}
+      {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
       volumes:
+        {{- if .Values.selfSignedCertConfigMap }}
         - emptyDir: { }
           name: cacerts
         - configMap:
             name: {{ .Values.selfSignedCertConfigMap }}
           name: self-signed-certs-volume
+        {{- end }}
+        {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+        - configMap:
+            name: {{ .Values.resourceClassConfiguration.name }}
+            items:
+              - key: {{ .Values.resourceClassConfiguration.path }}
+                path: agentConfigs.yaml
+          name: resource-class-config-volume
+        {{- end }}
       {{- end }}
       restartPolicy: OnFailure
 {{- end }}

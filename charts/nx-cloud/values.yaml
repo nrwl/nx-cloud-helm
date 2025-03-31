@@ -223,6 +223,12 @@ saml:
 selfSignedCertConfigMap: ''
 vcsHttpsProxy: ''
 
+# Optional: ConfigMap for loading resource class configuration
+# If this feature is used, both name and path must be specified
+resourceClassConfiguration:
+  name: ""      # Name of the configmap containing resource class configuration
+  path: ""      # Path to the specific key within the configmap that contains the configuration
+
 secret:
   name: ''
   nxCloudMongoServerEndpoint: ''
@@ -239,5 +245,6 @@ secret:
   githubAppClientId: ''
   githubAppClientSecret: ''
   gitlabAccessToken: ''
+
 
 extraManifests: {}
