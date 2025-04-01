@@ -60,13 +60,19 @@ spec:
           securityContext:
           {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
           {{- end }}
-          {{- if .Values.selfSignedCertConfigMap }}
+          {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
           volumeMounts:
+            {{- if .Values.selfSignedCertConfigMap }}
             - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
               name: cacerts
               subPath: security
             - mountPath: /self-signed-certs
               name: self-signed-certs-volume
+            {{- end }}
+            {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+            - mountPath: /opt/nx-cloud/resource-classes
+              name: resource-class-config-volume
+            {{- end }}
           {{- end}}
           startupProbe:
             httpGet:
@@ -94,6 +100,10 @@ spec:
           {{- include "nxCloud.workflows.serviceTarget" . | indent 12 }}
           {{- if .Values.nxApi.deployment.env }}
             {{- toYaml .Values.nxApi.deployment.env | nindent 12 }}
+          {{- end }}
+          {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+            - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+              value: '/opt/nx-cloud/resource-classes/agentConfigs.yaml'
           {{- end }}
           {{- if .Values.enableMessageQueue }}
             - name: ACTIVEMQ_ADDRESS
@@ -152,11 +162,21 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
         {{- end }}
-      {{- if .Values.selfSignedCertConfigMap }}
+      {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
       volumes:
+        {{- if .Values.selfSignedCertConfigMap }}
         - emptyDir: { }
           name: cacerts
         - configMap:
             name: {{ .Values.selfSignedCertConfigMap }}
           name: self-signed-certs-volume
+        {{- end }}
+        {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
+        - configMap:
+            name: {{ .Values.resourceClassConfiguration.name }}
+            items:
+              - key: {{ .Values.resourceClassConfiguration.path }}
+                path: agentConfigs.yaml
+          name: resource-class-config-volume
+        {{- end }}
       {{- end }}
