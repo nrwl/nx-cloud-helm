@@ -117,3 +117,88 @@ Below are various little env snippets that multiple mainifests make use of
 - name: NX_API_INTERNAL_BASE_URL
   value: http://nx-cloud-nx-api-service
 {{- end }}
+
+{{/*
+Volume Mounts Helper - combines standard mounts with custom mounts from values
+Usage: {{ include "nxCloud.volumeMounts" (dict "component" .Values.componentName "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path)) }}
+*/}}
+{{- define "nxCloud.volumeMounts" -}}
+{{- $component := .component -}}
+{{- $selfSigned := .selfSigned -}}
+{{- $resourceClass := .resourceClass -}}
+{{- $hasCustomMounts := false -}}
+{{- if $component.deployment -}}
+  {{- if $component.deployment.volumeMounts -}}
+    {{- $hasCustomMounts = true -}}
+  {{- end -}}
+{{- else if $component.volumeMounts -}}
+  {{- $hasCustomMounts = true -}}
+{{- end -}}
+
+{{- if or $selfSigned $resourceClass $hasCustomMounts }}
+volumeMounts:
+  {{- if $selfSigned }}
+  - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
+    name: cacerts
+    subPath: security
+  - mountPath: /self-signed-certs
+    name: self-signed-certs-volume
+  {{- end }}
+  {{- if $resourceClass }}
+  - mountPath: /opt/nx-cloud/resource-classes
+    name: resource-class-config-volume
+  {{- end }}
+  {{- if $component.deployment }}
+    {{- if $component.deployment.volumeMounts }}
+      {{- toYaml $component.deployment.volumeMounts | nindent 2 }}
+    {{- end }}
+  {{- else if $component.volumeMounts }}
+    {{- toYaml $component.volumeMounts | nindent 2 }}
+  {{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Volumes Helper - combines standard volumes with custom volumes from values
+Usage: {{ include "nxCloud.volumes" (dict "component" .Values.componentName "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "resourceClassConfig" .Values.resourceClassConfiguration) }}
+*/}}
+{{- define "nxCloud.volumes" -}}
+{{- $component := .component -}}
+{{- $selfSigned := .selfSigned -}}
+{{- $resourceClass := .resourceClass -}}
+{{- $resourceClassConfig := .resourceClassConfig -}}
+{{- $hasCustomVolumes := false -}}
+{{- if $component.deployment -}}
+  {{- if $component.deployment.volumes -}}
+    {{- $hasCustomVolumes = true -}}
+  {{- end -}}
+{{- else if $component.volumes -}}
+  {{- $hasCustomVolumes = true -}}
+{{- end -}}
+
+{{- if or $selfSigned $resourceClass $hasCustomVolumes }}
+volumes:
+  {{- if $selfSigned }}
+  - emptyDir: {}
+    name: cacerts
+  - configMap:
+      name: {{ $selfSigned }}
+    name: self-signed-certs-volume
+  {{- end }}
+  {{- if $resourceClass }}
+  - configMap:
+      name: {{ $resourceClassConfig.name }}
+      items:
+        - key: {{ $resourceClassConfig.path }}
+          path: agentConfigs.yaml
+    name: resource-class-config-volume
+  {{- end }}
+  {{- if $component.deployment }}
+    {{- if $component.deployment.volumes }}
+      {{- toYaml $component.deployment.volumes | nindent 2 }}
+    {{- end }}
+  {{- else if $component.volumes }}
+    {{- toYaml $component.volumes | nindent 2 }}
+  {{- end }}
+{{- end }}
+{{- end -}}

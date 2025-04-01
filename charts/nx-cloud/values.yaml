@@ -31,6 +31,8 @@ frontend:
     replicas: 1
     port: 4202
     env: []
+    volumes: []
+    volumeMounts: []
   service:
     name: nx-cloud-frontend-service
     type: ClusterIP
@@ -56,6 +58,8 @@ nxApi:
     port: 4203
     env: []
     readinessProbe: {}
+    volumes: []
+    volumeMounts: []
   service:
     name: nx-cloud-nx-api-service
     type: ClusterIP
@@ -107,6 +111,8 @@ aggregator:
     digest: ''
     pullPolicy: Always
   env: []
+  volumes: []
+  volumeMounts: []
   resources:
     limits: {}
     requests:

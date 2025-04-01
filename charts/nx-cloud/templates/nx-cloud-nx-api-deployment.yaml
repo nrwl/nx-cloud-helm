@@ -60,20 +60,7 @@ spec:
           securityContext:
           {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
           {{- end }}
-          {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
-          volumeMounts:
-            {{- if .Values.selfSignedCertConfigMap }}
-            - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
-              name: cacerts
-              subPath: security
-            - mountPath: /self-signed-certs
-              name: self-signed-certs-volume
-            {{- end }}
-            {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
-            - mountPath: /opt/nx-cloud/resource-classes
-              name: resource-class-config-volume
-            {{- end }}
-          {{- end}}
+          {{ include "nxCloud.volumeMounts" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path)) | indent 10 }}
           startupProbe:
             httpGet:
               path: /nx-cloud/uptime-check
@@ -162,21 +149,4 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
         {{- end }}
-      {{- if or .Values.selfSignedCertConfigMap (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) }}
-      volumes:
-        {{- if .Values.selfSignedCertConfigMap }}
-        - emptyDir: { }
-          name: cacerts
-        - configMap:
-            name: {{ .Values.selfSignedCertConfigMap }}
-          name: self-signed-certs-volume
-        {{- end }}
-        {{- if and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path }}
-        - configMap:
-            name: {{ .Values.resourceClassConfiguration.name }}
-            items:
-              - key: {{ .Values.resourceClassConfiguration.path }}
-                path: agentConfigs.yaml
-          name: resource-class-config-volume
-        {{- end }}
-      {{- end }}
+      {{ include "nxCloud.volumes" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "resourceClassConfig" .Values.resourceClassConfiguration) | indent 6 }}
