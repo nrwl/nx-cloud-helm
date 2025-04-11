@@ -167,6 +167,8 @@ Usage: {{ include "nxCloud.volumes" (dict "component" .Values.componentName "sel
 {{- $selfSigned := .selfSigned -}}
 {{- $resourceClass := .resourceClass -}}
 {{- $resourceClassConfig := .resourceClassConfig -}}
+{{- $isNxApi := .isNxApi -}}
+{{- $preBuiltJavaCertStoreConfigMap := .preBuiltJavaCertStoreConfigMap -}}
 {{- $hasCustomVolumes := false -}}
 {{- if $component.deployment -}}
   {{- if $component.deployment.volumes -}}
@@ -182,7 +184,7 @@ volumes:
   - emptyDir: {}
     name: cacerts
   - configMap:
-      name: {{ $selfSigned }}
+      name: {{ if and $isNxApi $preBuiltJavaCertStoreConfigMap }}{{ $preBuiltJavaCertStoreConfigMap }}{{ else }}{{ $selfSigned }}{{ end }}
     name: self-signed-certs-volume
   {{- end }}
   {{- if $resourceClass }}

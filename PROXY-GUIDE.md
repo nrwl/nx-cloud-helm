@@ -91,3 +91,19 @@ If you are using a self-hosted service such as Gitlab or Github and securing con
    ```yaml
    selfSignedCertConfigMap: 'self-signed-certs'
    ```
+
+#### Pre-built Java cacerts 
+
+If you provide a custom `cert.pem` file above, containing multiple certs, because the Java services need to be import each one by one into the keystore, this can sometimes result in long
+nx-api pod startup times. As an alternative, you can "pre-build" a Java keystore containing your custom CAs:
+
+1. Pull our "custom keystore creator" Docker image: `docker pull nxprivatecloud/create-custom-cacerts:latest`
+2. Make sure your custom `cert.pem` file is available locally, for example in `${HOME}/custom-certs/cert.pem` (make sure it's called `cert.pem`)
+3. Run the image and mount the folder where your `cert.pem` file is located: `docker run -v ${HOME}/custom-certs:/certs nxprivatecloud/create-custom-cacerts:latest`
+4. The image will import all your custom certs and should output a new custom certs store for you in your mounted folder: `${HOME}/custom-certs/cacerts`
+5. Apply a new configmap with this: `cd ${HOME}/custom-certs && kubectl create configmap pre-built-java-cert-store --from-file=cacerts=./cacerts`
+6. Add this option to your Helm values file: 
+    ```yaml
+   preBuiltJavaCertStoreConfigMap: 'pre-built-java-cert-store'
+   ```
+7. IMPORTANT: make sure you keep your previously created `self-signed-certs` configMap and the `selfSignedCertConfigMap` option also stays defined in your Helm values. The frontend pod will continue to need this.
