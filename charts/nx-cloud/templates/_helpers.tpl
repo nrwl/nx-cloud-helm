@@ -182,7 +182,7 @@ volumes:
   - emptyDir: {}
     name: cacerts
   - configMap:
-      name: {{ $selfSigned }}
+      name: {{ default $selfSigned .Values.preBuiltJavaCertStoreConfigMap }}
     name: self-signed-certs-volume
   {{- end }}
   {{- if $resourceClass }}
