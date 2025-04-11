@@ -149,4 +149,4 @@ spec:
             - name: NX_CLOUD_USE_MONGO42
               value: 'false'
         {{- end }}
-      {{ include "nxCloud.volumes" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "resourceClassConfig" .Values.resourceClassConfiguration "preBuiltJavaCertStoreConfigMap" .Values.preBuiltJavaCertStoreConfigMap) | indent 6 }}
+      {{ include "nxCloud.volumes" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "resourceClassConfig" .Values.resourceClassConfiguration "preBuiltJavaCertStoreConfigMap" .Values.preBuiltJavaCertStoreConfigMap "isNxApi" true) | indent 6 }}
