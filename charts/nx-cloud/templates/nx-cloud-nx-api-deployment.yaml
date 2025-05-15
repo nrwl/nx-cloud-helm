@@ -61,7 +61,7 @@ spec:
           securityContext:
           {{- toYaml .Values.nxApi.securityContext | nindent 12 }}
           {{- end }}
-          {{ include "nxCloud.volumeMounts" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path)) | indent 10 }}
+          {{ include "nxCloud.volumeMounts" (dict "component" .Values.nxApi "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "global" .Values.global.imageTag) | indent 10 }}
           startupProbe:
             httpGet:
               path: /nx-cloud/uptime-check

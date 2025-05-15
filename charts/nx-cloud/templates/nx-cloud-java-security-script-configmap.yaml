@@ -46,7 +46,7 @@ data:
     else
       echo "Could not find Java security directory in Corretto installation"
       # List all potential security directories for debugging
-      find /usr/lib/jvm -name "security" -type d 2>/dev/null
+      find /usr -name "security" -type d 2>/dev/null | grep -i java
       exit 1
     fi
     echo "Successfully copied Java security files from $JAVA_PATH to /cacerts"

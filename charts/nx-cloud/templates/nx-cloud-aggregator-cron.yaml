@@ -33,7 +33,7 @@ spec:
           securityContext:
           {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
           {{- end }}
-          {{ include "nxCloud.volumeMounts" (dict "component" .Values.aggregator "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path)) | indent 10 }}
+          {{ include "nxCloud.volumeMounts" (dict "component" .Values.aggregator "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "global" .Values.global.imageTag) | indent 10 }}
           env:
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
