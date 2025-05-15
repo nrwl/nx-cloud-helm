@@ -9,8 +9,7 @@ spec:
       initContainers:
         - command:
             - sh
-            - -c
-            - cp -r /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security /cacerts
+            - /scripts/find-java-security.sh
           image: {{ include "nxCloud.images.aggregator.image" . }}
           name: copy-cacerts
           {{- if .Values.aggregator.securityContext }}
@@ -20,6 +19,8 @@ spec:
           volumeMounts:
             - mountPath: /cacerts
               name: cacerts
+            - mountPath: /scripts
+              name: java-security-script
       {{- end}}
       containers:
         - name: nx-cloud-aggregator
@@ -32,7 +33,7 @@ spec:
           securityContext:
           {{- toYaml .Values.aggregator.securityContext | nindent 12 }}
           {{- end }}
-          {{ include "nxCloud.volumeMounts" (dict "component" .Values.aggregator "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path)) | indent 10 }}
+          {{ include "nxCloud.volumeMounts" (dict "component" .Values.aggregator "selfSigned" .Values.selfSignedCertConfigMap "resourceClass" (and .Values.resourceClassConfiguration.name .Values.resourceClassConfiguration.path) "global" .Values.global.imageTag) | indent 10 }}
           env:
           {{- include "nxCloud.env.mongoSecrets" . | indent 12 }}
           {{- include "nxCloud.env.verboseLogging" . | indent 12 }}
