@@ -135,10 +135,39 @@ Usage: {{ include "nxCloud.volumeMounts" (dict "component" .Values.componentName
   {{- $hasCustomMounts = true -}}
 {{- end -}}
 
+{{/* Determine which Java version to use based on image tag */}}
+{{- $javaPath := "/usr/lib/jvm/java-21-amazon-corretto/jre/lib/security" -}}
+{{- $imageTag := "" -}}
+{{- if $component.image.tag -}}
+  {{- $imageTag = $component.image.tag | toString -}}
+{{- else if .global -}}
+  {{- $imageTag = .global | toString -}}
+{{- end -}}
+
+{{/* Default to Java 21 for 'latest' or versions >= 2505.15.0 */}}
+{{- if $imageTag -}}
+  {{- if ne $imageTag "latest" -}}
+    {{/* Normalize the version for semver comparison */}}
+    {{- $normalizedVersion := $imageTag -}}
+    
+    {{/* Handle versions without patch component */}}
+    {{- if eq (len (splitList "." $normalizedVersion)) 1 -}}
+      {{- $normalizedVersion = printf "%s.0.0" $normalizedVersion -}}
+    {{- else if eq (len (splitList "." $normalizedVersion)) 2 -}}
+      {{- $normalizedVersion = printf "%s.0" $normalizedVersion -}}
+    {{- end -}}
+    
+    {{/* Compare with semver */}}
+    {{- if semverCompare "< 2505.15.0" $normalizedVersion -}}
+      {{- $javaPath = "/usr/lib/jvm/java-17-amazon-corretto/jre/lib/security" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{- if or $selfSigned $resourceClass $hasCustomMounts }}
 volumeMounts:
   {{- if $selfSigned }}
-  - mountPath: /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security
+  - mountPath: {{ $javaPath }}
     name: cacerts
     subPath: security
   - mountPath: /self-signed-certs
@@ -186,6 +215,9 @@ volumes:
   - configMap:
       name: {{ if and $isNxApi $preBuiltJavaCertStoreConfigMap }}{{ $preBuiltJavaCertStoreConfigMap }}{{ else }}{{ $selfSigned }}{{ end }}
     name: self-signed-certs-volume
+  - configMap:
+      name: nx-cloud-java-security-script
+    name: java-security-script
   {{- end }}
   {{- if $resourceClass }}
   - configMap:
