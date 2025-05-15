@@ -10,7 +10,7 @@ spec:
         - command:
             - sh
             - -c
-            - cp -r /usr/lib/jvm/java-17-amazon-corretto/jre/lib/security /cacerts
+            - /scripts/find-java-security.sh
           image: {{ include "nxCloud.images.aggregator.image" . }}
           name: copy-cacerts
           {{- if .Values.aggregator.securityContext }}
@@ -20,6 +20,8 @@ spec:
           volumeMounts:
             - mountPath: /cacerts
               name: cacerts
+            - mountPath: /scripts
+              name: java-security-script
       {{- end}}
       containers:
         - name: nx-cloud-aggregator

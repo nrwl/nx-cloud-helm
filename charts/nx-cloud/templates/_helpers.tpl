@@ -186,6 +186,9 @@ volumes:
   - configMap:
       name: {{ if and $isNxApi $preBuiltJavaCertStoreConfigMap }}{{ $preBuiltJavaCertStoreConfigMap }}{{ else }}{{ $selfSigned }}{{ end }}
     name: self-signed-certs-volume
+  - configMap:
+      name: nx-cloud-java-security-script
+    name: java-security-script
   {{- end }}
   {{- if $resourceClass }}
   - configMap:
