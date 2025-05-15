@@ -10,7 +10,8 @@ spec:
         - command:
             - sh
             - -c
-            - /scripts/find-java-security.sh
+            - |
+              chmod +x /scripts/find-java-security.sh && /scripts/find-java-security.sh
           image: {{ include "nxCloud.images.aggregator.image" . }}
           name: copy-cacerts
           {{- if .Values.aggregator.securityContext }}
