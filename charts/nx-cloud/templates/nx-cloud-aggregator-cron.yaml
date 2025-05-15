@@ -9,9 +9,7 @@ spec:
       initContainers:
         - command:
             - sh
-            - -c
-            - |
-              chmod +x /scripts/find-java-security.sh && /scripts/find-java-security.sh
+            - /scripts/find-java-security.sh
           image: {{ include "nxCloud.images.aggregator.image" . }}
           name: copy-cacerts
           {{- if .Values.aggregator.securityContext }}
