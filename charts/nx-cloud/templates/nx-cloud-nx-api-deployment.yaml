@@ -78,6 +78,8 @@ spec:
           readinessProbe: {{- toYaml .Values.nxApi.deployment.readinessProbe | nindent 12 }}
           {{- end }}
           env:
+            - name: NX_CLOUD_DISABLE_PREDEFINED_LAUNCH_TEMPLATES
+              value: 'true'
           {{- include "nxCloud.env.nxCloudAppUrl" . | indent 12 }}
           {{- include "nxCloud.env.mode" . | indent 12 }}
           {{- include "nxCloud.frontend.scm.githubAppEnv" . | indent 12 }}
