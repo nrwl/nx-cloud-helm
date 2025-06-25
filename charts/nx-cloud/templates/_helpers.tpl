@@ -116,10 +116,12 @@ Below are various little env snippets that multiple mainifests make use of
   value: {{ .Values.nxApi.service.port }}
 - name: NX_API_INTERNAL_BASE_URL
   value: http://{{ .Values.nxApi.service.name }}
+{{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
 - name: FILE_SERVER_INTERNAL_BASE_URL
   value: 'http://{{ .Values.fileServer.service.name }}'
 - name: FILE_SERVER_INTERNAL_PORT
   value: {{ .Values.fileServer.service.port }}
+{{- end }}
 {{- end }}
 
 {{/*
