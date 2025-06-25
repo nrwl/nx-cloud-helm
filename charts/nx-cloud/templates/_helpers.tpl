@@ -116,6 +116,10 @@ Below are various little env snippets that multiple mainifests make use of
   value: '4203'
 - name: NX_API_INTERNAL_BASE_URL
   value: http://nx-cloud-nx-api-service
+- name: FILE_SERVER_INTERNAL_BASE_URL
+  value: 'http://nx-cloud-file-server-service'
+- name: FILE_SERVER_INTERNAL_PORT
+  value: '5000'
 {{- end }}
 
 {{/*
