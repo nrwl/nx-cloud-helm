@@ -113,7 +113,7 @@ Below are various little env snippets that multiple mainifests make use of
 
 {{- define "nxCloud.frontend.nxApiTarget" }}
 - name: NX_API_INTERNAL_PORT
-  value: {{ .Values.nxApi.service.port }}
+  value: {{ .Values.nxApi.service.port | quote }}
 - name: NX_API_INTERNAL_BASE_URL
   value: http://{{ .Values.nxApi.service.name }}
 {{- end }}
@@ -123,7 +123,7 @@ Below are various little env snippets that multiple mainifests make use of
 - name: FILE_SERVER_INTERNAL_BASE_URL
   value: http://{{ .Values.fileServer.service.name }}
 - name: FILE_SERVER_INTERNAL_PORT
-  value: {{ .Values.fileServer.service.port }}
+  value: {{ .Values.fileServer.service.port | quote }}
 {{- end }}
 {{- end }}
 
