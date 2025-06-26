@@ -113,9 +113,18 @@ Below are various little env snippets that multiple mainifests make use of
 
 {{- define "nxCloud.frontend.nxApiTarget" }}
 - name: NX_API_INTERNAL_PORT
-  value: '4203'
+  value: {{ .Values.nxApi.service.port | quote }}
 - name: NX_API_INTERNAL_BASE_URL
-  value: http://nx-cloud-nx-api-service
+  value: http://{{ .Values.nxApi.service.name }}
+{{- end }}
+
+{{- define "nxCloud.frontend.fileServerTarget" }}
+{{- if and (not .Values.awsS3.enabled) (not .Values.azure.enabled) }}
+- name: FILE_SERVER_INTERNAL_BASE_URL
+  value: http://{{ .Values.fileServer.service.name }}
+- name: FILE_SERVER_INTERNAL_PORT
+  value: {{ .Values.fileServer.service.port | quote }}
+{{- end }}
 {{- end }}
 
 {{/*
