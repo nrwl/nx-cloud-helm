@@ -4,7 +4,7 @@ global:
   imagePullSecrets: []
 
 config:
-  nxCloudAppURL: ""
+  nxCloudAppURL: "nx.test"
   verboseLogging: false
   fileServer:
     cacheExpirationPeriodInDays: 1
@@ -17,7 +17,7 @@ ingress:
   annotations: {}
   labels: {}
   className: ""
-  host: ""
+  host: "nx.test"
   tls:
     enabled: false
     secretName: ""
@@ -89,9 +89,12 @@ fileServer:
   serviceAccount:
     create: true
     name: nx-cloud-file-server
+    automount: false
     annotations: {}
     labels: {}
-    automount: false
+
+  config:
+    cacheExpirationPeriodInDays: 1
 
 aggregator:
   image:
@@ -103,7 +106,15 @@ aggregator:
     schedule: "*/10 * * * *"
     annotations: {}
     labels: {}
-    env: []
+    env:
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        value: "mongodb://127.0.0.1"
+      - name: ADMIN_PASSWORD
+        value: "test123"
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
     envFrom: []
     # envFrom:
     # - configMapRef:
@@ -129,9 +140,9 @@ aggregator:
   serviceAccount:
     create: true
     name: nx-cloud-aggregator
+    automount: false
     annotations: {}
     labels: {}
-    automount: false
 
   secret:
     create: false
@@ -154,7 +165,11 @@ frontend:
     labels: {}
     replicas: 1
     port: 4202
-    env: []
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        value: "mongodb://127.0.0.1"
 
     strategy:
       type: Recreate
@@ -210,7 +225,33 @@ api:
     labels: {}
     replicas: 1
     port: 4203
-    env: []
+    env:
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        value: "mongodb://127.0.0.1"
+      - name: FILE_SERVER_INTERNAL_BASE_URL
+        value: http://nx-cloud-file-server-service
+      - name: FILE_SERVER_INTERNAL_PORT
+        value: "5000"
+      - name: USE_VALKEY
+        value: "true"
+      - name: VALKEY_CLIENT_PROVIDER
+        value: redisson
+      - name: VALKEY_USE_SENTINEL
+        value: "true"
+      - name: VALKEY_SENTINEL_MASTER_NAME
+        value: "nxcloud"
+      - name: VALKEY_PRIMARY_ADDRESS
+        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      - name: VALKEY_REPLICA_ADDRESSES
+        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      - name: VALKEY_PORT
+        value: "6379"
+      - name: VALKEY_SENTINEL_PORT
+        value: "26379"
+      - name: VALKEY_USERNAME
+        value: "default"
+      - name: VALKEY_PASSWORD
+        value: test123
 
     strategy:
       type: Recreate
