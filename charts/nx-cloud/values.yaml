@@ -27,8 +27,8 @@ fileServer:
   enabled: true
 
   image:
-    repository: ""
-    tag: ""
+    repository: "nx-cloud-file-server"
+    tag: "2506.26.6"
     pullPolicy: IfNotPresent
 
   service:
@@ -95,8 +95,8 @@ fileServer:
 
 aggregator:
   image:
-    repository:
-    tag: ""
+    repository: "nx-cloud-aggregator"
+    tag: "2506.26.6"
     pullPolicy: IfNotPresent
 
   cronjob:
@@ -138,8 +138,8 @@ aggregator:
 
 frontend:
   image:
-    repository: ""
-    tag: ""
+    repository: "nx-cloud-frontend"
+    tag: "2506.26.6"
     pullPolicy: ""
 
   service:
@@ -194,8 +194,8 @@ frontend:
 
 api:
   image:
-    repository: ""
-    tag: ""
+    repository: "nx-cloud-nx-api"
+    tag: "2506.26.6"
     pullPolicy: ""
 
   service:
