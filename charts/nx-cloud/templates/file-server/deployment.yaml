@@ -66,10 +66,6 @@ spec:
             - name: NX_API_LOG_LEVEL
               value: 'INFO'
             {{- end }}
-            {{- if .Values.config.fileServer.cacheExpirationPeriodInDays }}
-            - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
-              value: '{{ add .Values.config.fileServer.cacheExpirationPeriodInDays 1 }}'
-            {{- end }}
             {{- if .Values.fileServer.deployment.env }}
             {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
             {{- end }}

@@ -6,8 +6,6 @@ global:
 config:
   nxCloudAppURL: ""
   verboseLogging: false
-  fileServer:
-    cacheExpirationPeriodInDays: 1
   agentConfiguration:
     create: false
     agentConfigs.yaml: ""
@@ -42,7 +40,9 @@ fileServer:
     annotations: {}
     labels: {}
     port: 5000
-    env: []
+    env:
+      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
+        value: 1
 
     strategy:
       type: RollingUpdate
