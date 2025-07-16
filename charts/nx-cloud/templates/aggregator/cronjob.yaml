@@ -1,0 +1,82 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nx-cloud-aggregator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.aggregator.cronjob.labels "context" .) | nindent 4 }}
+  {{- with .Values.aggregator.cronjob.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: {{ .Values.aggregator.cronjob.schedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if .Values.aggregator.serviceAccount.create }}
+          serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
+          {{- end }}
+          {{- with .Values.aggregator.cronjob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.aggregator.cronjob.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.aggregator.cronjob.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: nx-cloud-aggregator
+              image: {{ .Values.aggregator.image.repository }}:{{ .Values.aggregator.image.tag }}
+              imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
+              {{- if .Values.aggregator.cronjob.resources }}
+              resources: {{- toYaml .Values.aggregator.cronjob.resources | nindent 16 }}
+              {{- end }}
+              env:
+                - name: NX_CLOUD_MODE
+                  value: 'private-enterprise'
+                - name: NX_CLOUD_APP_URL
+                  value: {{ .Values.config.nxCloudAppURL }}
+                {{- if .Values.config.agentConfiguration.create }}
+                - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+                  value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
+                {{- end }}
+                {{- if .Values.config.verboseLogging }}
+                - name: NX_VERBOSE_LOGGING
+                  value: 'true'
+                - name: NX_API_LOG_LEVEL
+                  value: 'DEBUG'
+                {{- else }}
+                - name: NX_VERBOSE_LOGGING
+                  value: 'false'
+                - name: NX_API_LOG_LEVEL
+                  value: 'INFO'
+                {{- end }}
+                {{- if .Values.aggregator.cronjob.env }}
+                {{- toYaml .Values.aggregator.cronjob.env | nindent 16 }}
+                {{- end }}
+              {{- if .Values.aggregator.cronjob.envFrom }}
+              envFrom:
+                {{- toYaml .Values.aggregator.cronjob.envFrom | nindent 16 }}
+              {{- end }}
+              {{- if .Values.config.agentConfiguration.create }}
+              volumeMounts:
+                - name: resource-class-config-volume
+                  mountPath: /opt/nx-cloud/resource-classes
+              {{- end }}
+          restartPolicy: OnFailure
+          {{- if .Values.config.agentConfiguration.create }}
+          volumes:
+            - name: resource-class-config-volume
+              configMap:
+                name: agent-configuration
+                items:
+                  - key: agentConfigs.yaml
+                    path: agentConfigs.yaml
+          {{- end }}

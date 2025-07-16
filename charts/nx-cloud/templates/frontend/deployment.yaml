@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-frontend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.frontend.deployment.labels "context" .) | nindent 4 }}
+  {{- with .Values.frontend.deployment.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.frontend.deployment.replicas | default 1}}
+  selector:
+    matchLabels:
+      {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  {{- with .Values.frontend.deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+    spec:
+      serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      {{- with .Values.frontend.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.frontend.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.frontend.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: nx-cloud-frontend
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy | default .Values.global.imagePullPolicy }}
+          {{- if .Values.frontend.deployment.resources }}
+          resources: {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4202
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 4202
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - containerPort: 4202
+          env:
+            - name: NX_CLOUD_MODE
+              value: 'private-enterprise'
+            - name: NX_CLOUD_APP_URL
+              value: {{ .Values.config.nxCloudAppURL }}
+            {{- if .Values.config.verboseLogging }}
+            - name: NX_VERBOSE_LOGGING
+              value: 'true'
+            - name: NX_API_LOG_LEVEL
+              value: 'DEBUG'
+            {{- else }}
+            - name: NX_VERBOSE_LOGGING
+              value: 'false'
+            - name: NX_API_LOG_LEVEL
+              value: 'INFO'
+            {{- end }}
+            {{- if .Values.frontend.deployment.env }}
+            {{- toYaml .Values.frontend.deployment.env | nindent 12 }}
+            {{- end }}
+          {{- if .Values.frontend.deployment.envFrom }}
+          envFrom:
+            {{- toYaml .Values.frontend.deployment.envFrom | nindent 12 }}
+          {{- end }}
