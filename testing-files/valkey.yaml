@@ -40,4 +40,4 @@ metrics:
   enabled: true
   extraArgs:
     check-keys: 'backgroundTasks:workingSet,backgroundTasks:workingSet:claims'
-    count-keys: 'backgroundTasks:tasks:keyed:work:*
+    count-keys: 'backgroundTasks:tasks:keyed:work:*'
