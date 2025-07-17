@@ -44,11 +44,11 @@ jobs:
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
-          helm install mongo bitnami/mongodb -n mongodb --create-namespace -f testing-files/mongodb.yaml --wait --timeout 180s
+          helm install mongo bitnami/mongodb -n mongodb --create-namespace -f testing-files/mongodb.yaml --wait
 
       - name: Install Valkey
         run: |
-          helm install valkey bitnami/valkey -n valkey --create-namespace -f testing-files/valkey.yaml --wait --timeout 180s
+          helm install valkey bitnami/valkey -n valkey --create-namespace -f testing-files/valkey.yaml --wait
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
