@@ -108,7 +108,7 @@ aggregator:
     labels: {}
     env:
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongodb.mongodb:27017"
+        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
       - name: ADMIN_PASSWORD
         value: "password"
       - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
@@ -169,7 +169,7 @@ frontend:
       - name: NX_API_INTERNAL_BASE_URL
         value: 'http://nx-cloud-nx-api-service'
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongodb.mongodb:27017"
+        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
 
     strategy:
       type: Recreate
@@ -227,7 +227,7 @@ api:
     port: 4203
     env:
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongodb.mongodb:27017"
+        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
       - name: FILE_SERVER_INTERNAL_BASE_URL
         value: http://nx-cloud-file-server-service
       - name: FILE_SERVER_INTERNAL_PORT
