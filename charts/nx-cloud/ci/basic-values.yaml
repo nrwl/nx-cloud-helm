@@ -252,6 +252,8 @@ api:
         value: "default"
       - name: VALKEY_PASSWORD
         value: password
+      - name: ACTIVEMQ_ADDRESS
+        value: tcp://nx-cloud-messagequeue:61616
 
     strategy:
       type: Recreate
