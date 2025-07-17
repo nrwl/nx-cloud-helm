@@ -10,10 +10,10 @@ primary:
       cpu: 4
       memory: 4Gi
   persistence:
-    size: 12Gi
+    enabled: false
 
 replica:
-  replicaCount: 3
+  replicaCount: 1
   resources:
     requests:
       cpu: 1.5
@@ -22,7 +22,7 @@ replica:
       cpu: 4
       memory: 4Gi
   persistence:
-    size: 12Gi
+    enabled: false
 
 sentinel:
   enabled: true
