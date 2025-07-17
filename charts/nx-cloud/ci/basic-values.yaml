@@ -108,9 +108,9 @@ aggregator:
     labels: {}
     env:
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://127.0.0.1"
+        value: "mongodb://mongodb.mongodb:27017"
       - name: ADMIN_PASSWORD
-        value: "test123"
+        value: "password"
       - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
         value: 'true'
       - name: NX_CLOUD_LOG_OUTPUT_FORMAT
@@ -169,7 +169,7 @@ frontend:
       - name: NX_API_INTERNAL_BASE_URL
         value: 'http://nx-cloud-nx-api-service'
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://127.0.0.1"
+        value: "mongodb://mongodb.mongodb:27017"
 
     strategy:
       type: Recreate
@@ -227,7 +227,7 @@ api:
     port: 4203
     env:
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://127.0.0.1"
+        value: "mongodb://mongodb.mongodb:27017"
       - name: FILE_SERVER_INTERNAL_BASE_URL
         value: http://nx-cloud-file-server-service
       - name: FILE_SERVER_INTERNAL_PORT
@@ -251,7 +251,7 @@ api:
       - name: VALKEY_USERNAME
         value: "default"
       - name: VALKEY_PASSWORD
-        value: test123
+        value: password
 
     strategy:
       type: Recreate

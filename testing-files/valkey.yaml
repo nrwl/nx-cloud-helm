@@ -1,0 +1,43 @@
+auth:
+  password: "password"
+
+primary:
+  resources:
+    requests:
+      cpu: 1.5
+      memory: 1Gi
+    limits:
+      cpu: 4
+      memory: 4Gi
+  persistence:
+    size: 12Gi
+
+replica:
+  replicaCount: 3
+  resources:
+    requests:
+      cpu: 1.5
+      memory: 1Gi
+    limits:
+      cpu: 4
+      memory: 4Gi
+  persistence:
+    size: 12Gi
+
+sentinel:
+  enabled: true
+  primarySet: nxcloud
+  quorum: 2
+
+commonConfiguration: |-
+  # Enable AOF https://valkey.io/docs/topics/persistence.html
+  appendonly yes
+  notify-keyspace-events Els
+  # Disable RDB persistence, AOF persistence already enabled.
+  save ""
+
+metrics:
+  enabled: true
+  extraArgs:
+    check-keys: 'backgroundTasks:workingSet,backgroundTasks:workingSet:claims'
+    count-keys: 'backgroundTasks:tasks:keyed:work:*
