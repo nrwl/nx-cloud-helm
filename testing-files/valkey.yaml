@@ -2,25 +2,25 @@ auth:
   password: "password"
 
 primary:
-  resources:
-    requests:
-      cpu: 1.5
-      memory: 1Gi
-    limits:
-      cpu: 4
-      memory: 4Gi
+#  resources:
+#    requests:
+#      cpu: 1.5
+#      memory: 1Gi
+#    limits:
+#      cpu: 4
+#      memory: 4Gi
   persistence:
     enabled: false
 
 replica:
   replicaCount: 3
-  resources:
-    requests:
-      cpu: 1.5
-      memory: 1Gi
-    limits:
-      cpu: 4
-      memory: 4Gi
+#  resources:
+#    requests:
+#      cpu: 1.5
+#      memory: 1Gi
+#    limits:
+#      cpu: 4
+#      memory: 4Gi
   persistence:
     enabled: false
 
