@@ -42,13 +42,21 @@ jobs:
 
       - name: Install MongoDB
         run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo update
-          helm install mongo bitnami/mongodb -n mongodb --create-namespace -f testing-files/mongodb.yaml --wait
+          helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
+          --version 3.0.22 \
+          --namespace mongodb \
+          --create-namespace \
+          --values testing-files/mongodb.yaml \
+          --wait
 
       - name: Install Valkey
         run: |
-          helm install valkey bitnami/valkey -n valkey --create-namespace -f testing-files/valkey.yaml --wait
+          helm install valkey oci://registry-1.docker.io/bitnamicharts/valkey \
+          --version 16.5.32 \
+          --namespace valkey \
+          --create-namespace \
+          --values testing-files/valkey.yaml \
+          --wait
 
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
