@@ -41,7 +41,7 @@ spec:
       {{- end }}
       containers:
         - name: nx-cloud-frontend
-          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Values.global.imageTag }}
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy | default .Values.global.imagePullPolicy }}
           {{- if .Values.frontend.deployment.resources }}
           resources: {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
@@ -64,7 +64,7 @@ spec:
             - name: NX_CLOUD_MODE
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
-              value: {{ .Values.config.nxCloudAppURL }}
+              value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
             {{- if .Values.config.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: 'true'

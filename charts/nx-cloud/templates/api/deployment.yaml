@@ -26,7 +26,7 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.api.serviceAccount.name }}
-      {{- if .Values.config.agentConfiguration.create }}
+      {{- if .Values.config.agentConfigs }}
       volumes:
         - name: resource-class-config-volume
           configMap:
@@ -50,9 +50,9 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: nx-cloud-nx-api
-          image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
+          image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Values.global.imageTag }}
           imagePullPolicy: {{ .Values.api.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
-          {{- if .Values.config.agentConfiguration.create }}
+          {{- if .Values.config.agentConfigs }}
           volumeMounts:
             - name: resource-class-config-volume
               mountPath: /opt/nx-cloud/resource-classes
@@ -78,8 +78,8 @@ spec:
             - name: NX_CLOUD_MODE
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
-              value: {{ .Values.config.nxCloudAppURL }}
-            {{- if .Values.config.agentConfiguration.create }}
+              value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
+            {{- if .Values.config.agentConfigs }}
             - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
               value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
             {{- end }}

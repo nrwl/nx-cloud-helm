@@ -1,14 +1,13 @@
 global:
   labels: {}
+  imageTag: "2025.06.3"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
 
 config:
   nxCloudAppURL: ""
   verboseLogging: false
-  agentConfiguration:
-    create: false
-    agentConfigs.yaml: ""
+  agentConfigs: ""
 
 ingress:
   enabled: true
@@ -42,7 +41,7 @@ fileServer:
     port: 5000
     env:
       - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
-        value: 1
+        value: "1"
 
     strategy:
       type: RollingUpdate

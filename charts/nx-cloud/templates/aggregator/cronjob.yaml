@@ -33,7 +33,7 @@ spec:
           {{- end }}
           containers:
             - name: nx-cloud-aggregator
-              image: {{ .Values.aggregator.image.repository }}:{{ .Values.aggregator.image.tag }}
+              image: {{ .Values.aggregator.image.repository }}:{{ .Values.aggregator.image.tag | default .Values.global.imageTag }}
               imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
               {{- if .Values.aggregator.cronjob.resources }}
               resources: {{- toYaml .Values.aggregator.cronjob.resources | nindent 16 }}
@@ -42,8 +42,8 @@ spec:
                 - name: NX_CLOUD_MODE
                   value: 'private-enterprise'
                 - name: NX_CLOUD_APP_URL
-                  value: {{ .Values.config.nxCloudAppURL }}
-                {{- if .Values.config.agentConfiguration.create }}
+                  value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
+                {{- if .Values.config.agentConfigs }}
                 - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
                   value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
                 {{- end }}
@@ -65,13 +65,13 @@ spec:
               envFrom:
                 {{- toYaml .Values.aggregator.cronjob.envFrom | nindent 16 }}
               {{- end }}
-              {{- if .Values.config.agentConfiguration.create }}
+              {{- if .Values.config.agentConfigs }}
               volumeMounts:
                 - name: resource-class-config-volume
                   mountPath: /opt/nx-cloud/resource-classes
               {{- end }}
           restartPolicy: OnFailure
-          {{- if .Values.config.agentConfiguration.create }}
+          {{- if .Values.config.agentConfigs }}
           volumes:
             - name: resource-class-config-volume
               configMap:

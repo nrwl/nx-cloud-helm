@@ -1,0 +1,164 @@
+config:
+  nxCloudAppURL: "nx.test"
+  agentConfigs: |
+        resourceClasses:
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/small
+            creditMultiplier: 5
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/medium
+            creditMultiplier: 10
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/medium+
+            creditMultiplier: 15
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/large
+            creditMultiplier: 20
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/large+
+            creditMultiplier: 30
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/extra_large
+            creditMultiplier: 40
+          - architecture: amd64
+            os: linux
+            identifier: docker_linux_amd64/extra_large+
+            creditMultiplier: 60
+          - architecture: arm64
+            os: linux
+            identifier: docker_linux_arm64/medium
+            creditMultiplier: 13
+          - architecture: arm64
+            os: linux
+            identifier: docker_linux_arm64/large
+            creditMultiplier: 26
+          - architecture: arm64
+            os: linux
+            identifier: docker_linux_arm64/extra_large
+            creditMultiplier: 52
+          - architecture: amd64
+            os: windows
+            identifier: windows/medium
+            creditMultiplier: 40
+        enabledImages:
+          - "ubuntu22.04-node20.9-v1"
+          - "ubuntu22.04-node20.9-v2"
+          - "ubuntu22.04-node20.9-v3"
+          - "ubuntu22.04-node20.9-v4"
+          - "ubuntu22.04-node20.9-v5"
+          - "ubuntu22.04-node20.9-v6"
+          - "ubuntu22.04-node20.11-v1"
+          - "ubuntu22.04-node20.11-v2"
+          - "ubuntu22.04-node20.11-v3"
+          - "ubuntu22.04-node20.11-v4"
+          - "ubuntu22.04-node20.11-v5"
+          - "ubuntu22.04-node20.11-v6"
+          - "ubuntu22.04-node20.11-v7"
+          - "ubuntu22.04-node20.11-v8"
+          - "ubuntu22.04-node20.11-v9"
+          - "ubuntu22.04-node20.11-v10"
+          - "ubuntu22.04-node20.11-v11"
+          - "ubuntu22.04-node20.11-v12"
+          - "ubuntu22.04-node20.19-v1"
+          - "ubuntu22.04-node20.19-v2"
+          - "ubuntu22.04-node20.19-v3"
+          - "ubuntu22.04-node20.9-v2-beta1"
+          - "ubuntu22.04-node20.9-withDind-v1"
+          - "ubuntu22.04-node20.9-withDind-v2"
+          - "ubuntu22.04-node20.9-withDind-v3"
+          - "ubuntu22.04-node20.9-withDind-v4"
+          - "ubuntu22.04-node20.9-withDind-v5"
+          - "ubuntu22.04-node20.9-withDind-v6"
+          - "ubuntu22.04-node20.9-withDind-v7"
+          - "ubuntu22.04-node20.9-withDind-v8"
+          - "ubuntu22.04-node20.9-withDind-v9"
+          - "ubuntu22.04-node20.9-withDind-v10"
+          - "ubuntu22.04-node20.9-withDind-v11"
+          - "windows-2022"
+
+ingress:
+  host: "nx.test"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+aggregator:
+  cronjob:
+    env:
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
+
+frontend:
+  deployment:
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+
+api:
+  deployment:
+    env:
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: FILE_SERVER_INTERNAL_BASE_URL
+        value: http://nx-cloud-file-server-service
+      - name: FILE_SERVER_INTERNAL_PORT
+        value: "5000"
+      - name: USE_VALKEY
+        value: "true"
+      - name: VALKEY_CLIENT_PROVIDER
+        value: redisson
+      - name: VALKEY_USE_SENTINEL
+        value: "true"
+      - name: VALKEY_SENTINEL_MASTER_NAME
+        value: "nxcloud"
+      - name: VALKEY_PRIMARY_ADDRESS
+        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      - name: VALKEY_REPLICA_ADDRESSES
+        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      - name: VALKEY_PORT
+        value: "6379"
+      - name: VALKEY_SENTINEL_PORT
+        value: "26379"
+      - name: VALKEY_USERNAME
+        value: "default"
+      - name: VALKEY_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: VALKEY_PASSWORD
+      - name: ACTIVEMQ_ADDRESS
+        value: tcp://nx-cloud-messagequeue:61616

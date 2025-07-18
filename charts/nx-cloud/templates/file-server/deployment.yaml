@@ -49,7 +49,7 @@ spec:
             claimName: {{ .Values.fileServer.pvc.name }}
       containers:
         - name: nx-cloud-file-server
-          image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag }}
+          image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag | default .Values.global.imageTag }}
           imagePullPolicy: {{ .Values.fileServer.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
           {{- if .Values.fileServer.deployment.resources }}
           resources: {{- toYaml .Values.fileServer.deployment.resources | nindent 12 }}

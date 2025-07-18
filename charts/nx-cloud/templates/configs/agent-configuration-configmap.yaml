@@ -1,4 +1,4 @@
-{{- if .Values.config.agentConfiguration.create }}
+{{- if .Values.config.agentConfigs }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,8 +7,6 @@ metadata:
   labels:
     {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.config.labels "context" .) | nindent 4 }}
 data:
-{{- if and (index .Values.config.agentConfiguration "agentConfigs.yaml") (ne (index .Values.config.agentConfiguration "agentConfigs.yaml") "") }}
   agentConfigs.yaml: |
-{{ index .Values.config.agentConfiguration "agentConfigs.yaml" | indent 4 }}
-{{- end }}
+{{ .Values.config.agentConfigs | indent 4 }}
 {{- end }}

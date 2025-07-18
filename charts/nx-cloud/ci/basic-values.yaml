@@ -1,233 +1,52 @@
-global:
-  labels: {}
-  imagePullPolicy: IfNotPresent
-  imagePullSecrets: []
-
 config:
   nxCloudAppURL: "nx.test"
-  verboseLogging: false
-  fileServer:
-    cacheExpirationPeriodInDays: 1
-  agentConfiguration:
-    create: false
-    agentConfigs.yaml: ""
 
 ingress:
-  enabled: true
-  annotations: {}
-  labels: {}
-  className: ""
   host: "nx.test"
-  tls:
-    enabled: false
-    secretName: ""
-    hosts: []
 
-fileServer:
-  enabled: true
-
-  image:
-    repository: "nxprivatecloud/nx-cloud-file-server"
-    tag: "2025.06.3"
-    pullPolicy: IfNotPresent
-
-  service:
-    annotations: {}
-    labels: {}
-    name: nx-cloud-file-server-service
-    type: ClusterIP
-    port: 5000
-
-  deployment:
-    annotations: {}
-    labels: {}
-    port: 5000
-    env: []
-
-    strategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxUnavailable: 1
-        maxSurge: 0
-
-    envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
-
-    securityContext:
-      enabled: true
-      runAsUser: 10000
-      runAsGroup: 10000
-      fsGroup: 10000
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    # If you wish to steer placement of the file-server pod(s) these will be applied to the pod spec.
-    affinity: {}
-    tolerations: {}
-    nodeSelector: {}
-
-    resources: {}
-    # resources:
-    #   limits:
-    #     memory: '1Gi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '0.5Gi'
-    #     cpu: '0.5'
-
-  pvc:
-    name: nx-cloud-file-server
-    annotations: {}
-    labels: {}
-    storageClassName: ""
-    size: 10Gi
-    helmResourcePolicy: keep
-
-  serviceAccount:
-    create: true
-    name: nx-cloud-file-server
-    automount: false
-    annotations: {}
-    labels: {}
-
-  config:
-    cacheExpirationPeriodInDays: 1
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
 
 aggregator:
-  image:
-    repository: "nxprivatecloud/nx-cloud-aggregator"
-    tag: "2025.06.3"
-    pullPolicy: IfNotPresent
-
   cronjob:
-    schedule: "*/10 * * * *"
-    annotations: {}
-    labels: {}
     env:
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
-      - name: ADMIN_PASSWORD
-        value: "password"
       - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
         value: 'true'
       - name: NX_CLOUD_LOG_OUTPUT_FORMAT
         value: 'json'
-    envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
-
-    # If you wish to steer placement of the aggregator pod(s) these will be applied to the pod spec.
-    affinity: {}
-    tolerations: {}
-    nodeSelector: {}
-
-    resources: {}
-    # Example resource configuration:
-    # resources:
-    #   limits:
-    #     memory: '1500Mi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '1200M'
-    #     cpu: '0.5'
-
-  serviceAccount:
-    create: true
-    name: nx-cloud-aggregator
-    automount: false
-    annotations: {}
-    labels: {}
-
-  secret:
-    create: false
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
 
 frontend:
-  image:
-    repository: "nxprivatecloud/nx-cloud-frontend"
-    tag: "2025.06.3"
-    pullPolicy: ""
-
-  service:
-    annotations: {}
-    labels: {}
-    name: nx-cloud-frontend-service
-    type: ClusterIP
-    port: 8080
-
   deployment:
-    annotations: {}
-    labels: {}
-    replicas: 1
-    port: 4202
     env:
       - name: NX_API_INTERNAL_BASE_URL
         value: 'http://nx-cloud-nx-api-service'
       - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
-
-    strategy:
-      type: Recreate
-      # Uncomment below for RollingUpdate
-      # type: RollingUpdate
-      # rollingUpdate:
-      #   maxUnavailable: 0
-      #   maxSurge: 1
-
-    envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
-
-    # If you wish to steer placement of the frontend pod(s) these will be applied to the pod spec.
-    affinity: {}
-    tolerations: {}
-    nodeSelector: {}
-
-    resources: {}
-    # resources:
-    #   limits:
-    #     memory: '1Gi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '0.5Gi'
-    #     cpu: '0.5'
-
-  serviceAccount:
-    create: true
-    name: nx-cloud-frontend
-    annotations: {}
-    labels: {}
-    automount: false
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
 
 api:
-  image:
-    repository: "nxprivatecloud/nx-cloud-nx-api"
-    tag: "2025.06.3"
-    pullPolicy: ""
-
-  service:
-    annotations: {}
-    labels: {}
-    name: nx-cloud-nx-api-service
-    type: ClusterIP
-    port: 4203
-
   deployment:
-    annotations: {}
-    labels: {}
-    replicas: 1
-    port: 4203
     env:
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        value: "mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017"
       - name: FILE_SERVER_INTERNAL_BASE_URL
         value: http://nx-cloud-file-server-service
       - name: FILE_SERVER_INTERNAL_PORT
@@ -250,55 +69,15 @@ api:
         value: "26379"
       - name: VALKEY_USERNAME
         value: "default"
-      - name: VALKEY_PASSWORD
-        value: password
       - name: ACTIVEMQ_ADDRESS
         value: tcp://nx-cloud-messagequeue:61616
-
-    strategy:
-      type: Recreate
-      # Uncomment below for RollingUpdate
-      # type: RollingUpdate
-      # rollingUpdate:
-      #   maxUnavailable: 0
-      #   maxSurge: 1
-
-    envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
-
-    # If you wish to steer placement of the api pod(s) these will be applied to the pod spec.
-    affinity: {}
-    tolerations: {}
-    nodeSelector: {}
-
-    resources: {}
-    # resources:
-    #   limits:
-    #     memory: '4Gi'
-    #     cpu: '3.0'
-    #   requests:
-    #     memory: '2Gi'
-    #     cpu: '1.0'
-
-  serviceAccount:
-    create: true
-    name: nx-cloud-nx-api
-    annotations: {}
-    labels: {}
-    automount: false
-
-workflowController:
-  service:
-    enabled: false
-    name: "nx-cloud-workflow-controller-service"
-    annotations: {}
-    labels: {}
-    externalName: ""
-    port: 9000
-    headless: false
-
-extraObjects: []
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: VALKEY_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: VALKEY_PASSWORD
