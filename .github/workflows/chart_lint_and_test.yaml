@@ -43,7 +43,7 @@ jobs:
       - name: Install MongoDB
         run: |
           helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
-          --version 3.0.22 \
+          --version 16.5.32 \
           --namespace mongodb \
           --create-namespace \
           --values testing-files/mongodb.yaml \
@@ -52,7 +52,7 @@ jobs:
       - name: Install Valkey
         run: |
           helm install valkey oci://registry-1.docker.io/bitnamicharts/valkey \
-          --version 16.5.32 \
+          --version 3.0.22 \
           --namespace valkey \
           --create-namespace \
           --values testing-files/valkey.yaml \
