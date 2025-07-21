@@ -113,7 +113,7 @@ aggregator:
           secretKeyRef:
             name: nx-cloud-credentials
             key: ADMIN_PASSWORD
-    resources: {}
+    resources: null
 
 frontend:
   deployment:
@@ -125,7 +125,7 @@ frontend:
           secretKeyRef:
             name: nx-cloud-credentials
             key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-    resources: {}
+    resources: null
 
 api:
   deployment:
@@ -164,4 +164,4 @@ api:
             key: VALKEY_PASSWORD
       - name: ACTIVEMQ_ADDRESS
         value: tcp://nx-cloud-messagequeue:61616
-    resources: {}
+    resources: null

@@ -47,7 +47,7 @@ fileServer:
     env:
       - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
         value: "1"
-    resources: {}
+    resources: null
 
   pvc:
     annotations:
@@ -87,7 +87,7 @@ aggregator:
           secretKeyRef:
             name: nx-cloud-credentials
             key: ADMIN_PASSWORD
-    resources: {}
+    resources: null
 
   serviceAccount:
     annotations:
@@ -121,7 +121,7 @@ frontend:
           secretKeyRef:
             name: nx-cloud-credentials
             key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-    resources: {}
+    resources: null
 
   serviceAccount:
     annotations:
@@ -182,7 +182,7 @@ api:
           secretKeyRef:
             name: nx-cloud-credentials
             key: VALKEY_PASSWORD
-    resources: {}
+    resources: null
 
   serviceAccount:
     annotations:
@@ -190,19 +190,3 @@ api:
     labels:
       dummy-api-sa-label-1: "dummy-value-1"
       dummy-api-sa-label-2: "dummy-value-2"
-
-workflowController:
-  service:
-    enabled: true
-    name: "nx-cloud-workflow-controller-service"
-    annotations:
-      dummy-wf-controller-annotation-1: "dummy-value-1"
-      dummy-wf-controller-annotation-2: "dummy-value-2"
-    labels:
-      dummy-wf-controller-label-1: "dummy-value-1"
-      dummy-wf-controller-label-2: "dummy-value-2"
-      dummy-wf-controller-label-3: "dummy-value-3"
-      service-type: "external-name"
-    externalName: "10.0.0.1"
-    port: 9000
-    headless: true

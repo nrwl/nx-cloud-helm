@@ -88,7 +88,7 @@ api:
           secretKeyRef:
             name: nx-cloud-credentials
             key: VALKEY_PASSWORD
-    resources: {}
+    resources: null
 
 # Configure frontend
 frontend:
@@ -101,7 +101,7 @@ frontend:
           secretKeyRef:
             name: nx-cloud-credentials
             key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-    resources: {}
+    resources: null
 
 # Configure aggregator
 aggregator:
@@ -121,4 +121,4 @@ aggregator:
           secretKeyRef:
             name: nx-cloud-credentials
             key: ADMIN_PASSWORD
-    resources: {}
+    resources: null
