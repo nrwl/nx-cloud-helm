@@ -1,0 +1,168 @@
+config:
+  nxCloudAppURL: "nx.test"
+
+ingress:
+  host: "nx.test"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+  # ConfigMap for file-server
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: file-server-config
+    data:
+      config.json: "file-server-config"
+
+  # ConfigMap for aggregator
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: aggregator-config
+    data:
+      config.json: "aggregator-config"
+
+  # ConfigMap for frontend
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: frontend-config
+    data:
+      config.json: "frontend-config"
+
+  # ConfigMap for api
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: api-config
+    data:
+      config.json: "api-config"
+
+# Test volumes and volumeMounts for file-server
+fileServer:
+  enabled: true
+  deployment:
+    volumes:
+      - name: file-server-config
+        configMap:
+          name: file-server-config
+      - name: file-server-data
+        persistentVolumeClaim:
+          claimName: nx-cloud-file-server
+    volumeMounts:
+      - name: file-server-config
+        mountPath: /app/config
+      - name: file-server-data
+        mountPath: /app/data
+
+# Test volumes and volumeMounts for aggregator
+aggregator:
+  cronjob:
+    env:
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
+    volumes:
+      - name: aggregator-config
+        configMap:
+          name: aggregator-config
+      - name: aggregator-logs
+        emptyDir: {}
+    volumeMounts:
+      - name: aggregator-config
+        mountPath: /app/config
+      - name: aggregator-logs
+        mountPath: /app/logs
+
+# Test volumes and volumeMounts for frontend
+frontend:
+  deployment:
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+    volumes:
+      - name: frontend-config
+        configMap:
+          name: frontend-config
+      - name: frontend-assets
+        emptyDir: {}
+    volumeMounts:
+      - name: frontend-config
+        mountPath: /app/config
+      - name: frontend-assets
+        mountPath: /app/assets
+
+# Test volumes and volumeMounts for api
+api:
+  deployment:
+    env:
+      - name: FILE_SERVER_INTERNAL_BASE_URL
+        value: http://nx-cloud-file-server-service
+      - name: FILE_SERVER_INTERNAL_PORT
+        value: "5000"
+      - name: USE_VALKEY
+        value: "true"
+      - name: VALKEY_CLIENT_PROVIDER
+        value: redisson
+      - name: VALKEY_USE_SENTINEL
+        value: "true"
+      - name: VALKEY_SENTINEL_MASTER_NAME
+        value: "nxcloud"
+      - name: VALKEY_PRIMARY_ADDRESS
+        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      - name: VALKEY_REPLICA_ADDRESSES
+        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      - name: VALKEY_PORT
+        value: "6379"
+      - name: VALKEY_SENTINEL_PORT
+        value: "26379"
+      - name: VALKEY_USERNAME
+        value: "default"
+      - name: ACTIVEMQ_ADDRESS
+        value: tcp://nx-cloud-messagequeue:61616
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: VALKEY_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: VALKEY_PASSWORD
+    volumes:
+      - name: api-config
+        configMap:
+          name: api-config
+      - name: api-temp
+        emptyDir: {}
+    volumeMounts:
+      - name: api-config
+        mountPath: /app/config
+      - name: api-temp
+        mountPath: /app/temp
