@@ -27,6 +27,10 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      {{- if .Values.frontend.deployment.volumes }}
+      volumes:
+        {{- toYaml .Values.frontend.deployment.volumes | nindent 8 }}
+      {{- end }}
       {{- with .Values.frontend.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -82,4 +86,8 @@ spec:
           {{- if .Values.frontend.deployment.envFrom }}
           envFrom:
             {{- toYaml .Values.frontend.deployment.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.frontend.deployment.volumeMounts }}
+          volumeMounts:
+            {{- toYaml .Values.frontend.deployment.volumeMounts | nindent 12 }}
           {{- end }}

@@ -47,6 +47,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: {{ .Values.fileServer.pvc.name }}
+        {{- if .Values.fileServer.deployment.volumes }}
+        {{- toYaml .Values.fileServer.deployment.volumes | nindent 8 }}
+        {{- end }}
       containers:
         - name: nx-cloud-file-server
           image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag | default .Values.global.imageTag }}
@@ -93,4 +96,7 @@ spec:
           volumeMounts:
             - mountPath: /data
               name: data
+            {{- if .Values.fileServer.deployment.volumeMounts }}
+            {{- toYaml .Values.fileServer.deployment.volumeMounts | nindent 12 }}
+            {{- end }}
 {{- end }}

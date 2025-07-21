@@ -65,18 +65,28 @@ spec:
               envFrom:
                 {{- toYaml .Values.aggregator.cronjob.envFrom | nindent 16 }}
               {{- end }}
-              {{- if .Values.config.agentConfigs }}
+              {{- if or .Values.config.agentConfigs .Values.aggregator.cronjob.volumeMounts }}
               volumeMounts:
+                {{- if .Values.config.agentConfigs }}
                 - name: resource-class-config-volume
                   mountPath: /opt/nx-cloud/resource-classes
+                {{- end }}
+                {{- if .Values.aggregator.cronjob.volumeMounts }}
+                {{- toYaml .Values.aggregator.cronjob.volumeMounts | nindent 16 }}
+                {{- end }}
               {{- end }}
           restartPolicy: OnFailure
-          {{- if .Values.config.agentConfigs }}
+          {{- if or .Values.config.agentConfigs .Values.aggregator.cronjob.volumes }}
           volumes:
+            {{- if .Values.config.agentConfigs }}
             - name: resource-class-config-volume
               configMap:
                 name: agent-configuration
                 items:
                   - key: agentConfigs.yaml
                     path: agentConfigs.yaml
+            {{- end }}
+            {{- if .Values.aggregator.cronjob.volumes }}
+            {{- toYaml .Values.aggregator.cronjob.volumes | nindent 12 }}
+            {{- end }}
           {{- end }}

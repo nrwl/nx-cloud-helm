@@ -26,14 +26,19 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.api.serviceAccount.name }}
-      {{- if .Values.config.agentConfigs }}
+      {{- if or .Values.config.agentConfigs .Values.api.deployment.volumes }}
       volumes:
+        {{- if .Values.config.agentConfigs }}
         - name: resource-class-config-volume
           configMap:
             name: agent-configuration
             items:
               - key: agentConfigs.yaml
                 path: agentConfigs.yaml
+        {{- end }}
+        {{- if .Values.api.deployment.volumes }}
+        {{- toYaml .Values.api.deployment.volumes | nindent 8 }}
+        {{- end }}
       {{- end }}
       {{- with .Values.api.deployment.nodeSelector }}
       nodeSelector:
@@ -52,10 +57,15 @@ spec:
         - name: nx-cloud-nx-api
           image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Values.global.imageTag }}
           imagePullPolicy: {{ .Values.api.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
-          {{- if .Values.config.agentConfigs }}
+          {{- if or .Values.config.agentConfigs .Values.api.deployment.volumeMounts }}
           volumeMounts:
+            {{- if .Values.config.agentConfigs }}
             - name: resource-class-config-volume
               mountPath: /opt/nx-cloud/resource-classes
+            {{- end }}
+            {{- if .Values.api.deployment.volumeMounts }}
+            {{- toYaml .Values.api.deployment.volumeMounts | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- if .Values.api.deployment.resources }}
           resources: {{- toYaml .Values.api.deployment.resources | nindent 12 }}
