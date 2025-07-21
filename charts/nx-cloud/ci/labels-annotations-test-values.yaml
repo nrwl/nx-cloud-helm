@@ -187,7 +187,6 @@ api:
       dummy-api-sa-label-1: "dummy-value-1"
       dummy-api-sa-label-2: "dummy-value-2"
 
-# Test labels and annotations for workflowController (ExternalName)
 workflowController:
   service:
     enabled: true
@@ -198,7 +197,8 @@ workflowController:
     labels:
       dummy-wf-controller-label-1: "dummy-value-1"
       dummy-wf-controller-label-2: "dummy-value-2"
+      dummy-wf-controller-label-3: "dummy-value-3"
       service-type: "external-name"
-    externalName: "workflow-controller.example.com"
+    externalName: "10.0.0.1"
     port: 9000
     headless: true
