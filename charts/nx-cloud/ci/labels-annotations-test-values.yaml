@@ -1,0 +1,204 @@
+config:
+  nxCloudAppURL: "nx.test"
+
+global:
+  labels:
+    dummy-global-label-1: "dummy-value-1"
+    dummy-global-label-2: "dummy-value-2"
+
+ingress:
+  host: "nx.test"
+  annotations:
+    dummy-ingress-annotation-1: "dummy-value-1"
+    dummy-ingress-annotation-2: "dummy-value-2"
+  labels:
+    dummy-ingress-label-1: "dummy-value-1"
+    dummy-ingress-label-2: "dummy-value-2"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+# Test labels and annotations for file-server
+fileServer:
+  enabled: true
+  service:
+    annotations:
+      dummy-file-server-svc-annotation-1: "dummy-value-1"
+      dummy-file-server-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-file-server-svc-label-1: "dummy-value-1"
+      dummy-file-server-svc-label-2: "dummy-value-2"
+
+  deployment:
+    annotations:
+      dummy-file-server-deploy-annotation-1: "dummy-value-1"
+      dummy-file-server-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-file-server-deploy-label-1: "dummy-value-1"
+      dummy-file-server-deploy-label-2: "dummy-value-2"
+    env:
+      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
+        value: "1"
+
+  pvc:
+    annotations:
+      dummy-file-server-pvc-annotation-1: "dummy-value-1"
+    labels:
+      dummy-file-server-pvc-label-1: "dummy-value-1"
+      dummy-file-server-pvc-label-2: "dummy-value-2"
+
+  serviceAccount:
+    annotations:
+      dummy-file-server-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-file-server-sa-label-1: "dummy-value-1"
+      dummy-file-server-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for aggregator
+aggregator:
+  cronjob:
+    annotations:
+      dummy-aggregator-cronjob-annotation-1: "dummy-value-1"
+      dummy-aggregator-cronjob-annotation-2: "dummy-value-2"
+    labels:
+      dummy-aggregator-cronjob-label-1: "dummy-value-1"
+      dummy-aggregator-cronjob-label-2: "dummy-value-2"
+    env:
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
+
+  serviceAccount:
+    annotations:
+      dummy-aggregator-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-aggregator-sa-label-1: "dummy-value-1"
+      dummy-aggregator-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for frontend
+frontend:
+  service:
+    annotations:
+      dummy-frontend-svc-annotation-1: "dummy-value-1"
+      dummy-frontend-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-frontend-svc-label-1: "dummy-value-1"
+      dummy-frontend-svc-label-2: "dummy-value-2"
+
+  deployment:
+    annotations:
+      dummy-frontend-deploy-annotation-1: "dummy-value-1"
+      dummy-frontend-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-frontend-deploy-label-1: "dummy-value-1"
+      dummy-frontend-deploy-label-2: "dummy-value-2"
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+
+  serviceAccount:
+    annotations:
+      dummy-frontend-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-frontend-sa-label-1: "dummy-value-1"
+      dummy-frontend-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for api
+api:
+  service:
+    annotations:
+      dummy-api-svc-annotation-1: "dummy-value-1"
+      dummy-api-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-api-svc-label-1: "dummy-value-1"
+      dummy-api-svc-label-2: "dummy-value-2"
+
+  deployment:
+    annotations:
+      dummy-api-deploy-annotation-1: "dummy-value-1"
+      dummy-api-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-api-deploy-label-1: "dummy-value-1"
+      dummy-api-deploy-label-2: "dummy-value-2"
+    env:
+      - name: FILE_SERVER_INTERNAL_BASE_URL
+        value: http://nx-cloud-file-server-service
+      - name: FILE_SERVER_INTERNAL_PORT
+        value: "5000"
+      - name: USE_VALKEY
+        value: "true"
+      - name: VALKEY_CLIENT_PROVIDER
+        value: redisson
+      - name: VALKEY_USE_SENTINEL
+        value: "true"
+      - name: VALKEY_SENTINEL_MASTER_NAME
+        value: "nxcloud"
+      - name: VALKEY_PRIMARY_ADDRESS
+        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      - name: VALKEY_REPLICA_ADDRESSES
+        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      - name: VALKEY_PORT
+        value: "6379"
+      - name: VALKEY_SENTINEL_PORT
+        value: "26379"
+      - name: VALKEY_USERNAME
+        value: "default"
+      - name: ACTIVEMQ_ADDRESS
+        value: tcp://nx-cloud-messagequeue:61616
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: VALKEY_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: VALKEY_PASSWORD
+
+  serviceAccount:
+    annotations:
+      dummy-api-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-api-sa-label-1: "dummy-value-1"
+      dummy-api-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for workflowController (ExternalName)
+workflowController:
+  service:
+    enabled: true
+    name: "nx-cloud-workflow-controller-service"
+    annotations:
+      dummy-wf-controller-annotation-1: "dummy-value-1"
+      dummy-wf-controller-annotation-2: "dummy-value-2"
+    labels:
+      dummy-wf-controller-label-1: "dummy-value-1"
+      dummy-wf-controller-label-2: "dummy-value-2"
+      service-type: "external-name"
+    externalName: "workflow-controller.example.com"
+    port: 9000
+    headless: true
