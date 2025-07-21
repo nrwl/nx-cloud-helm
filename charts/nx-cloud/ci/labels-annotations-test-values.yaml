@@ -47,6 +47,7 @@ fileServer:
     env:
       - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
         value: "1"
+    resources: {}
 
   pvc:
     annotations:
@@ -86,6 +87,7 @@ aggregator:
           secretKeyRef:
             name: nx-cloud-credentials
             key: ADMIN_PASSWORD
+    resources: {}
 
   serviceAccount:
     annotations:
@@ -119,6 +121,7 @@ frontend:
           secretKeyRef:
             name: nx-cloud-credentials
             key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+    resources: {}
 
   serviceAccount:
     annotations:
@@ -179,6 +182,7 @@ api:
           secretKeyRef:
             name: nx-cloud-credentials
             key: VALKEY_PASSWORD
+    resources: {}
 
   serviceAccount:
     annotations:

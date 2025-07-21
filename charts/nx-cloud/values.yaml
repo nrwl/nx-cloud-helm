@@ -63,14 +63,11 @@ fileServer:
     tolerations: {}
     nodeSelector: {}
 
-    resources: {}
-    # resources:
-    #   limits:
-    #     memory: '1Gi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '0.5Gi'
-    #     cpu: '0.5'
+    resources:
+      limits: {}
+      requests:
+        memory: '0.5Gi'
+        cpu: '0.5'
 
     volumes: []
     volumeMounts: []
@@ -108,15 +105,11 @@ aggregator:
     tolerations: {}
     nodeSelector: {}
 
-    resources: {}
-    # Example resource configuration:
-    # resources:
-    #   limits:
-    #     memory: '1500Mi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '1200M'
-    #     cpu: '0.5'
+    resources:
+      limits: {}
+      requests:
+        memory: '1200M'
+        cpu: '0.5'
 
     volumes: []
     volumeMounts: []
@@ -165,14 +158,11 @@ frontend:
     tolerations: {}
     nodeSelector: {}
 
-    resources: {}
-    # resources:
-    #   limits:
-    #     memory: '1Gi'
-    #     cpu: '1.0'
-    #   requests:
-    #     memory: '0.5Gi'
-    #     cpu: '0.5'
+    resources:
+      limits: {}
+      requests:
+        memory: '0.5Gi'
+        cpu: '0.5'
 
     volumes: []
     volumeMounts: []
@@ -218,7 +208,11 @@ api:
     tolerations: {}
     nodeSelector: {}
 
-    resources: {}
+    resources:
+      limits: {}
+      requests:
+        memory: '1Gi'
+        cpu: '1.0'
 
     volumes: []
     volumeMounts: []

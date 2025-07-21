@@ -63,6 +63,7 @@ fileServer:
         mountPath: /app/config
       - name: file-server-data
         mountPath: /app/data
+    resources: {}
 
 # Test volumes and volumeMounts for aggregator
 aggregator:
@@ -93,6 +94,7 @@ aggregator:
         mountPath: /app/config
       - name: aggregator-logs
         mountPath: /app/logs
+    resources: {}
 
 # Test volumes and volumeMounts for frontend
 frontend:
@@ -116,6 +118,7 @@ frontend:
         mountPath: /app/config
       - name: frontend-assets
         mountPath: /app/assets
+    resources: {}
 
 # Test volumes and volumeMounts for api
 api:
@@ -166,3 +169,4 @@ api:
         mountPath: /app/config
       - name: api-temp
         mountPath: /app/temp
+    resources: {}

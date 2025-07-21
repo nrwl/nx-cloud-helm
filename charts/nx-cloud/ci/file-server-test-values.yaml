@@ -15,51 +15,46 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
-# Test the workflowController service with ExternalName configuration
-workflowController:
+# Enable file server
+fileServer:
+  enabled: true
   service:
-    enabled: true
-    name: "nx-cloud-workflow-controller-service"
     annotations:
-      test-annotation: "test-value"
+      test-annotation: "file-server-test"
     labels:
-      test-label: "test-value"
-    externalName: "workflow-controller.example.com"
-    port: 9000
-    headless: false
+      test-label: "file-server-test"
+    name: nx-cloud-file-server-service
+    type: ClusterIP
+    port: 5000
 
-# Include minimal required configurations for other components
-aggregator:
-  cronjob:
-    env:
-      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
-        value: 'true'
-      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
-        value: 'json'
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-      - name: ADMIN_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: ADMIN_PASSWORD
-    resources: {}
-
-frontend:
   deployment:
     env:
-      - name: NX_API_INTERNAL_BASE_URL
-        value: 'http://nx-cloud-nx-api-service'
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-    resources: {}
+      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
+        value: "7"
+    resources:
+      requests:
+        memory: '0.5Gi'
+        cpu: '0.5'
 
+  pvc:
+    name: nx-cloud-file-server
+    annotations:
+      test-annotation: "file-server-pvc-test"
+    labels:
+      test-label: "file-server-pvc-test"
+    storageClassName: "standard"
+    size: 10Gi
+    helmResourcePolicy: keep
+
+  serviceAccount:
+    create: true
+    name: nx-cloud-file-server
+    annotations:
+      test-annotation: "file-server-sa-test"
+    labels:
+      test-label: "file-server-sa-test"
+
+# Configure API to use file server
 api:
   deployment:
     env:
@@ -97,4 +92,37 @@ api:
           secretKeyRef:
             name: nx-cloud-credentials
             key: VALKEY_PASSWORD
+    resources: {}
+
+# Configure frontend
+frontend:
+  deployment:
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+    resources: {}
+
+# Configure aggregator
+aggregator:
+  cronjob:
+    env:
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
     resources: {}
