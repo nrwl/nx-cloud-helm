@@ -31,10 +31,6 @@ fileServer:
     env:
       - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
         value: "7"
-    resources:
-      requests:
-        memory: '0.5Gi'
-        cpu: '0.5'
 
   pvc:
     name: nx-cloud-file-server
