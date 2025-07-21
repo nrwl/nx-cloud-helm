@@ -56,8 +56,7 @@ fileServer:
         configMap:
           name: file-server-config
       - name: file-server-data
-        persistentVolumeClaim:
-          claimName: nx-cloud-file-server
+        emptyDir: {}
     volumeMounts:
       - name: file-server-config
         mountPath: /app/config
