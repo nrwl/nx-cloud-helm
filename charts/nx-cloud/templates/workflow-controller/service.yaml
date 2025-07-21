@@ -7,11 +7,7 @@ metadata:
   name: {{ .Values.workflowController.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: nx-cloud-workflow-controller
-    {{- include "nxCloud.app.labels" . | indent 4 }}
-    {{- with .Values.workflowController.service.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
   {{- with .Values.workflowController.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -25,16 +21,12 @@ spec:
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
-  name: {{ .Values.workflowController.service.name }}
+  name: {{ printf "%s-1" .Values.workflowController.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    kubernetes.io/service-name: {{ .Values.workflowController.service.name | default "nx-cloud-workflow-controller-service" }}
+    kubernetes.io/service-name: {{ .Values.workflowController.service.name }}
     endpointslice.kubernetes.io/manage-by: helm
-    app: nx-cloud-workflow-controller
-    {{- include "nxCloud.app.labels" . | indent 4 }}
-    {{- with .Values.workflowController.service.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
   {{- with .Values.workflowController.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -56,11 +48,7 @@ metadata:
   name: {{ .Values.workflowController.service.name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: nx-cloud-workflow-controller
-    {{- include "nxCloud.app.labels" . | indent 4 }}
-    {{- with .Values.workflowController.service.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
   {{- with .Values.workflowController.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
