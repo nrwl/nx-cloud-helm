@@ -21,7 +21,7 @@ ingress:
     hosts: []
 
 fileServer:
-  enabled: true
+  enabled: false
 
   image:
     repository: "nxprivatecloud/nx-cloud-file-server"
@@ -50,11 +50,6 @@ fileServer:
         maxSurge: 0
 
     envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
 
     securityContext:
       enabled: true
@@ -76,6 +71,9 @@ fileServer:
     #   requests:
     #     memory: '0.5Gi'
     #     cpu: '0.5'
+
+    volumes: []
+    volumeMounts: []
 
   pvc:
     name: nx-cloud-file-server
@@ -104,11 +102,6 @@ aggregator:
     labels: {}
     env: []
     envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
 
     # If you wish to steer placement of the aggregator pod(s) these will be applied to the pod spec.
     affinity: {}
@@ -124,6 +117,9 @@ aggregator:
     #   requests:
     #     memory: '1200M'
     #     cpu: '0.5'
+
+    volumes: []
+    volumeMounts: []
 
   serviceAccount:
     create: true
@@ -164,13 +160,7 @@ frontend:
       #   maxSurge: 1
 
     envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
 
-    # If you wish to steer placement of the frontend pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}
     nodeSelector: {}
@@ -183,6 +173,9 @@ frontend:
     #   requests:
     #     memory: '0.5Gi'
     #     cpu: '0.5'
+
+    volumes: []
+    volumeMounts: []
 
   serviceAccount:
     create: true
@@ -220,25 +213,15 @@ api:
       #   maxSurge: 1
 
     envFrom: []
-    # envFrom:
-    # - configMapRef:
-    #     name: my-config-map
-    # - secretRef:
-    #     name: my-secret
-
     # If you wish to steer placement of the api pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}
     nodeSelector: {}
 
     resources: {}
-    # resources:
-    #   limits:
-    #     memory: '4Gi'
-    #     cpu: '3.0'
-    #   requests:
-    #     memory: '2Gi'
-    #     cpu: '1.0'
+
+    volumes: []
+    volumeMounts: []
 
   serviceAccount:
     create: true
