@@ -1,0 +1,14 @@
+ingress:
+  enabled: true
+  host: "example.com"
+  additionalPaths:
+    - path: /custom-path
+      pathType: Prefix
+      service:
+        name: custom-service
+        port: 8080
+    - path: /another-path
+      pathType: Prefix
+      service:
+        name: another-service
+        port: 9090

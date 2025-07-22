@@ -16,9 +16,7 @@ spec:
     spec:
       template:
         spec:
-          {{- if .Values.aggregator.serviceAccount.create }}
           serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
-          {{- end }}
           {{- with .Values.aggregator.cronjob.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}

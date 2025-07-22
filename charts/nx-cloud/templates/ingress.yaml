@@ -54,4 +54,15 @@ spec:
                 port:
                   number: {{ .Values.fileServer.service.port }}
           {{- end }}
+          {{- if .Values.ingress.additionalPaths }}
+          {{- range .Values.ingress.additionalPaths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .service.name }}
+                port:
+                  number: {{ .service.port }}
+          {{- end }}
+          {{- end }}
 {{- end }}
