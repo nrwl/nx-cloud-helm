@@ -1,0 +1,20 @@
+{{- if .Values.fileServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.fileServer.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.fileServer.service.labels "context" .) | nindent 4 }}
+  {{- with .Values.fileServer.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.fileServer.service.type }}
+  selector:
+    {{- include "nxCloud.selectorLabels" (dict "component" "file-server" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+  ports:
+    - port: {{ .Values.fileServer.service.port }}
+      targetPort: {{ .Values.fileServer.deployment.port }}
+{{- end }}

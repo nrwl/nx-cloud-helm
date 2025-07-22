@@ -1,0 +1,95 @@
+{{- if .Values.fileServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-file-server
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.fileServer.deployment.labels "context" .) | nindent 4 }}
+  {{- with .Values.fileServer.deployment.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "nxCloud.selectorLabels" (dict "component" "file-server" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  {{- with .Values.fileServer.deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "nxCloud.selectorLabels" (dict "component" "file-server" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+    spec:
+      serviceAccountName: {{ .Values.fileServer.serviceAccount.name }}
+      {{- if .Values.fileServer.deployment.securityContext.enabled }}
+      securityContext: {{- omit .Values.fileServer.deployment.securityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.fileServer.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.fileServer.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.fileServer.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.fileServer.pvc.name }}
+        {{- if .Values.fileServer.deployment.volumes }}
+        {{- toYaml .Values.fileServer.deployment.volumes | nindent 8 }}
+        {{- end }}
+      containers:
+        - name: nx-cloud-file-server
+          image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag | default .Values.global.imageTag }}
+          imagePullPolicy: {{ .Values.fileServer.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
+          {{- if .Values.fileServer.deployment.resources }}
+          resources: {{- toYaml .Values.fileServer.deployment.resources | nindent 12 }}
+          {{- end }}
+          env:
+            {{- if .Values.fileServer.verboseLogging | default .Values.global.verboseLogging }}
+            - name: NX_VERBOSE_LOGGING
+              value: "true"
+            {{- end }}
+            - name: NX_API_LOG_LEVEL
+              value: {{ .Values.fileServer.logLevel | default .Values.global.logLevel | quote }}
+            {{- if .Values.fileServer.deployment.env }}
+            {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
+            {{- end }}
+          {{- if .Values.fileServer.deployment.envFrom }}
+          envFrom:
+            {{- toYaml .Values.fileServer.deployment.envFrom | nindent 12 }}
+          {{- end }}
+          ports:
+            - containerPort: {{ .Values.fileServer.deployment.port }}
+          livenessProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: {{ .Values.fileServer.deployment.port }}
+            initialDelaySeconds: 10
+          startupProbe:
+            httpGet:
+              path: /file/uptime-check
+              port: {{ .Values.fileServer.deployment.port }}
+            failureThreshold: 10
+            periodSeconds: 5
+          {{- if .Values.fileServer.deployment.securityContext }}
+          securityContext:
+          {{- omit .Values.fileServer.deployment.securityContext "enabled" "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            {{- if .Values.fileServer.deployment.volumeMounts }}
+            {{- toYaml .Values.fileServer.deployment.volumeMounts | nindent 12 }}
+            {{- end }}
+{{- end }}

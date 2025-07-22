@@ -15,6 +15,20 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
+# Test the workflowController service with headless configuration
+workflowController:
+  service:
+    enabled: true
+    name: "nx-cloud-workflow-controller-headless"
+    annotations:
+      test-headless-annotation: "test-value"
+    labels:
+      test-headless-label: "test-value"
+    externalName: "10.0.0.1"
+    port: 9000
+    headless: true
+
+# Include minimal required configurations for other components
 aggregator:
   cronjob:
     env:

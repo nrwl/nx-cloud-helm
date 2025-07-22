@@ -15,6 +15,56 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
+  # ConfigMap for file-server
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: file-server-config
+    data:
+      config.json: "file-server-config"
+
+  # ConfigMap for aggregator
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: aggregator-config
+    data:
+      config.json: "aggregator-config"
+
+  # ConfigMap for frontend
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: frontend-config
+    data:
+      config.json: "frontend-config"
+
+  # ConfigMap for api
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: api-config
+    data:
+      config.json: "api-config"
+
+# Test volumes and volumeMounts for file-server
+fileServer:
+  enabled: true
+  deployment:
+    volumes:
+      - name: file-server-config
+        configMap:
+          name: file-server-config
+      - name: file-server-data
+        emptyDir: {}
+    volumeMounts:
+      - name: file-server-config
+        mountPath: /app/config
+      - name: file-server-data
+        mountPath: /app/data
+    resources: null
+
+# Test volumes and volumeMounts for aggregator
 aggregator:
   cronjob:
     env:
@@ -32,8 +82,20 @@ aggregator:
           secretKeyRef:
             name: nx-cloud-credentials
             key: ADMIN_PASSWORD
+    volumes:
+      - name: aggregator-config
+        configMap:
+          name: aggregator-config
+      - name: aggregator-logs
+        emptyDir: {}
+    volumeMounts:
+      - name: aggregator-config
+        mountPath: /app/config
+      - name: aggregator-logs
+        mountPath: /app/logs
     resources: null
 
+# Test volumes and volumeMounts for frontend
 frontend:
   deployment:
     env:
@@ -44,8 +106,20 @@ frontend:
           secretKeyRef:
             name: nx-cloud-credentials
             key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+    volumes:
+      - name: frontend-config
+        configMap:
+          name: frontend-config
+      - name: frontend-assets
+        emptyDir: {}
+    volumeMounts:
+      - name: frontend-config
+        mountPath: /app/config
+      - name: frontend-assets
+        mountPath: /app/assets
     resources: null
 
+# Test volumes and volumeMounts for api
 api:
   deployment:
     env:
@@ -83,4 +157,15 @@ api:
           secretKeyRef:
             name: nx-cloud-credentials
             key: VALKEY_PASSWORD
+    volumes:
+      - name: api-config
+        configMap:
+          name: api-config
+      - name: api-temp
+        emptyDir: {}
+    volumeMounts:
+      - name: api-config
+        mountPath: /app/config
+      - name: api-temp
+        mountPath: /app/temp
     resources: null

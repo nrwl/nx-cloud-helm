@@ -1,0 +1,29 @@
+auth:
+  password: "password"
+
+primary:
+  persistence:
+    enabled: false
+
+replica:
+  replicaCount: 3
+  persistence:
+    enabled: false
+
+sentinel:
+  enabled: true
+  primarySet: nxcloud
+  quorum: 2
+
+commonConfiguration: |-
+  # Enable AOF https://valkey.io/docs/topics/persistence.html
+  appendonly yes
+  notify-keyspace-events Els
+  # Disable RDB persistence, AOF persistence already enabled.
+  save ""
+
+metrics:
+  enabled: true
+  extraArgs:
+    check-keys: 'backgroundTasks:workingSet,backgroundTasks:workingSet:claims'
+    count-keys: 'backgroundTasks:tasks:keyed:work:*'

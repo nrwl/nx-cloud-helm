@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.frontend.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.frontend.service.labels "context" .) | nindent 4 }}
+  {{- with .Values.frontend.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.frontend.service.type }}
+  selector:
+    {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+  ports:
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.deployment.port }}

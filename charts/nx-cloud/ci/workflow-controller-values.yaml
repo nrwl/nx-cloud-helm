@@ -15,6 +15,20 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
+# Test the workflowController service with ExternalName configuration
+workflowController:
+  service:
+    enabled: true
+    name: "nx-cloud-workflow-controller-service"
+    annotations:
+      test-annotation: "test-value"
+    labels:
+      test-label: "test-value"
+    externalName: "workflow-controller.example.com"
+    port: 9000
+    headless: false
+
+# Include minimal required configurations for other components
 aggregator:
   cronjob:
     env:

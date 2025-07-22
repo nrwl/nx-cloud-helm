@@ -40,6 +40,24 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.10.0
 
+      - name: Install MongoDB
+        run: |
+          helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
+          --version 16.5.32 \
+          --namespace mongodb \
+          --create-namespace \
+          --values testing-files/mongodb.yaml \
+          --wait
+
+      - name: Install Valkey
+        run: |
+          helm install valkey oci://registry-1.docker.io/bitnamicharts/valkey \
+          --version 3.0.22 \
+          --namespace valkey \
+          --create-namespace \
+          --values testing-files/valkey.yaml \
+          --wait
+
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct install --config testing-files/ct.yaml --target-branch ${{ github.event.repository.default_branch }} --debug

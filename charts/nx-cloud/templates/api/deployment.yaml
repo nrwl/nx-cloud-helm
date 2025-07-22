@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nx-cloud-nx-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.api.deployment.labels "context" .) | nindent 4 }}
+  {{- with .Values.api.deployment.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.api.deployment.replicas }}
+  selector:
+    matchLabels:
+      {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 300
+  {{- with .Values.api.deployment.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+    spec:
+      serviceAccountName: {{ .Values.api.serviceAccount.name }}
+      {{- if or .Values.config.agentConfigs .Values.api.deployment.volumes }}
+      volumes:
+        {{- if .Values.config.agentConfigs }}
+        - name: resource-class-config-volume
+          configMap:
+            name: agent-configuration
+            items:
+              - key: agentConfigs.yaml
+                path: agentConfigs.yaml
+        {{- end }}
+        {{- if .Values.api.deployment.volumes }}
+        {{- toYaml .Values.api.deployment.volumes | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.api.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.api.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.api.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: nx-cloud-nx-api
+          image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Values.global.imageTag }}
+          imagePullPolicy: {{ .Values.api.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
+          {{- if or .Values.config.agentConfigs .Values.api.deployment.volumeMounts }}
+          volumeMounts:
+            {{- if .Values.config.agentConfigs }}
+            - name: resource-class-config-volume
+              mountPath: /opt/nx-cloud/resource-classes
+            {{- end }}
+            {{- if .Values.api.deployment.volumeMounts }}
+            {{- toYaml .Values.api.deployment.volumeMounts | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.api.deployment.resources }}
+          resources: {{- toYaml .Values.api.deployment.resources | nindent 12 }}
+          {{- end }}
+          ports:
+            - containerPort: 4203
+          startupProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 10
+            failureThreshold: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /nx-cloud/uptime-check
+              port: 4203
+            initialDelaySeconds: 30
+          env:
+            - name: NX_CLOUD_MODE
+              value: 'private-enterprise'
+            - name: NX_CLOUD_APP_URL
+              value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
+            {{- if .Values.config.agentConfigs }}
+            - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+              value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
+            {{- end }}
+            {{- if .Values.api.verboseLogging | default .Values.global.verboseLogging }}
+            - name: NX_VERBOSE_LOGGING
+              value: "true"
+            {{- end }}
+            - name: NX_API_LOG_LEVEL
+              value: {{ .Values.api.logLevel | default .Values.global.logLevel | quote }}
+            {{- if .Values.api.deployment.env }}
+            {{- toYaml .Values.api.deployment.env | nindent 12 }}
+            {{- end }}
+          {{- if .Values.api.deployment.envFrom }}
+          envFrom:
+            {{- toYaml .Values.api.deployment.envFrom | nindent 12 }}
+          {{- end }}
