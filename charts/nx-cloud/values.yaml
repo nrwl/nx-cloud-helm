@@ -21,7 +21,6 @@ ingress:
     secretName: ""
     hosts: []
   additionalPaths: []
-  # additionalPaths:
   # - path: /custom-path
   #   pathType: Prefix
   #   service:
@@ -161,12 +160,10 @@ frontend:
     env: []
 
     strategy:
-      type: Recreate
-      # Uncomment below for RollingUpdate
-      # type: RollingUpdate
-      # rollingUpdate:
-      #   maxUnavailable: 0
-      #   maxSurge: 1
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
 
     envFrom: []
 
@@ -214,12 +211,10 @@ api:
     env: []
 
     strategy:
-      type: Recreate
-      # Uncomment below for RollingUpdate
-      # type: RollingUpdate
-      # rollingUpdate:
-      #   maxUnavailable: 0
-      #   maxSurge: 1
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
 
     envFrom: []
     # If you wish to steer placement of the api pod(s) these will be applied to the pod spec.

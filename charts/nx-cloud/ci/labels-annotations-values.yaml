@@ -44,9 +44,6 @@ fileServer:
     labels:
       dummy-file-server-deploy-label-1: "dummy-value-1"
       dummy-file-server-deploy-label-2: "dummy-value-2"
-    env:
-      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
-        value: "1"
     resources: null
 
   pvc:
