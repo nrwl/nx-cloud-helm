@@ -3,10 +3,11 @@ global:
   imageTag: "2025.06.3"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
+  verboseLogging: false
+  logLevel: "INFO"
 
 config:
   nxCloudAppURL: ""
-  verboseLogging: false
   agentConfigs: ""
 
 ingress:
@@ -29,6 +30,8 @@ ingress:
 
 fileServer:
   enabled: false
+  verboseLogging: false
+  logLevel: "INFO"
 
   image:
     repository: "nxprivatecloud/nx-cloud-file-server"
@@ -95,6 +98,9 @@ fileServer:
     automount: false
 
 aggregator:
+  verboseLogging: false
+  logLevel: "INFO"
+
   image:
     repository: "nxprivatecloud/nx-cloud-aggregator"
     tag: "2025.06.3"
@@ -132,6 +138,9 @@ aggregator:
     create: false
 
 frontend:
+  verboseLogging: false
+  logLevel: "INFO"
+
   image:
     repository: "nxprivatecloud/nx-cloud-frontend"
     tag: "2025.06.3"
@@ -182,6 +191,9 @@ frontend:
     automount: false
 
 api:
+  verboseLogging: false
+  logLevel: "INFO"
+
   image:
     repository: "nxprivatecloud/nx-cloud-nx-api"
     tag: "2025.06.3"

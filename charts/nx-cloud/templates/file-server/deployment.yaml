@@ -56,17 +56,12 @@ spec:
           resources: {{- toYaml .Values.fileServer.deployment.resources | nindent 12 }}
           {{- end }}
           env:
-            {{- if .Values.config.verboseLogging }}
+            {{- if .Values.fileServer.verboseLogging | default .Values.global.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: 'true'
-            - name: NX_API_LOG_LEVEL
-              value: 'DEBUG'
-            {{- else }}
-            - name: NX_VERBOSE_LOGGING
-              value: 'false'
-            - name: NX_API_LOG_LEVEL
-              value: 'INFO'
+              value: "true"
             {{- end }}
+            - name: NX_API_LOG_LEVEL
+              value: {{ .Values.fileServer.logLevel | default .Values.global.logLevel | quote }}
             {{- if .Values.fileServer.deployment.env }}
             {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
             {{- end }}

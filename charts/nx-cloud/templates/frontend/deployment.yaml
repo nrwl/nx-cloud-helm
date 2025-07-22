@@ -69,17 +69,12 @@ spec:
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
-            {{- if .Values.config.verboseLogging }}
+            {{- if .Values.frontend.verboseLogging | default .Values.global.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: 'true'
-            - name: NX_API_LOG_LEVEL
-              value: 'DEBUG'
-            {{- else }}
-            - name: NX_VERBOSE_LOGGING
-              value: 'false'
-            - name: NX_API_LOG_LEVEL
-              value: 'INFO'
+              value: "true"
             {{- end }}
+            - name: NX_API_LOG_LEVEL
+              value: {{ .Values.frontend.logLevel | default .Values.global.logLevel | quote }}
             {{- if .Values.frontend.deployment.env }}
             {{- toYaml .Values.frontend.deployment.env | nindent 12 }}
             {{- end }}

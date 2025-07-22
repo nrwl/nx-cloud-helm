@@ -93,17 +93,12 @@ spec:
             - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
               value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
             {{- end }}
-            {{- if .Values.config.verboseLogging }}
+            {{- if .Values.api.verboseLogging | default .Values.global.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
-              value: 'true'
-            - name: NX_API_LOG_LEVEL
-              value: 'DEBUG'
-            {{- else }}
-            - name: NX_VERBOSE_LOGGING
-              value: 'false'
-            - name: NX_API_LOG_LEVEL
-              value: 'INFO'
+              value: "true"
             {{- end }}
+            - name: NX_API_LOG_LEVEL
+              value: {{ .Values.api.logLevel | default .Values.global.logLevel | quote }}
             {{- if .Values.api.deployment.env }}
             {{- toYaml .Values.api.deployment.env | nindent 12 }}
             {{- end }}
