@@ -26,9 +26,6 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.api.serviceAccount.name }}
-      {{- if .Values.api.deployment.securityContext }}
-      securityContext: {{- toYaml .Values.api.deployment.securityContext | nindent 8 }}
-      {{- end }}
       {{- if or .Values.config.agentConfigs .Values.api.deployment.volumes }}
       volumes:
         {{- if .Values.config.agentConfigs }}

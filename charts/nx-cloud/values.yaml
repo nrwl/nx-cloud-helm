@@ -72,8 +72,8 @@ fileServer:
     resources:
       limits: {}
       requests:
-        memory: '0.5Gi'
-        cpu: '0.5'
+        memory: '500Mi'
+        cpu: '500m'
 
     volumes: []
     volumeMounts: []
@@ -119,8 +119,8 @@ aggregator:
     resources:
       limits: {}
       requests:
-        memory: '1200M'
-        cpu: '0.5'
+        memory: '1200Mi'
+        cpu: '500m'
 
     volumes: []
     volumeMounts: []
@@ -175,8 +175,8 @@ frontend:
     resources:
       limits: {}
       requests:
-        memory: '0.5Gi'
-        cpu: '0.5'
+        memory: '500Mi'
+        cpu: '500m'
 
     volumes: []
     volumeMounts: []
@@ -229,8 +229,8 @@ api:
     resources:
       limits: {}
       requests:
-        memory: '1Gi'
-        cpu: '1.0'
+        memory: '1000Mi'
+        cpu: '1000m'
 
     volumes: []
     volumeMounts: []
