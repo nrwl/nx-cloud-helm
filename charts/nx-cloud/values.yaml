@@ -23,9 +23,11 @@ ingress:
   additionalPaths: []
   # - path: /custom-path
   #   pathType: Prefix
-  #   service:
-  #     name: custom-service-name
-  #     port: 8080
+  #   backend:
+  #     service:
+  #       name: custom-service-name
+  #       port:
+  #         number: 8080
 
 fileServer:
   enabled: false

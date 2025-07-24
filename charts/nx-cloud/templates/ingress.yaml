@@ -55,14 +55,6 @@ spec:
                   number: {{ .Values.fileServer.service.port }}
           {{- end }}
           {{- if .Values.ingress.additionalPaths }}
-          {{- range .Values.ingress.additionalPaths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
-            backend:
-              service:
-                name: {{ .service.name }}
-                port:
-                  number: {{ .service.port }}
-          {{- end }}
+          {{- toYaml .Values.ingress.additionalPaths | nindent 10 }}
           {{- end }}
 {{- end }}

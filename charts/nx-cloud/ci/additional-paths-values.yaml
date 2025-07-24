@@ -7,14 +7,18 @@ ingress:
   additionalPaths:
     - path: /custom-path
       pathType: Prefix
-      service:
-        name: custom-service
-        port: 8080
+      backend:
+        service:
+          name: custom-service
+          port:
+            number: 8080
     - path: /another-path
       pathType: Prefix
-      service:
-        name: another-service
-        port: 9090
+      backend:
+        service:
+          name: another-service
+          port:
+            number: 9090
 
 extraObjects:
   - apiVersion: v1
