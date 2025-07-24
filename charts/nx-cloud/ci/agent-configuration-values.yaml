@@ -1,5 +1,7 @@
+global:
+  nxCloudAppURL: "https://nx.test"
+
 config:
-  nxCloudAppURL: "nx.test"
   agentConfigs: |
         resourceClasses:
           - architecture: amd64
@@ -83,7 +85,6 @@ config:
           - "windows-2022"
 
 ingress:
-  host: "nx.test"
 
 extraObjects:
   - apiVersion: v1

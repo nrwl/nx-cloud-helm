@@ -71,7 +71,7 @@ spec:
             - name: NX_CLOUD_MODE
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
-              value: {{ .Values.config.nxCloudAppURL | default .Values.ingress.host }}
+              value: {{ .Values.global.nxCloudAppURL }}
             {{- if .Values.frontend.verboseLogging | default .Values.global.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: "true"

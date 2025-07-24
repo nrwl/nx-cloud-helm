@@ -87,3 +87,10 @@ Create the name of the service account to use
   value: 'DEBUG'
 {{- end }}
 {{- end }}
+
+{{/*
+Strip http:// or https:// prefixes from a URL
+*/}}
+{{- define "nxCloud.stripURLProtocol" -}}
+{{- regexReplaceAll "^https?://" . "" -}}
+{{- end -}}

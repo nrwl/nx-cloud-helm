@@ -1,8 +1,5 @@
-config:
-  nxCloudAppURL: "nx.test"
-
-ingress:
-  host: "nx.test"
+global:
+  nxCloudAppURL: "https://nx.test"
 
 extraObjects:
   - apiVersion: v1

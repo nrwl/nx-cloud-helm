@@ -24,11 +24,11 @@ spec:
         {{- end }}
       {{- else }}
       hosts:
-        - {{ .Values.ingress.host | quote }}
+        - {{ .Values.ingress.host | default (include "nxCloud.stripURLProtocol" .Values.global.nxCloudAppURL) | quote }}
       {{- end }}
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.host }}
+    - host: {{ .Values.ingress.host | default (include "nxCloud.stripURLProtocol" .Values.global.nxCloudAppURL) }}
       http:
         paths:
           - path: /

@@ -5,9 +5,9 @@ global:
   imagePullSecrets: []
   verboseLogging: false
   logLevel: "INFO"
+  nxCloudAppURL: ""
 
 config:
-  nxCloudAppURL: ""
   agentConfigs: ""
 
 ingress:

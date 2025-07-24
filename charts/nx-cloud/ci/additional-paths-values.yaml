@@ -1,9 +1,8 @@
-config:
-  nxCloudAppURL: "nx.test"
+global:
+  nxCloudAppURL: "https://nx.test"
 
 ingress:
   enabled: true
-  host: "nx.test"
   additionalPaths:
     - path: /custom-path
       pathType: Prefix
