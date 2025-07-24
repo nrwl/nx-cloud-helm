@@ -1,0 +1,118 @@
+config:
+  nxCloudAppURL: "nx.test"
+
+ingress:
+  host: "nx.test"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+# Test security context for file-server
+fileServer:
+  enabled: true
+  deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
+    env:
+      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
+        value: "7"
+    resources: null
+
+# Test security context for aggregator
+aggregator:
+  cronjob:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
+    env:
+      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
+        value: 'true'
+      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
+        value: 'json'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: ADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: ADMIN_PASSWORD
+    resources: null
+
+# Test security context for frontend
+frontend:
+  deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
+    env:
+      - name: NX_API_INTERNAL_BASE_URL
+        value: 'http://nx-cloud-nx-api-service'
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+    resources: null
+
+# Test security context for api
+api:
+  deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
+    env:
+      - name: FILE_SERVER_INTERNAL_BASE_URL
+        value: http://nx-cloud-file-server-service
+      - name: FILE_SERVER_INTERNAL_PORT
+        value: "5000"
+      - name: USE_VALKEY
+        value: "true"
+      - name: VALKEY_CLIENT_PROVIDER
+        value: redisson
+      - name: VALKEY_USE_SENTINEL
+        value: "true"
+      - name: VALKEY_SENTINEL_MASTER_NAME
+        value: "nxcloud"
+      - name: VALKEY_PRIMARY_ADDRESS
+        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      - name: VALKEY_REPLICA_ADDRESSES
+        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      - name: VALKEY_PORT
+        value: "6379"
+      - name: VALKEY_SENTINEL_PORT
+        value: "26379"
+      - name: VALKEY_USERNAME
+        value: "default"
+      - name: ACTIVEMQ_ADDRESS
+        value: tcp://nx-cloud-messagequeue:61616
+      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      - name: VALKEY_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: nx-cloud-credentials
+            key: VALKEY_PASSWORD
+    resources: null

@@ -27,6 +27,9 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      {{- if .Values.frontend.deployment.securityContext }}
+      securityContext: {{- toYaml .Values.frontend.deployment.securityContext | nindent 8 }}
+      {{- end }}
       {{- if .Values.frontend.deployment.volumes }}
       volumes:
         {{- toYaml .Values.frontend.deployment.volumes | nindent 8 }}
@@ -85,4 +88,8 @@ spec:
           {{- if .Values.frontend.deployment.volumeMounts }}
           volumeMounts:
             {{- toYaml .Values.frontend.deployment.volumeMounts | nindent 12 }}
+          {{- end }}
+          {{- if .Values.frontend.deployment.securityContext }}
+          securityContext:
+          {{- omit .Values.frontend.deployment.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}
           {{- end }}

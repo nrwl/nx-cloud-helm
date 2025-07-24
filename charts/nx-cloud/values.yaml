@@ -60,12 +60,7 @@ fileServer:
 
     envFrom: []
 
-    securityContext:
-      enabled: true
-      runAsUser: 10000
-      runAsGroup: 10000
-      fsGroup: 10000
-      fsGroupChangePolicy: "OnRootMismatch"
+    securityContext: {}
 
     # If you wish to steer placement of the file-server pod(s) these will be applied to the pod spec.
     affinity: {}
@@ -111,6 +106,8 @@ aggregator:
     labels: {}
     env: []
     envFrom: []
+
+    securityContext: {}
 
     # If you wish to steer placement of the aggregator pod(s) these will be applied to the pod spec.
     affinity: {}
@@ -167,6 +164,8 @@ frontend:
 
     envFrom: []
 
+    securityContext: {}
+
     affinity: {}
     tolerations: {}
     nodeSelector: {}
@@ -217,6 +216,9 @@ api:
         maxSurge: 1
 
     envFrom: []
+
+    securityContext: {}
+
     # If you wish to steer placement of the api pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}

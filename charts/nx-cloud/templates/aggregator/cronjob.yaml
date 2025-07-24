@@ -17,6 +17,9 @@ spec:
       template:
         spec:
           serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
+          {{- if .Values.aggregator.cronjob.securityContext }}
+          securityContext: {{- toYaml .Values.aggregator.cronjob.securityContext | nindent 12 }}
+          {{- end }}
           {{- with .Values.aggregator.cronjob.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
@@ -67,6 +70,10 @@ spec:
                 {{- if .Values.aggregator.cronjob.volumeMounts }}
                 {{- toYaml .Values.aggregator.cronjob.volumeMounts | nindent 16 }}
                 {{- end }}
+              {{- end }}
+              {{- if .Values.aggregator.cronjob.securityContext }}
+              securityContext:
+              {{- omit .Values.aggregator.cronjob.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 16 }}
               {{- end }}
           restartPolicy: OnFailure
           {{- if or .Values.config.agentConfigs .Values.aggregator.cronjob.volumes }}

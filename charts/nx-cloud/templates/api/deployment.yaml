@@ -26,6 +26,9 @@ spec:
         {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
     spec:
       serviceAccountName: {{ .Values.api.serviceAccount.name }}
+      {{- if .Values.api.deployment.securityContext }}
+      securityContext: {{- toYaml .Values.api.deployment.securityContext | nindent 8 }}
+      {{- end }}
       {{- if or .Values.config.agentConfigs .Values.api.deployment.volumes }}
       volumes:
         {{- if .Values.config.agentConfigs }}
@@ -105,4 +108,8 @@ spec:
           {{- if .Values.api.deployment.envFrom }}
           envFrom:
             {{- toYaml .Values.api.deployment.envFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.api.deployment.securityContext }}
+          securityContext:
+          {{- omit .Values.api.deployment.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}
           {{- end }}
