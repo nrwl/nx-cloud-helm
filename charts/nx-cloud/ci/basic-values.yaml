@@ -1,5 +1,7 @@
 global:
   nxCloudAppURL: "https://nx.test"
+  imagePullSecrets:
+   - regcreds
 
 extraObjects:
   - apiVersion: v1

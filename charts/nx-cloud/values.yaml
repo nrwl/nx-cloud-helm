@@ -21,13 +21,6 @@ ingress:
     secretName: ""
     hosts: []
   additionalPaths: []
-  # - path: /custom-path
-  #   pathType: Prefix
-  #   backend:
-  #     service:
-  #       name: custom-service-name
-  #       port:
-  #         number: 8080
 
 fileServer:
   enabled: false

@@ -84,8 +84,6 @@ config:
           - "ubuntu22.04-node20.9-withDind-v11"
           - "windows-2022"
 
-ingress:
-
 extraObjects:
   - apiVersion: v1
     kind: Secret
