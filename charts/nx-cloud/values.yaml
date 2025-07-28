@@ -29,7 +29,7 @@ fileServer:
 
   image:
     repository: "nxprivatecloud/nx-cloud-file-server"
-    tag: "2025.06.3"
+    tag: ""
     pullPolicy: IfNotPresent
 
   service:
@@ -92,7 +92,7 @@ aggregator:
 
   image:
     repository: "nxprivatecloud/nx-cloud-aggregator"
-    tag: "2025.06.3"
+    tag: ""
     pullPolicy: IfNotPresent
 
   cronjob:
@@ -134,7 +134,7 @@ frontend:
 
   image:
     repository: "nxprivatecloud/nx-cloud-frontend"
-    tag: "2025.06.3"
+    tag: ""
     pullPolicy: ""
 
   service:
@@ -187,7 +187,7 @@ api:
 
   image:
     repository: "nxprivatecloud/nx-cloud-nx-api"
-    tag: "2025.06.3"
+    tag: ""
     pullPolicy: ""
 
   service:
