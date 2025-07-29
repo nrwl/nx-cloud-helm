@@ -26,6 +26,9 @@ spec:
     metadata:
       labels:
         app: nx-cloud-workflow-controller
+        {{- if .Values.controller.deployment.podLabels }}
+        {{- toYaml .Values.controller.deployment.podLabels | nindent 8}}
+        {{- end }}
     spec:
       securityContext:
         runAsNonRoot: true
