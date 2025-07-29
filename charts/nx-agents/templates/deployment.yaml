@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Values.global.namespace | quote }}
   labels:
     {{- include "nxCloud.app.labels" . | indent 4 }}
-    {{- toYaml .Values.controller.deployment.labels | indent 4 }}
+    {{- if .Values.controller.deployment.labels }}
+    {{- toYaml .Values.controller.deployment.labels | nindent 4 }}
+    {{- end }}
   {{- if .Values.controller.deployment.annotations }}
   annotations:
     {{- toYaml .Values.controller.deployment.annotations | nindent 4 }}
