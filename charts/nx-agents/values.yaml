@@ -53,6 +53,8 @@ controller:
   deployment:
     port: 9000
     annotations: {}
+    labels: {}
+
 
     # If you wish to steer placement of the controller pod(s) these will be applied to the pod spec. Currently, we recommend
     # using taints and tolerations at this time to isolate your controller from the runner pods.
