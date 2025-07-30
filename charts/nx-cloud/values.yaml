@@ -1,5 +1,6 @@
 global:
   labels: {}
+  podLabels: {}
   imageTag: "2025.06.3"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -42,6 +43,7 @@ fileServer:
   deployment:
     annotations: {}
     labels: {}
+    podLabels: {}
     port: 5000
     env:
       - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
@@ -57,7 +59,6 @@ fileServer:
 
     securityContext: {}
 
-    # If you wish to steer placement of the file-server pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}
     nodeSelector: {}
@@ -99,12 +100,12 @@ aggregator:
     schedule: "*/10 * * * *"
     annotations: {}
     labels: {}
+    podLabels: {}
     env: []
     envFrom: []
 
     securityContext: {}
 
-    # If you wish to steer placement of the aggregator pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}
     nodeSelector: {}
@@ -147,6 +148,7 @@ frontend:
   deployment:
     annotations: {}
     labels: {}
+    podLabels: {}
     replicas: 1
     port: 4202
     env: []
@@ -200,6 +202,7 @@ api:
   deployment:
     annotations: {}
     labels: {}
+    podLabels: {}
     replicas: 1
     port: 4203
     env: []
@@ -214,7 +217,6 @@ api:
 
     securityContext: {}
 
-    # If you wish to steer placement of the api pod(s) these will be applied to the pod spec.
     affinity: {}
     tolerations: {}
     nodeSelector: {}

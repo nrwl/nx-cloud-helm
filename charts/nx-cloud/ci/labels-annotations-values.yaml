@@ -3,6 +3,9 @@ global:
   labels:
     dummy-global-label-1: "dummy-value-1"
     dummy-global-label-2: "dummy-value-2"
+  podLabels:
+    dummy-global-pod-label-1: "dummy-value-1"
+    dummy-global-pod-label-2: "dummy-value-2"
 
 ingress:
   annotations:
@@ -41,6 +44,9 @@ fileServer:
     labels:
       dummy-file-server-deploy-label-1: "dummy-value-1"
       dummy-file-server-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-file-server-pod-label-1: "dummy-value-1"
+      dummy-file-server-pod-label-2: "dummy-value-2"
     resources: null
 
   pvc:
@@ -66,6 +72,9 @@ aggregator:
     labels:
       dummy-aggregator-cronjob-label-1: "dummy-value-1"
       dummy-aggregator-cronjob-label-2: "dummy-value-2"
+    podLabels:
+      dummy-aggregator-pod-label-1: "dummy-value-1"
+      dummy-aggregator-pod-label-2: "dummy-value-2"
     env:
       - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
         value: 'true'
@@ -107,6 +116,9 @@ frontend:
     labels:
       dummy-frontend-deploy-label-1: "dummy-value-1"
       dummy-frontend-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-frontend-pod-label-1: "dummy-value-1"
+      dummy-frontend-pod-label-2: "dummy-value-2"
     env:
       - name: NX_API_INTERNAL_BASE_URL
         value: 'http://nx-cloud-nx-api-service'
@@ -141,6 +153,9 @@ api:
     labels:
       dummy-api-deploy-label-1: "dummy-value-1"
       dummy-api-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-api-pod-label-1: "dummy-value-1"
+      dummy-api-pod-label-2: "dummy-value-2"
     env:
       - name: FILE_SERVER_INTERNAL_BASE_URL
         value: http://nx-cloud-file-server-service

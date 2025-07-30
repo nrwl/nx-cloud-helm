@@ -23,7 +23,13 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "nxCloud.selectorLabels" (dict "component" "file-server" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+        {{- include "nxCloud.selectorLabels" (dict "component" "file-server" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 8 }}
+        {{- with .Values.global.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with .Values.fileServer.deployment.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ .Values.fileServer.serviceAccount.name }}
       {{- if .Values.fileServer.deployment.securityContext }}

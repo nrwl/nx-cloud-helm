@@ -15,6 +15,15 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            {{- include "nxCloud.selectorLabels" (dict "component" "aggregator" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+            {{- with .Values.global.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.aggregator.cronjob.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         spec:
           serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
           {{- with .Values.aggregator.cronjob.nodeSelector }}
