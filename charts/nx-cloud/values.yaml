@@ -247,4 +247,5 @@ workflowController:
     port: 9000
     headless: false
 
+objects: []
 extraObjects: []
