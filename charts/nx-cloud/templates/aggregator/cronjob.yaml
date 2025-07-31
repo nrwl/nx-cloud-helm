@@ -60,8 +60,14 @@ spec:
                 {{- end }}
                 - name: NX_API_LOG_LEVEL
                   value: {{ .Values.aggregator.logLevel | default .Values.global.logLevel | quote }}
-                {{- if .Values.aggregator.cronjob.env }}
-                {{- toYaml .Values.aggregator.cronjob.env | nindent 16 }}
+                {{- range $key, $value := .Values.aggregator.cronjob.env }}
+                - name: {{ $key }}
+                  value: {{ $value | quote }}
+                {{- end }}
+                {{- range $key, $value := .Values.aggregator.cronjob.envValueFrom }}
+                - name: {{ $key }}
+                  valueFrom:
+                    {{- toYaml $value | nindent 20 }}
                 {{- end }}
               {{- if .Values.aggregator.cronjob.envFrom }}
               envFrom:

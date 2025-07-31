@@ -46,8 +46,13 @@ fileServer:
     podLabels: {}
     port: 5000
     env:
-      - name: NX_CACHE_EXPIRATION_PERIOD_IN_DAYS
-        value: "1"
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "1"
+
+    envValueFrom: {}
+      #  ENV_NAME:
+      #    configMapKeyRef:
+      #      name: configmap-name
+      #      key: value_key
 
     strategy:
       type: RollingUpdate
@@ -101,7 +106,13 @@ aggregator:
     annotations: {}
     labels: {}
     podLabels: {}
-    env: []
+    env: {}
+
+    envValueFrom: {}
+      #  ENV_NAME:
+      #    configMapKeyRef:
+      #      name: configmap-name
+      #      key: value_key
     envFrom: []
 
     securityContext: {}
@@ -151,7 +162,13 @@ frontend:
     podLabels: {}
     replicas: 1
     port: 4202
-    env: []
+    env: {}
+
+    envValueFrom: {}
+      #  ENV_NAME:
+      #    configMapKeyRef:
+      #      name: configmap-name
+      #      key: value_key
 
     strategy:
       type: RollingUpdate
@@ -205,7 +222,13 @@ api:
     podLabels: {}
     replicas: 1
     port: 4203
-    env: []
+    env: {}
+
+    envValueFrom: {}
+      #  ENV_NAME:
+      #    configMapKeyRef:
+      #      name: configmap-name
+      #      key: value_key
 
     strategy:
       type: RollingUpdate

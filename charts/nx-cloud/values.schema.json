@@ -229,6 +229,9 @@
             "env": {
               "$ref": "#/definitions/envVars"
             },
+            "envValueFrom": {
+              "$ref": "#/definitions/envValueFrom"
+            },
             "envFrom": {
               "$ref": "#/definitions/envFrom"
             },
@@ -452,6 +455,9 @@
         "env": {
           "$ref": "#/definitions/envVars"
         },
+        "envValueFrom": {
+          "$ref": "#/definitions/envValueFrom"
+        },
         "strategy": {
           "type": "object",
           "properties": {
@@ -579,30 +585,64 @@
       "required": ["create", "name", "automount"]
     },
     "envVars": {
-      "type": "array",
-      "description": "Environment variables",
-      "items": {
+      "type": "object",
+      "description": "Environment variables as key-value pairs",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "envValueFrom": {
+      "type": "object",
+      "description": "Environment variables with values from ConfigMaps, Secrets, etc.",
+      "additionalProperties": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
+          "configMapKeyRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              }
+            },
+            "required": ["name", "key"]
           },
-          "value": {
-            "type": "string"
+          "secretKeyRef": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              }
+            },
+            "required": ["name", "key"]
           },
-          "valueFrom": {
-            "type": "object"
+          "fieldRef": {
+            "type": "object",
+            "properties": {
+              "fieldPath": {
+                "type": "string"
+              }
+            },
+            "required": ["fieldPath"]
+          },
+          "resourceFieldRef": {
+            "type": "object",
+            "properties": {
+              "containerName": {
+                "type": "string"
+              },
+              "resource": {
+                "type": "string"
+              }
+            },
+            "required": ["resource"]
           }
-        },
-        "required": ["name"],
-        "oneOf": [
-          {
-            "required": ["value"]
-          },
-          {
-            "required": ["valueFrom"]
-          }
-        ]
+        }
       }
     },
     "envFrom": {

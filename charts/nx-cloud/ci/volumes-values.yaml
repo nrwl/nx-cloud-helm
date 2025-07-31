@@ -65,20 +65,17 @@ fileServer:
 aggregator:
   cronjob:
     env:
-      - name: NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES
-        value: 'true'
-      - name: NX_CLOUD_LOG_OUTPUT_FORMAT
-        value: 'json'
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-      - name: ADMIN_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: ADMIN_PASSWORD
+      NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
+      NX_CLOUD_LOG_OUTPUT_FORMAT: 'json'
+    envValueFrom:
+      NX_CLOUD_MONGO_SERVER_ENDPOINT:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      ADMIN_PASSWORD:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: ADMIN_PASSWORD
     volumes:
       - name: aggregator-config
         configMap:
@@ -96,13 +93,12 @@ aggregator:
 frontend:
   deployment:
     env:
-      - name: NX_API_INTERNAL_BASE_URL
-        value: 'http://nx-cloud-nx-api-service'
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
+    envValueFrom:
+      NX_CLOUD_MONGO_SERVER_ENDPOINT:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
     volumes:
       - name: frontend-config
         configMap:
@@ -120,40 +116,27 @@ frontend:
 api:
   deployment:
     env:
-      - name: FILE_SERVER_INTERNAL_BASE_URL
-        value: http://nx-cloud-file-server-service
-      - name: FILE_SERVER_INTERNAL_PORT
-        value: "5000"
-      - name: USE_VALKEY
-        value: "true"
-      - name: VALKEY_CLIENT_PROVIDER
-        value: redisson
-      - name: VALKEY_USE_SENTINEL
-        value: "true"
-      - name: VALKEY_SENTINEL_MASTER_NAME
-        value: "nxcloud"
-      - name: VALKEY_PRIMARY_ADDRESS
-        value: valkey-node-0.valkey-headless.valkey.svc.cluster.local
-      - name: VALKEY_REPLICA_ADDRESSES
-        value: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
-      - name: VALKEY_PORT
-        value: "6379"
-      - name: VALKEY_SENTINEL_PORT
-        value: "26379"
-      - name: VALKEY_USERNAME
-        value: "default"
-      - name: ACTIVEMQ_ADDRESS
-        value: tcp://nx-cloud-messagequeue:61616
-      - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: NX_CLOUD_MONGO_SERVER_ENDPOINT
-      - name: VALKEY_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: nx-cloud-credentials
-            key: VALKEY_PASSWORD
+      FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
+      FILE_SERVER_INTERNAL_PORT: "5000"
+      USE_VALKEY: "true"
+      VALKEY_CLIENT_PROVIDER: redisson
+      VALKEY_USE_SENTINEL: "true"
+      VALKEY_SENTINEL_MASTER_NAME: "nxcloud"
+      VALKEY_PRIMARY_ADDRESS: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+      VALKEY_REPLICA_ADDRESSES: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+      VALKEY_PORT: "6379"
+      VALKEY_SENTINEL_PORT: "26379"
+      VALKEY_USERNAME: "default"
+      ACTIVEMQ_ADDRESS: tcp://nx-cloud-messagequeue:61616
+    envValueFrom:
+      NX_CLOUD_MONGO_SERVER_ENDPOINT:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
+      VALKEY_PASSWORD:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: VALKEY_PASSWORD
     volumes:
       - name: api-config
         configMap:

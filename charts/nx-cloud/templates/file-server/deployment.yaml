@@ -68,8 +68,14 @@ spec:
             {{- end }}
             - name: NX_API_LOG_LEVEL
               value: {{ .Values.fileServer.logLevel | default .Values.global.logLevel | quote }}
-            {{- if .Values.fileServer.deployment.env }}
-            {{- toYaml .Values.fileServer.deployment.env | nindent 12 }}
+            {{- range $key, $value := .Values.fileServer.deployment.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $value := .Values.fileServer.deployment.envValueFrom }}
+            - name: {{ $key }}
+              valueFrom:
+                {{- toYaml $value | nindent 16 }}
             {{- end }}
           {{- if .Values.fileServer.deployment.envFrom }}
           envFrom:
