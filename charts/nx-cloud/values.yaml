@@ -7,6 +7,9 @@ global:
   verboseLogging: false
   logLevel: "INFO"
   nxCloudAppURL: ""
+  mongodbConnectionString:
+    secretName: ""
+    secretKey: ""
 
 config:
   agentConfigs: ""
@@ -49,10 +52,10 @@ fileServer:
       NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "1"
 
     envValueFrom: {}
-      #  ENV_NAME:
-      #    configMapKeyRef:
-      #      name: configmap-name
-      #      key: value_key
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
 
     strategy:
       type: RollingUpdate
@@ -109,10 +112,10 @@ aggregator:
     env: {}
 
     envValueFrom: {}
-      #  ENV_NAME:
-      #    configMapKeyRef:
-      #      name: configmap-name
-      #      key: value_key
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
     envFrom: []
 
     securityContext: {}
@@ -165,10 +168,10 @@ frontend:
     env: {}
 
     envValueFrom: {}
-      #  ENV_NAME:
-      #    configMapKeyRef:
-      #      name: configmap-name
-      #      key: value_key
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
 
     strategy:
       type: RollingUpdate
@@ -225,10 +228,10 @@ api:
     env: {}
 
     envValueFrom: {}
-      #  ENV_NAME:
-      #    configMapKeyRef:
-      #      name: configmap-name
-      #      key: value_key
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
 
     strategy:
       type: RollingUpdate
@@ -270,5 +273,4 @@ workflowController:
     port: 9000
     headless: false
 
-objects: []
-extraObjects: []
+extraObjects: {}

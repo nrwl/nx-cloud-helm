@@ -45,6 +45,21 @@
           "type": "string",
           "description": "NX Cloud application URL",
           "format": "uri"
+        },
+        "mongodbConnectionString": {
+          "type": "object",
+          "description": "MongoDB connection string configuration",
+          "properties": {
+            "secretName": {
+              "type": "string",
+              "description": "Name of the secret containing the MongoDB connection string"
+            },
+            "secretKey": {
+              "type": "string",
+              "description": "Key within the secret containing the MongoDB connection string"
+            }
+          },
+          "required": ["secretName", "secretKey"]
         }
       },
       "required": ["nxCloudAppURL"]
@@ -368,7 +383,7 @@
       }
     },
     "extraObjects": {
-      "type": "array",
+      "type": "object",
       "description": "Extra Kubernetes objects to create",
       "items": {
         "type": "object"

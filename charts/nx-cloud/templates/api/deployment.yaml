@@ -95,6 +95,13 @@ spec:
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.global.nxCloudAppURL }}
+            {{- if .Values.global.mongodbConnectionString.secretName }}
+            - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.mongodbConnectionString.secretName }}
+                  key: {{ .Values.global.mongodbConnectionString.secretKey }}
+            {{- end }}
             {{- if .Values.config.agentConfigs }}
             - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
               value: /opt/nx-cloud/resource-classes/agentConfigs.yaml

@@ -75,6 +75,13 @@ spec:
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.global.nxCloudAppURL }}
+            {{- if .Values.global.mongodbConnectionString.secretName }}
+            - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.global.mongodbConnectionString.secretName }}
+                  key: {{ .Values.global.mongodbConnectionString.secretKey }}
+            {{- end }}
             {{- if .Values.frontend.verboseLogging | default .Values.global.verboseLogging }}
             - name: NX_VERBOSE_LOGGING
               value: "true"

@@ -1,8 +1,12 @@
 global:
   nxCloudAppURL: "https://nx.test"
+  mongodbConnectionString:
+    secretName: nx-cloud-credentials
+    secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
 
 extraObjects:
-  - apiVersion: v1
+  appSecrets:
+    apiVersion: v1
     kind: Secret
     metadata:
       name: nx-cloud-credentials
@@ -63,10 +67,6 @@ api:
       VALKEY_USERNAME: "default"
       ACTIVEMQ_ADDRESS: tcp://nx-cloud-messagequeue:61616
     envValueFrom:
-      NX_CLOUD_MONGO_SERVER_ENDPOINT:
-        secretKeyRef:
-          name: nx-cloud-credentials
-          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
       VALKEY_PASSWORD:
         secretKeyRef:
           name: nx-cloud-credentials
@@ -78,11 +78,6 @@ frontend:
   deployment:
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
-    envValueFrom:
-      NX_CLOUD_MONGO_SERVER_ENDPOINT:
-        secretKeyRef:
-          name: nx-cloud-credentials
-          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
     resources: null
 
 # Configure aggregator
@@ -92,10 +87,6 @@ aggregator:
       NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
       NX_CLOUD_LOG_OUTPUT_FORMAT: 'json'
     envValueFrom:
-      NX_CLOUD_MONGO_SERVER_ENDPOINT:
-        secretKeyRef:
-          name: nx-cloud-credentials
-          key: NX_CLOUD_MONGO_SERVER_ENDPOINT
       ADMIN_PASSWORD:
         secretKeyRef:
           name: nx-cloud-credentials
