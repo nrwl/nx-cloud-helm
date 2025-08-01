@@ -1,17 +1,8 @@
-{{ range .Values.objects }}
+{{ range $name, $manifest := .Values.extraObjects }}
 ---
-{{ if typeIs "string" . }}
-    {{- tpl . $ }}
+{{ if typeIs "string" $manifest }}
+    {{- tpl $manifest $ }}
 {{- else }}
-    {{- tpl (toYaml .) $ }}
-{{- end }}
-{{ end }}
-
-{{ range .Values.extraObjects }}
----
-{{ if typeIs "string" . }}
-    {{- tpl . $ }}
-{{- else }}
-    {{- tpl (toYaml .) $ }}
+    {{- tpl (toYaml $manifest) $ }}
 {{- end }}
 {{ end }}
