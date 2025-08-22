@@ -195,6 +195,7 @@ frontend:
 
     volumes: []
     volumeMounts: []
+    extraContainers: []
 
   serviceAccount:
     create: true
@@ -255,6 +256,7 @@ api:
 
     volumes: []
     volumeMounts: []
+    extraContainers: []
 
   serviceAccount:
     create: true

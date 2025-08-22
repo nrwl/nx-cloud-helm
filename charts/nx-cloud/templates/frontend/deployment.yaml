@@ -109,3 +109,6 @@ spec:
           securityContext:
           {{- omit .Values.frontend.deployment.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}
           {{- end }}
+        {{- with .Values.frontend.deployment.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}

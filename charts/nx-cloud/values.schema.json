@@ -534,6 +534,9 @@
         },
         "volumeMounts": {
           "type": "array"
+        },
+        "extraContainers": {
+          "type": "array"
         }
       },
       "required": ["port"]
