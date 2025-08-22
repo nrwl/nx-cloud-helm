@@ -5,6 +5,12 @@ global:
   mongodbConnectionString:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
+  extraContainers:
+    - name: sidecar-nginx-global
+      image: nginx:1.25-alpine
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 8090
 
 extraObjects:
   appSecrets:

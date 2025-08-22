@@ -10,6 +10,7 @@ global:
   mongodbConnectionString:
     secretName: ""
     secretKey: ""
+  extraContainers: []
 
 config:
   agentConfigs: ""
@@ -79,6 +80,7 @@ fileServer:
 
     volumes: []
     volumeMounts: []
+    extraContainers: []
 
   pvc:
     name: nx-cloud-file-server

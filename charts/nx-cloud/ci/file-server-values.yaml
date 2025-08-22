@@ -29,6 +29,12 @@ fileServer:
     port: 5000
 
   deployment:
+    extraContainers:
+      - name: sidecar-nginx-file-server
+        image: nginx:1.25-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8083
     env:
       NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "7"
 

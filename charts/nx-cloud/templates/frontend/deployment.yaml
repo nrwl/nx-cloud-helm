@@ -112,3 +112,6 @@ spec:
         {{- with .Values.frontend.deployment.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- with .Values.global.extraContainers }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}

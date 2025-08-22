@@ -60,6 +60,10 @@
             }
           },
           "required": ["secretName", "secretKey"]
+        },
+        "extraContainers": {
+          "type": "array",
+          "description": "Extra sidecar containers to be added to all component pods"
         }
       },
       "required": ["nxCloudAppURL"]
