@@ -121,10 +121,17 @@ spec:
               valueFrom:
                 {{- toYaml $value | nindent 16 }}
             {{- end }}
-          {{- if .Values.api.deployment.envFrom }}
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.api.valkey.passwordSecret.name }}
+                  key: {{ .Values.api.valkey.passwordSecret.key }}
           envFrom:
+            - configMapRef:
+                name: nx-cloud-nx-api-valkey-config
+            {{- if .Values.api.deployment.envFrom }}
             {{- toYaml .Values.api.deployment.envFrom | nindent 12 }}
-          {{- end }}
+            {{- end }}
           {{- if .Values.api.deployment.securityContext }}
           securityContext:
           {{- omit .Values.api.deployment.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}

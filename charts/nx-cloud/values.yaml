@@ -210,6 +210,20 @@ api:
   verboseLogging: false
   logLevel: "INFO"
 
+  # Valkey (Redis-compatible) configuration for the API.
+  valkey:
+    clientProvider: "redisson"
+    useSentinel: false
+    sentinelMasterName: ""
+    sentinelPort: 26379
+    primaryAddress: ""
+    replicaAddresses: ""
+    port: 6379
+    username: ""
+    passwordSecret:
+      name: ""
+      key: ""
+
   image:
     repository: "nxprivatecloud/nx-cloud-nx-api"
     tag: ""
