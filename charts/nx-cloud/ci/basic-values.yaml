@@ -1,28 +1,10 @@
 global:
   nxCloudAppURL: "https://nx.test"
   imagePullSecrets:
-   - regcreds
+    - regcreds
   mongodbConnectionString:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
-
-# objects:
-#   - apiVersion: v1
-#     kind: Service
-#     metadata:
-#       name: backend-not-found
-#       labels:
-#         app: backend-not-found
-#         app.kubernetes.io/name: nx-cloud
-#         app.kubernetes.io/instance: nx-cloud
-#     spec:
-#       selector:
-#         app: backend-not-found
-#       type: ClusterIP
-#       ports:
-#         - name: http
-#           port: 80
-#           targetPort: 80
 
 extraObjects:
   appSecrets:
