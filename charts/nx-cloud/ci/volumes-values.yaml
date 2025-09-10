@@ -94,10 +94,6 @@ frontend:
   deployment:
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
-    envValueFrom:
-      secretKeyRef:
-        name: nx-cloud-credentials
-        key: NX_CLOUD_MONGO_SERVER_ENDPOINT
     volumes:
       - name: frontend-config
         configMap:
