@@ -1,16 +1,13 @@
 global:
   nxCloudAppURL: "https://nx.test"
-  imagePullSecrets:
-    - regcreds
   mongodbConnectionString:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
   extraContainers:
-    - name: sidecar-nginx-global
-      image: nginx:1.25-alpine
+    - name: sidecar-debian-global
+      image: debian:stable-slim
       imagePullPolicy: IfNotPresent
-      ports:
-        - containerPort: 8090
+      command: ["sleep", "infinity"]
 
 extraObjects:
   appSecrets:
@@ -60,11 +57,10 @@ frontend:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
     resources: null
     extraContainers:
-      - name: sidecar-nginx-frontend
-        image: nginx:1.25-alpine
+      - name: sidecar-debian-frontend
+        image: debian:stable-slim
         imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: 8081
+        command: ["sleep", "infinity"]
 
 api:
   valkey:
@@ -86,8 +82,7 @@ api:
       ACTIVEMQ_ADDRESS: tcp://nx-cloud-messagequeue:61616
     resources: null
     extraContainers:
-      - name: sidecar-nginx-api
-        image: nginx:1.25-alpine
+      - name: sidecar-debian-api
+        image: debian:stable-slim
         imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: 8082
+        command: ["sleep", "infinity"]

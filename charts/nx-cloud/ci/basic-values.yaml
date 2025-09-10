@@ -1,7 +1,5 @@
 global:
   nxCloudAppURL: "https://nx.test"
-  imagePullSecrets:
-    - regcreds
   mongodbConnectionString:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT

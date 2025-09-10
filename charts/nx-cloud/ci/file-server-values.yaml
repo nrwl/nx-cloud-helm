@@ -30,11 +30,10 @@ fileServer:
 
   deployment:
     extraContainers:
-      - name: sidecar-nginx-file-server
-        image: nginx:1.25-alpine
+      - name: sidecar-debian-file-server
+        image: debian:stable-slim
         imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: 8083
+        command: ["sleep", "infinity"]
     env:
       NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "7"
 
