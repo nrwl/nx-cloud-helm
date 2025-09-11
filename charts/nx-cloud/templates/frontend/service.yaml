@@ -12,7 +12,7 @@ metadata:
 spec:
   type: {{ .Values.frontend.service.type }}
   selector:
-    {{- include "nxCloud.selectorLabels" (dict "component" "nx-cloud-frontend" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+    app: nx-cloud-frontend
   ports:
     - port: {{ .Values.frontend.service.port }}
       targetPort: {{ .Values.frontend.deployment.port }}

@@ -13,7 +13,7 @@ spec:
   replicas: {{ .Values.api.deployment.replicas }}
   selector:
     matchLabels:
-      {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+      app: nx-cloud-nx-api
   revisionHistoryLimit: 5
   progressDeadlineSeconds: 300
   {{- with .Values.api.deployment.strategy }}
@@ -23,7 +23,8 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 8 }}
+        {{- include "nxCloud.labels" . | nindent 8 }}
+        app: nx-cloud-nx-api
         {{- with .Values.global.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

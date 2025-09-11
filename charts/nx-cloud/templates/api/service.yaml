@@ -12,7 +12,7 @@ metadata:
 spec:
   type: {{ .Values.api.service.type }}
   selector:
-    {{- include "nxCloud.selectorLabels" (dict "component" "nx-api" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+    app: nx-cloud-nx-api
   ports:
     - port: {{ .Values.api.service.port }}
       targetPort: {{ .Values.api.deployment.port }}

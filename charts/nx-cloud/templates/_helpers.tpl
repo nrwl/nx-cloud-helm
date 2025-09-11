@@ -35,22 +35,12 @@ Common labels
 */}}
 {{- define "nxCloud.labels" -}}
 helm.sh/chart: {{ include "nxCloud.chart" . }}
-{{ include "nxCloud.selectorLabels" . }}
+app.kubernetes.io/name: {{ include "nxCloud.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "nxCloud.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "nxCloud.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- if .component }}
-app.kubernetes.io/component: {{ .component }}
-{{- end }}
 {{- end }}
 
 

@@ -17,7 +17,8 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "nxCloud.selectorLabels" (dict "component" "aggregator" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 12 }}
+            {{- include "nxCloud.labels" . | nindent 12 }}
+            app: nx-cloud-aggregator
             {{- with .Values.global.podLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
