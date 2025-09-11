@@ -69,5 +69,4 @@ api:
     env:
       FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
       FILE_SERVER_INTERNAL_PORT: "5000"
-      ACTIVEMQ_ADDRESS: tcp://nx-cloud-messagequeue:61616
     resources: null

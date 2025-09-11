@@ -1,7 +1,7 @@
 global:
   labels: {}
   podLabels: {}
-  imageTag: "2025.06.3"
+  imageTag: "2025.07.1"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   verboseLogging: false
