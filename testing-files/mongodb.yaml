@@ -1,0 +1,11 @@
+architecture: replicaset
+replicaCount: 1
+
+auth:
+  enabled: false
+
+arbiter:
+  enabled: false
+
+persistence:
+  enabled: false

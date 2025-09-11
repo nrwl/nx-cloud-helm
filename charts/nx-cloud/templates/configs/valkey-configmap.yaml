@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nx-cloud-nx-api-valkey-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.api.deployment.labels "context" .) | nindent 4 }}
+data:
+  USE_VALKEY: "true"
+  VALKEY_CLIENT_PROVIDER: "{{ .Values.api.valkey.clientProvider }}"
+  VALKEY_USE_SENTINEL: "{{ ternary "true" "false" .Values.api.valkey.useSentinel }}"
+  VALKEY_SENTINEL_MASTER_NAME: "{{ .Values.api.valkey.sentinelMasterName }}"
+  VALKEY_PRIMARY_ADDRESS: "{{ .Values.api.valkey.primaryAddress }}"
+  VALKEY_REPLICA_ADDRESSES: "{{ .Values.api.valkey.replicaAddresses }}"
+  VALKEY_PORT: "{{ .Values.api.valkey.port }}"
+  VALKEY_SENTINEL_PORT: "{{ .Values.api.valkey.sentinelPort }}"
+  VALKEY_USERNAME: "{{ .Values.api.valkey.username }}"

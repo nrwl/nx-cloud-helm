@@ -16,26 +16,27 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
-  backendNotFoundService:
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: backend-not-found
-      labels:
-        app: backend-not-found
-        app.kubernetes.io/name: nx-cloud
-        app.kubernetes.io/instance: nx-cloud
-    spec:
-      selector:
-        app: backend-not-found
-      type: ClusterIP
-      ports:
-        - name: http
-          port: 80
-          targetPort: 80
+# Test security context for file-server
+fileServer:
+  enabled: true
+  deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
+    env:
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "7"
+    resources: null
 
+# Test security context for aggregator
 aggregator:
   cronjob:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
     env:
       NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
       NX_CLOUD_LOG_OUTPUT_FORMAT: 'json'
@@ -46,12 +47,19 @@ aggregator:
           key: ADMIN_PASSWORD
     resources: null
 
+# Test security context for frontend
 frontend:
   deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
     resources: null
 
+# Test security context for api
 api:
   valkey:
     clientProvider: "redisson"
@@ -66,6 +74,11 @@ api:
       name: nx-cloud-credentials
       key: VALKEY_PASSWORD
   deployment:
+    securityContext:
+      runAsUser: 10000
+      runAsGroup: 10000
+      fsGroup: 10000
+      fsGroupChangePolicy: "OnRootMismatch"
     env:
       FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
       FILE_SERVER_INTERNAL_PORT: "5000"

@@ -3,6 +3,11 @@ global:
   mongodbConnectionString:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
+  extraContainers:
+    - name: sidecar-debian-global
+      image: debian:stable-slim
+      imagePullPolicy: IfNotPresent
+      command: ["sleep", "infinity"]
 
 extraObjects:
   appSecrets:
@@ -51,6 +56,11 @@ frontend:
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
     resources: null
+    extraContainers:
+      - name: sidecar-debian-frontend
+        image: debian:stable-slim
+        imagePullPolicy: IfNotPresent
+        command: ["sleep", "infinity"]
 
 api:
   valkey:
@@ -70,3 +80,8 @@ api:
       FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
       FILE_SERVER_INTERNAL_PORT: "5000"
     resources: null
+    extraContainers:
+      - name: sidecar-debian-api
+        image: debian:stable-slim
+        imagePullPolicy: IfNotPresent
+        command: ["sleep", "infinity"]

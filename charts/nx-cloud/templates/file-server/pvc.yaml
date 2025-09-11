@@ -1,0 +1,27 @@
+{{- if .Values.fileServer.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.fileServer.pvc.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.fileServer.pvc.labels "context" .) | nindent 4 }}
+  {{- if or .Values.fileServer.pvc.helmResourcePolicy .Values.fileServer.pvc.annotations }}
+  annotations:
+    {{- if .Values.fileServer.pvc.helmResourcePolicy }}
+    helm.sh/resource-policy: {{ .Values.fileServer.pvc.helmResourcePolicy | quote }}
+    {{- end }}
+    {{- with .Values.fileServer.pvc.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.fileServer.pvc.storageClassName }}
+  storageClassName: {{ .Values.fileServer.pvc.storageClassName }}
+  {{- end}}
+  resources:
+    requests:
+      storage: {{ .Values.fileServer.pvc.size }}
+{{- end }}

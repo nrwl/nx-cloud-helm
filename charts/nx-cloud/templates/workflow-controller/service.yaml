@@ -1,0 +1,60 @@
+{{- if and .Values.workflowController.service.enabled .Values.workflowController.service.externalName}}
+{{- if .Values.workflowController.service.headless }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.workflowController.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
+  {{- with .Values.workflowController.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ports:
+    - port: {{ .Values.workflowController.service.port | default 9000 }}
+      protocol: TCP
+      targetPort: {{ .Values.workflowController.service.port | default 9000 }}
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: {{ printf "%s-1" .Values.workflowController.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    kubernetes.io/service-name: {{ .Values.workflowController.service.name }}
+    endpointslice.kubernetes.io/manage-by: helm
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
+  {{- with .Values.workflowController.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+addressType: IPv4
+ports:
+  - name: ''
+    protocol: TCP
+    port: {{ .Values.workflowController.service.port | default 9000 }}
+endpoints:
+  - addresses:
+      - {{ .Values.workflowController.service.externalName | quote }}
+    conditions: {}
+{{- else }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.workflowController.service.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.workflowController.service.labels "context" .) | nindent 4 }}
+  {{- with .Values.workflowController.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.workflowController.service.externalName }}
+{{- end }}
+{{- end }}
