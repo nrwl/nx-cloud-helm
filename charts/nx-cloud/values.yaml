@@ -1,257 +1,294 @@
-image:
-  tag: ''  # Deprecated, please use global.imageTag or service specific image tag.
-
 global:
-  imageRegistry: ''
-  imageTag: 'latest'
-  imageRepository: 'nxprivatecloud'
-  namespace: default
+  labels: {}
+  podLabels: {}
+  imageTag: "2025.07.1"
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  verboseLogging: false
+  logLevel: "INFO"
+  nxCloudAppURL: ""
+  mongodbConnectionString:
+    secretName: ""
+    secretKey: ""
+  extraContainers: []
 
-naming:
-  nameOverride: ''
-  fullNameOverride: ''
+config:
+  agentConfigs: ""
 
-mode: private-enterprise
-
-nxCloudAppURL: ''
-verboseLogging: false
-verboseMongoLogging: false
-enableMessageQueue: true
-
-frontend:
-  serviceAccountName: ''
-  image:
-    registry: ''
-    imageName: nx-cloud-frontend
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  deployment:
-    replicas: 1
-    port: 4202
-    env: []
-    volumes: []
-    volumeMounts: []
-  service:
-    name: nx-cloud-frontend-service
-    type: ClusterIP
-    port: 8080
-    annotations: {}
-  resources:
-    limits: {}
-    requests:
-      memory: '0.5Gi'
-      cpu: '0.5'
-
-nxApi:
-  serviceAccountName: ''
-  image:
-    registry: ''
-    imageName: nx-cloud-nx-api
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  deployment:
-    replicas: 1
-    port: 4203
-    env: []
-    readinessProbe: {}
-    volumes: []
-    volumeMounts: []
-  service:
-    name: nx-cloud-nx-api-service
-    type: ClusterIP
-    port: 4203
-    annotations: {}
-  resources:
-    limits: {}
-    requests:
-      memory: '1Gi'
-      cpu: '1.0'
+ingress:
+  enabled: true
+  annotations: {}
+  labels: {}
+  className: ""
+  host: ""
+  tls:
+    enabled: false
+    secretName: ""
+    hosts: []
+  additionalPaths: []
 
 fileServer:
-  serviceAccountName: ''
+  enabled: false
+  verboseLogging: false
+  logLevel: "INFO"
+
   image:
-    registry: ''
-    imageName: nx-cloud-file-server
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  deployment:
-    port: 5000
-    env: []
+    repository: "nxprivatecloud/nx-cloud-file-server"
+    tag: ""
+    pullPolicy: IfNotPresent
+
   service:
+    annotations: {}
+    labels: {}
     name: nx-cloud-file-server-service
     type: ClusterIP
     port: 5000
+
+  deployment:
     annotations: {}
-  resources:
-    limits: {}
-    requests:
-      memory: '0.5Gi'
-      cpu: '0.5'
-  securityContext:
-    enabled: true
-    runAsUser: 10000
-    runAsGroup: 10000
-    fsGroup: 10000
-    fsGroupChangePolicy: "OnRootMismatch"
+    labels: {}
+    podLabels: {}
+    port: 5000
+    env:
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "1"
+
+    envValueFrom: {}
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
+
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 0
+
+    envFrom: []
+
+    securityContext: {}
+
+    affinity: {}
+    tolerations: {}
+    nodeSelector: {}
+
+    resources:
+      limits: {}
+      requests:
+        memory: '500Mi'
+        cpu: '500m'
+
+    volumes: []
+    volumeMounts: []
+    extraContainers: []
+
+  pvc:
+    name: nx-cloud-file-server
+    annotations: {}
+    labels: {}
+    storageClassName: ""
+    size: 10Gi
+    helmResourcePolicy: keep
+
+  serviceAccount:
+    create: true
+    name: nx-cloud-file-server
+    annotations: {}
+    labels: {}
+    automount: false
 
 aggregator:
-  serviceAccountName: ''
-  schedule: '*/10 * * * *'
-  image:
-    registry: ''
-    imageName: nx-cloud-aggregator
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  env: []
-  volumes: []
-  volumeMounts: []
-  resources:
-    limits: {}
-    requests:
-      memory: '1200M'
-      cpu: '0.5'
+  verboseLogging: false
+  logLevel: "INFO"
 
-messagequeue:
-  serviceAccountName: ''
   image:
-    registry: ''
-    imageName: nx-cloud-messagequeue
-    repository: ''
-    tag: ''
-    digest: ''
-    pullPolicy: Always
-  deployment:
-    port: 61616
-    env: []
-    volumes: {}
-    volumeMounts: {}
-  service:
-    name: nx-cloud-messagequeue
-    type: ClusterIP
-    port: 61616
+    repository: "nxprivatecloud/nx-cloud-aggregator"
+    tag: ""
+    pullPolicy: IfNotPresent
+
+  cronjob:
+    schedule: "*/10 * * * *"
     annotations: {}
-  resources:
-    limits: {}
-    requests: {}
+    labels: {}
+    podLabels: {}
+    env: {}
 
-nxCloudWorkflows:
-  enabled: false
-  port: 9000
-  name: 'nx-cloud-workflow-controller-service'
-  workflowsNamespace: 'nx-cloud-workflows'
+    envValueFrom: {}
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
+    envFrom: []
 
-  # If externalName is left unset, the applications will look for ane existing service with the name defined
-  # by `nxCloudWorkflows.name` in the namespace `nxCloudWorkflows.workflowsNamespace`. Use this option if you are
-  # also running the nx-agents chart in the same cluster as this nx-cloud chart
-  #
-  # If externalName is set, an additional service will be created with the name `nxCloudWorkflows.name`
-  # in the global namespace of this chart, and applications will use that service to connect to the workflow controller.
-  # Use this option if your nx-agents are running in a different cluster than this nx-cloud chart
-  externalName: ''
+    securityContext: {}
 
-  # If you find that an externalName service is not working as expected, you can set this to true to create a headless service
-  # which will create an endpoint group as an alternative. Please continue to set `externalName` to the IP address
-  # you wish to direct traffic to as we will use it to populate the endpoint slice.
-  headless: false
+    affinity: {}
+    tolerations: {}
+    nodeSelector: {}
 
-# Deprecated, use nxApi.deployment.replicas and frontend.deployment.replicas
-replicas:
-  frontend: 1
-  nxApi: 1
+    resources:
+      limits: {}
+      requests:
+        memory: '1200Mi'
+        cpu: '500m'
 
-ingress:
-  skip: false
+    volumes: []
+    volumeMounts: []
 
-  # deprecated, use ingress.annotations
-  globalStaticIpName: ''
-  managedCertificates: ''
-  albScheme: ''
-  albListenPorts: ''
-  albCertificateArn: ''
-  class: ''
+  serviceAccount:
+    create: true
+    name: nx-cloud-aggregator
+    annotations: {}
+    labels: {}
+    automount: false
 
-  annotations:
-    nx.app/installed-by: 'helm'
+  secret:
+    create: false
 
-fileStorage:
-  storageClassName: ''
-  size: '30Gi'
-  resourcePolicy: ''
+frontend:
+  verboseLogging: false
+  logLevel: "INFO"
 
-awsS3:
-  enabled: false
-  bucket: ''
-  accelerated: false
-  endpoint: ''
-  enablePathStyleAccess: false
+  image:
+    repository: "nxprivatecloud/nx-cloud-frontend"
+    tag: ""
+    pullPolicy: ""
 
-azure:
-  enabled: false
-  container: ''
+  service:
+    annotations: {}
+    labels: {}
+    name: nx-cloud-frontend-service
+    type: ClusterIP
+    port: 8080
 
-useCosmosDb: false
+  deployment:
+    annotations: {}
+    labels: {}
+    podLabels: {}
+    replicas: 1
+    port: 4202
+    env: {}
 
-gitlab:
-  apiUrl: ''
-  projectId: ''
-  auth:
+    envValueFrom: {}
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
+
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+
+    envFrom: []
+
+    securityContext: {}
+
+    affinity: {}
+    tolerations: {}
+    nodeSelector: {}
+
+    resources:
+      limits: {}
+      requests:
+        memory: '500Mi'
+        cpu: '500m'
+
+    volumes: []
+    volumeMounts: []
+    extraContainers: []
+
+  serviceAccount:
+    create: true
+    name: nx-cloud-frontend
+    annotations: {}
+    labels: {}
+    automount: false
+
+api:
+  verboseLogging: false
+  logLevel: "INFO"
+
+  # Valkey (Redis-compatible) configuration for the API.
+  valkey:
+    clientProvider: "redisson"
+    useSentinel: false
+    sentinelMasterName: ""
+    sentinelPort: 26379
+    primaryAddress: ""
+    replicaAddresses: ""
+    port: 6379
+    username: ""
+    passwordSecret:
+      name: ""
+      key: ""
+
+  image:
+    repository: "nxprivatecloud/nx-cloud-nx-api"
+    tag: ""
+    pullPolicy: ""
+
+  service:
+    annotations: {}
+    labels: {}
+    name: nx-cloud-nx-api-service
+    type: ClusterIP
+    port: 4203
+
+  deployment:
+    annotations: {}
+    labels: {}
+    podLabels: {}
+    replicas: 1
+    port: 4203
+    env: {}
+
+    envValueFrom: {}
+    #  ENV_NAME:
+    #    configMapKeyRef:
+    #      name: configmap-name
+    #      key: value_key
+
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+
+    envFrom: []
+
+    securityContext: {}
+
+    affinity: {}
+    tolerations: {}
+    nodeSelector: {}
+
+    resources:
+      limits: {}
+      requests:
+        memory: '1000Mi'
+        cpu: '1000m'
+
+    volumes: []
+    volumeMounts: []
+    extraContainers: []
+
+  serviceAccount:
+    create: true
+    name: nx-cloud-nx-api
+    annotations: {}
+    labels: {}
+    automount: false
+
+workflowController:
+  service:
     enabled: false
-  mr:
-    enabled: false
+    name: "nx-cloud-workflow-controller-service"
+    annotations: {}
+    labels: {}
+    externalName: ""
+    port: 9000
+    headless: false
 
-github:
-  auth:
-    enabled: false
-  pr:
-    defaultWorkspaceId: ''
-    enabled: false
-    mode: 'webhook'
-    apiUrl: ''
-
-bitbucket:
-  auth:
-    enabled: false
-
-saml:
-  auth:
-    enabled: false
-
-# If you plan to deploy using your own self-signed certs, add them to a config map and provide the name here
-# We will mount the configmap to the pods and import the certs contained within at `self-signed-cert.crt`
-selfSignedCertConfigMap: ''
-preBuiltJavaCertStoreConfigMap: ''
-vcsHttpsProxy: ''
-
-# Optional: ConfigMap for loading resource class configuration
-# If this feature is used, both name and path must be specified
-resourceClassConfiguration:
-  name: ""      # Name of the configmap containing resource class configuration
-  path: ""      # Path to the specific key within the configmap that contains the configuration
-
-secret:
-  name: ''
-  nxCloudMongoServerEndpoint: ''
-  adminPassword: ''
-  awsS3AccessKeyId: ''
-  awsS3SecretAccessKey: ''
-  azureConnectionString: ''
-  githubAuthClientId: ''
-  githubAuthClientSecret: ''
-  githubWebhookSecret: ''
-  githubAuthToken: ''
-  githubAppId: ''
-  githubPrivateKey: ''
-  githubAppClientId: ''
-  githubAppClientSecret: ''
-  gitlabAccessToken: ''
-
-
-extraManifests: {}
+extraObjects: {}

@@ -1,0 +1,173 @@
+global:
+  nxCloudAppURL: "https://nx.test"
+  mongodbConnectionString:
+    secretName: nx-cloud-credentials
+    secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
+  labels:
+    dummy-global-label-1: "dummy-value-1"
+    dummy-global-label-2: "dummy-value-2"
+  podLabels:
+    dummy-global-pod-label-1: "dummy-value-1"
+    dummy-global-pod-label-2: "dummy-value-2"
+
+ingress:
+  annotations:
+    dummy-ingress-annotation-1: "dummy-value-1"
+    dummy-ingress-annotation-2: "dummy-value-2"
+  labels:
+    dummy-ingress-label-1: "dummy-value-1"
+    dummy-ingress-label-2: "dummy-value-2"
+
+extraObjects:
+  appSecrets:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+# Test labels and annotations for file-server
+fileServer:
+  enabled: true
+  service:
+    annotations:
+      dummy-file-server-svc-annotation-1: "dummy-value-1"
+      dummy-file-server-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-file-server-svc-label-1: "dummy-value-1"
+      dummy-file-server-svc-label-2: "dummy-value-2"
+
+  deployment:
+    annotations:
+      dummy-file-server-deploy-annotation-1: "dummy-value-1"
+      dummy-file-server-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-file-server-deploy-label-1: "dummy-value-1"
+      dummy-file-server-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-file-server-pod-label-1: "dummy-value-1"
+      dummy-file-server-pod-label-2: "dummy-value-2"
+    resources: null
+
+  pvc:
+    annotations:
+      dummy-file-server-pvc-annotation-1: "dummy-value-1"
+    labels:
+      dummy-file-server-pvc-label-1: "dummy-value-1"
+      dummy-file-server-pvc-label-2: "dummy-value-2"
+
+  serviceAccount:
+    annotations:
+      dummy-file-server-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-file-server-sa-label-1: "dummy-value-1"
+      dummy-file-server-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for aggregator
+aggregator:
+  cronjob:
+    annotations:
+      dummy-aggregator-cronjob-annotation-1: "dummy-value-1"
+      dummy-aggregator-cronjob-annotation-2: "dummy-value-2"
+    labels:
+      dummy-aggregator-cronjob-label-1: "dummy-value-1"
+      dummy-aggregator-cronjob-label-2: "dummy-value-2"
+    podLabels:
+      dummy-aggregator-pod-label-1: "dummy-value-1"
+      dummy-aggregator-pod-label-2: "dummy-value-2"
+    env:
+      NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
+      NX_CLOUD_LOG_OUTPUT_FORMAT: 'json'
+    envValueFrom:
+      ADMIN_PASSWORD:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: ADMIN_PASSWORD
+    resources: null
+
+  serviceAccount:
+    annotations:
+      dummy-aggregator-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-aggregator-sa-label-1: "dummy-value-1"
+      dummy-aggregator-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for frontend
+frontend:
+  service:
+    annotations:
+      dummy-frontend-svc-annotation-1: "dummy-value-1"
+      dummy-frontend-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-frontend-svc-label-1: "dummy-value-1"
+      dummy-frontend-svc-label-2: "dummy-value-2"
+
+  deployment:
+    annotations:
+      dummy-frontend-deploy-annotation-1: "dummy-value-1"
+      dummy-frontend-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-frontend-deploy-label-1: "dummy-value-1"
+      dummy-frontend-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-frontend-pod-label-1: "dummy-value-1"
+      dummy-frontend-pod-label-2: "dummy-value-2"
+    env:
+      NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
+    resources: null
+
+  serviceAccount:
+    annotations:
+      dummy-frontend-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-frontend-sa-label-1: "dummy-value-1"
+      dummy-frontend-sa-label-2: "dummy-value-2"
+
+# Test labels and annotations for api
+api:
+  service:
+    annotations:
+      dummy-api-svc-annotation-1: "dummy-value-1"
+      dummy-api-svc-annotation-2: "dummy-value-2"
+    labels:
+      dummy-api-svc-label-1: "dummy-value-1"
+      dummy-api-svc-label-2: "dummy-value-2"
+
+  valkey:
+    clientProvider: "redisson"
+    useSentinel: true
+    sentinelMasterName: "nxcloud"
+    sentinelPort: 26379
+    primaryAddress: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+    replicaAddresses: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+    port: 6379
+    username: "default"
+    passwordSecret:
+      name: nx-cloud-credentials
+      key: VALKEY_PASSWORD
+
+  deployment:
+    annotations:
+      dummy-api-deploy-annotation-1: "dummy-value-1"
+      dummy-api-deploy-annotation-2: "dummy-value-2"
+    labels:
+      dummy-api-deploy-label-1: "dummy-value-1"
+      dummy-api-deploy-label-2: "dummy-value-2"
+    podLabels:
+      dummy-api-pod-label-1: "dummy-value-1"
+      dummy-api-pod-label-2: "dummy-value-2"
+    env:
+      FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
+      FILE_SERVER_INTERNAL_PORT: "5000"
+    resources: null
+
+  serviceAccount:
+    annotations:
+      dummy-api-sa-annotation-1: "dummy-value-1"
+    labels:
+      dummy-api-sa-label-1: "dummy-value-1"
+      dummy-api-sa-label-2: "dummy-value-2"

@@ -1,0 +1,96 @@
+global:
+  nxCloudAppURL: "https://nx.test"
+  mongodbConnectionString:
+    secretName: nx-cloud-credentials
+    secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
+
+extraObjects:
+  appSecrets:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: nx-cloud-credentials
+    type: Opaque
+    stringData:
+      VALKEY_PASSWORD: password
+      NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
+      ADMIN_PASSWORD: password
+
+# Enable file server
+fileServer:
+  enabled: true
+  service:
+    annotations:
+      test-annotation: "file-server-test"
+    labels:
+      test-label: "file-server-test"
+    name: nx-cloud-file-server-service
+    type: ClusterIP
+    port: 5000
+
+  deployment:
+    extraContainers:
+      - name: sidecar-debian-file-server
+        image: debian:stable-slim
+        imagePullPolicy: IfNotPresent
+        command: ["sleep", "infinity"]
+    env:
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "7"
+
+  pvc:
+    name: nx-cloud-file-server
+    annotations:
+      test-annotation: "file-server-pvc-test"
+    labels:
+      test-label: "file-server-pvc-test"
+    storageClassName: "standard"
+    size: 10Gi
+    helmResourcePolicy: keep
+
+  serviceAccount:
+    create: true
+    name: nx-cloud-file-server
+    annotations:
+      test-annotation: "file-server-sa-test"
+    labels:
+      test-label: "file-server-sa-test"
+
+# Configure API to use file server
+api:
+  valkey:
+    clientProvider: "redisson"
+    useSentinel: true
+    sentinelMasterName: "nxcloud"
+    sentinelPort: 26379
+    primaryAddress: valkey-node-0.valkey-headless.valkey.svc.cluster.local
+    replicaAddresses: "valkey-node-1.valkey-headless.valkey.svc.cluster.local,valkey-node-2.valkey-headless.valkey.svc.cluster.local"
+    port: 6379
+    username: "default"
+    passwordSecret:
+      name: nx-cloud-credentials
+      key: VALKEY_PASSWORD
+  deployment:
+    env:
+      FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
+      FILE_SERVER_INTERNAL_PORT: "5000"
+    resources: null
+
+# Configure frontend
+frontend:
+  deployment:
+    env:
+      NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
+    resources: null
+
+# Configure aggregator
+aggregator:
+  cronjob:
+    env:
+      NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
+      NX_CLOUD_LOG_OUTPUT_FORMAT: 'json'
+    envValueFrom:
+      ADMIN_PASSWORD:
+        secretKeyRef:
+          name: nx-cloud-credentials
+          key: ADMIN_PASSWORD
+    resources: null

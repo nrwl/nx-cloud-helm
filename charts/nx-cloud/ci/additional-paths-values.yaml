@@ -4,6 +4,24 @@ global:
     secretName: nx-cloud-credentials
     secretKey: NX_CLOUD_MONGO_SERVER_ENDPOINT
 
+ingress:
+  enabled: true
+  additionalPaths:
+    - path: /custom-path
+      pathType: Prefix
+      backend:
+        service:
+          name: custom-service
+          port:
+            number: 8080
+    - path: /another-path
+      pathType: Prefix
+      backend:
+        service:
+          name: another-service
+          port:
+            number: 9090
+
 extraObjects:
   appSecrets:
     apiVersion: v1
@@ -15,24 +33,6 @@ extraObjects:
       VALKEY_PASSWORD: password
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
-
-  backendNotFoundService:
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: backend-not-found
-      labels:
-        app: backend-not-found
-        app.kubernetes.io/name: nx-cloud
-        app.kubernetes.io/instance: nx-cloud
-    spec:
-      selector:
-        app: backend-not-found
-      type: ClusterIP
-      ports:
-        - name: http
-          port: 80
-          targetPort: 80
 
 aggregator:
   cronjob:

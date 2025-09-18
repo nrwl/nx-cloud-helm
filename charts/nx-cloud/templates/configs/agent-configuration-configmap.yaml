@@ -1,0 +1,12 @@
+{{- if .Values.config.agentConfigs }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-configuration
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.config.labels "context" .) | nindent 4 }}
+data:
+  agentConfigs.yaml: |
+{{ .Values.config.agentConfigs | indent 4 }}
+{{- end }}

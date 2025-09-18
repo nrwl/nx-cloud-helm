@@ -1,0 +1,112 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nx-cloud-aggregator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.aggregator.cronjob.labels "context" .) | nindent 4 }}
+  {{- with .Values.aggregator.cronjob.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  schedule: {{ .Values.aggregator.cronjob.schedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "nxCloud.labels" . | nindent 12 }}
+            app: nx-cloud-aggregator
+            {{- with .Values.global.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.aggregator.cronjob.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
+          {{- with .Values.aggregator.cronjob.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.aggregator.cronjob.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.aggregator.cronjob.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: nx-cloud-aggregator
+              image: {{ .Values.aggregator.image.repository }}:{{ .Values.aggregator.image.tag | default .Values.global.imageTag }}
+              imagePullPolicy: {{ .Values.aggregator.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
+              {{- if .Values.aggregator.cronjob.resources }}
+              resources: {{- toYaml .Values.aggregator.cronjob.resources | nindent 16 }}
+              {{- end }}
+              env:
+                - name: NX_CLOUD_MODE
+                  value: 'private-enterprise'
+                - name: NX_CLOUD_APP_URL
+                  value: {{ .Values.global.nxCloudAppURL }}
+                {{- if .Values.global.mongodbConnectionString.secretName }}
+                - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.global.mongodbConnectionString.secretName }}
+                      key: {{ .Values.global.mongodbConnectionString.secretKey }}
+                {{- end }}
+                {{- if .Values.config.agentConfigs }}
+                - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+                  value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
+                {{- end }}
+                {{- if .Values.aggregator.verboseLogging | default .Values.global.verboseLogging }}
+                - name: NX_VERBOSE_LOGGING
+                  value: "true"
+                {{- end }}
+                - name: NX_API_LOG_LEVEL
+                  value: {{ .Values.aggregator.logLevel | default .Values.global.logLevel | quote }}
+                {{- range $key, $value := .Values.aggregator.cronjob.env }}
+                - name: {{ $key }}
+                  value: {{ $value | quote }}
+                {{- end }}
+                {{- range $key, $value := .Values.aggregator.cronjob.envValueFrom }}
+                - name: {{ $key }}
+                  valueFrom:
+                    {{- toYaml $value | nindent 20 }}
+                {{- end }}
+              {{- if .Values.aggregator.cronjob.envFrom }}
+              envFrom:
+                {{- toYaml .Values.aggregator.cronjob.envFrom | nindent 16 }}
+              {{- end }}
+              {{- if or .Values.config.agentConfigs .Values.aggregator.cronjob.volumeMounts }}
+              volumeMounts:
+                {{- if .Values.config.agentConfigs }}
+                - name: resource-class-config-volume
+                  mountPath: /opt/nx-cloud/resource-classes
+                {{- end }}
+                {{- if .Values.aggregator.cronjob.volumeMounts }}
+                {{- toYaml .Values.aggregator.cronjob.volumeMounts | nindent 16 }}
+                {{- end }}
+              {{- end }}
+              {{- if .Values.aggregator.cronjob.securityContext }}
+              securityContext:
+              {{- omit .Values.aggregator.cronjob.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 16 }}
+              {{- end }}
+          restartPolicy: OnFailure
+          {{- if or .Values.config.agentConfigs .Values.aggregator.cronjob.volumes }}
+          volumes:
+            {{- if .Values.config.agentConfigs }}
+            - name: resource-class-config-volume
+              configMap:
+                name: agent-configuration
+                items:
+                  - key: agentConfigs.yaml
+                    path: agentConfigs.yaml
+            {{- end }}
+            {{- if .Values.aggregator.cronjob.volumes }}
+            {{- toYaml .Values.aggregator.cronjob.volumes | nindent 12 }}
+            {{- end }}
+          {{- end }}
