@@ -1,3 +1,7 @@
+global:
+  security:
+    allowInsecureImages: true
+
 architecture: replicaset
 replicaCount: 1
 
