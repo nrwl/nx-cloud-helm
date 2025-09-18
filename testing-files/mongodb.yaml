@@ -1,6 +1,9 @@
 architecture: replicaset
 replicaCount: 1
 
+image:
+  repository: bitnamilegacy/mongodb
+
 auth:
   enabled: false
 
@@ -8,4 +11,7 @@ arbiter:
   enabled: false
 
 persistence:
+  enabled: false
+
+metrics:
   enabled: false

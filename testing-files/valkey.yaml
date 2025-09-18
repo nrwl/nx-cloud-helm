@@ -1,6 +1,9 @@
 auth:
   password: "password"
 
+image:
+  repository: bitnamilegacy/valkey
+
 primary:
   persistence:
     enabled: false
@@ -11,6 +14,8 @@ replica:
     enabled: false
 
 sentinel:
+  image:
+    repository: bitnamilegacy/valkey-sentinel
   enabled: true
   primarySet: nxcloud
   quorum: 2
@@ -23,7 +28,17 @@ commonConfiguration: |-
   save ""
 
 metrics:
+  image:
+    repository: bitnamilegacy/redis-exporter
   enabled: true
   extraArgs:
     check-keys: 'backgroundTasks:workingSet,backgroundTasks:workingSet:claims'
     count-keys: 'backgroundTasks:tasks:keyed:work:*'
+
+volumePermissions:
+  image:
+    repository: bitnamilegacy/os-shell
+
+kubectl:
+  image:
+    repository: bitnamilegacy/kubectl
