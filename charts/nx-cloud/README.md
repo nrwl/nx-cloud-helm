@@ -7,7 +7,21 @@ Controller service for Nx Agents).
 >
 > Starting with chart version 1.0.0, there are breaking changes to values and templates. Please review the migration guide before upgrading and plan for required adjustments.
 >
-> See MIGRATION.md for details: ./MIGRATION.md
+> See MIGRATION.md for details: [MIGRATION.md](MIGRATION.md)
+
+## Prerequisites
+* MongoDB 7+
+* Valkey 7.2+
+* Object storage
+  * Cloud storage (recommended for production deployments)
+    * S3-compatible storage 
+    * Google Cloud Storage 
+    * Azure Blob Storage 
+  * **OR** built-in file server (not recommended for production)
+
+## Object storage
+We recommend using a S3-compatible storage / Google Cloud Storage / Azure Blob Storage for production deployments.
+However, if you do not have a storage solution available, you can enable the built-in file server by setting `fileServer.enabled` to `true`.
 
 ## Values
 
