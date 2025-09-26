@@ -7,11 +7,11 @@ metadata:
     {{- include "nxCloud.mergedLabels" (dict "resourceLabels" .Values.api.deployment.labels "context" .) | nindent 4 }}
 data:
   USE_VALKEY: "true"
-  VALKEY_CLIENT_PROVIDER: "{{ .Values.api.valkey.clientProvider }}"
-  VALKEY_USE_SENTINEL: "{{ ternary "true" "false" .Values.api.valkey.useSentinel }}"
-  VALKEY_SENTINEL_MASTER_NAME: "{{ .Values.api.valkey.sentinelMasterName }}"
-  VALKEY_PRIMARY_ADDRESS: "{{ .Values.api.valkey.primaryAddress }}"
-  VALKEY_REPLICA_ADDRESSES: "{{ .Values.api.valkey.replicaAddresses }}"
-  VALKEY_PORT: "{{ .Values.api.valkey.port }}"
-  VALKEY_SENTINEL_PORT: "{{ .Values.api.valkey.sentinelPort }}"
-  VALKEY_USERNAME: "{{ .Values.api.valkey.username }}"
+  VALKEY_CLIENT_PROVIDER: {{ .Values.api.valkey.clientProvider | quote }}
+  VALKEY_USE_SENTINEL: {{ ternary "true" "false" .Values.api.valkey.useSentinel | quote }}
+  VALKEY_SENTINEL_MASTER_NAME: {{ .Values.api.valkey.sentinelMasterName | quote }}
+  VALKEY_PRIMARY_ADDRESS: {{ .Values.api.valkey.primaryAddress | quote }}
+  VALKEY_REPLICA_ADDRESSES: {{ .Values.api.valkey.replicaAddresses | quote }}
+  VALKEY_PORT: {{ .Values.api.valkey.port | quote }}
+  VALKEY_SENTINEL_PORT: {{ .Values.api.valkey.sentinelPort | quote }}
+  VALKEY_USERNAME: {{ .Values.api.valkey.username | quote }}
