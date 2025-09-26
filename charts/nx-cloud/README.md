@@ -12,7 +12,12 @@ Controller service for Nx Agents).
 ## Prerequisites
 * MongoDB 7+
 * Valkey 7.2+
-* S3-compatible storage / Google Cloud Storage / Azure Blob Storage (recommended) **OR** built-in file server (not recommended for production)
+* Object storage
+  * Cloud storage (recommended for production deployments)
+    * S3-compatible storage 
+    * Google Cloud Storage 
+    * Azure Blob Storage 
+  * **OR** built-in file server (not recommended for production)
 
 ## Object storage
 We recommend using a S3-compatible storage / Google Cloud Storage / Azure Blob Storage for production deployments.
