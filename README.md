@@ -7,6 +7,13 @@ This repo contains:
 * Nx Cloud Helm Chart
 * Nx Agents Helm Chart
 
+> Important: Breaking changes in nx-cloud chart version 1.0.0
+>
+> Starting with chart version 1.0.0, there are breaking changes to values and templates. Please review the migration guide before upgrading and plan for required adjustments.
+>
+> See charts/nx-cloud/MIGRATION.md for details: [MIGRATION.md](charts/nx-cloud/MIGRATION.md)
+
+
 ### Compatibility Matrix
 
 | Chart Version | Compatible Images                  |
