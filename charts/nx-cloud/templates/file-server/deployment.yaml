@@ -61,7 +61,7 @@ spec:
       {{- end }}
       containers:
         - name: nx-cloud-file-server
-          image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag | default .Values.global.imageTag }}
+          image: {{ include "nxCloud.image" (dict "image" .Values.fileServer.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.fileServer.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
           {{- if .Values.fileServer.deployment.resources }}
           resources: {{- toYaml .Values.fileServer.deployment.resources | nindent 12 }}

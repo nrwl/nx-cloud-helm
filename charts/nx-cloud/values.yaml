@@ -1,6 +1,7 @@
 global:
   labels: {}
   podLabels: {}
+  imageRegistry: ""
   imageTag: "2025.07.1"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -35,6 +36,7 @@ fileServer:
   image:
     repository: "nxprivatecloud/nx-cloud-file-server"
     tag: ""
+    digest: ""
     pullPolicy: IfNotPresent
 
   service:
@@ -105,6 +107,7 @@ aggregator:
   image:
     repository: "nxprivatecloud/nx-cloud-aggregator"
     tag: ""
+    digest: ""
     pullPolicy: IfNotPresent
 
   cronjob:
@@ -154,6 +157,7 @@ frontend:
   image:
     repository: "nxprivatecloud/nx-cloud-frontend"
     tag: ""
+    digest: ""
     pullPolicy: ""
 
   service:
@@ -230,6 +234,7 @@ api:
   image:
     repository: "nxprivatecloud/nx-cloud-nx-api"
     tag: ""
+    digest: ""
     pullPolicy: ""
 
   service:

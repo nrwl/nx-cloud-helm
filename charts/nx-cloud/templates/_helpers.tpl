@@ -84,3 +84,25 @@ Strip http:// or https:// prefixes from a URL
 {{- define "nxCloud.stripURLProtocol" -}}
 {{- regexReplaceAll "^https?://" . "" -}}
 {{- end -}}
+
+{{/*
+Construct the image reference with support for both tag and digest.
+If digest is specified, it takes precedence over tag.
+If global.imageRegistry is specified, it will be prepended to the repository.
+Usage: {{ include "nxCloud.image" (dict "image" .Values.api.image "global" .Values.global) }}
+*/}}
+{{- define "nxCloud.image" -}}
+{{- $registry := .global.imageRegistry | default "" -}}
+{{- $repository := .image.repository -}}
+{{- $digest := .image.digest | default "" -}}
+{{- $tag := .image.tag | default .global.imageTag -}}
+{{- $fullRepository := $repository -}}
+{{- if $registry -}}
+{{- $fullRepository = printf "%s/%s" (trimSuffix "/" $registry) $repository -}}
+{{- end -}}
+{{- if $digest -}}
+{{- printf "%s@%s" $fullRepository $digest -}}
+{{- else -}}
+{{- printf "%s:%s" $fullRepository $tag -}}
+{{- end -}}
+{{- end -}}

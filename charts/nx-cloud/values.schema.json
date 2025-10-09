@@ -15,6 +15,17 @@
             "type": "string"
           }
         },
+        "podLabels": {
+          "type": "object",
+          "description": "Global pod labels to apply to all pods",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "imageRegistry": {
+          "type": "string",
+          "description": "Global image registry to prepend to all image repositories (optional)"
+        },
         "imageTag": {
           "type": "string",
           "description": "Global image tag for all NX Cloud components",
@@ -410,13 +421,17 @@
           "type": "string",
           "description": "Image tag"
         },
+        "digest": {
+          "type": "string",
+          "description": "Image digest (takes precedence over tag if specified)"
+        },
         "pullPolicy": {
           "type": "string",
           "description": "Image pull policy",
           "enum": ["Always", "IfNotPresent", "Never", ""]
         }
       },
-      "required": ["repository", "tag"]
+      "required": ["repository"]
     },
     "serviceConfig": {
       "type": "object",

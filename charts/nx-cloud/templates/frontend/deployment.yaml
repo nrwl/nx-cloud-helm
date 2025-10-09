@@ -56,7 +56,7 @@ spec:
       {{- end }}
       containers:
         - name: nx-cloud-frontend
-          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Values.global.imageTag }}
+          image: {{ include "nxCloud.image" (dict "image" .Values.frontend.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy | default .Values.global.imagePullPolicy }}
           {{- if .Values.frontend.deployment.resources }}
           resources: {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
