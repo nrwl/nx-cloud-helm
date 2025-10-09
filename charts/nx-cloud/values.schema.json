@@ -261,7 +261,7 @@
               "type": "object"
             },
             "tolerations": {
-              "type": "object"
+              "type": "array"
             },
             "nodeSelector": {
               "type": "object"
@@ -525,7 +525,7 @@
           "type": "object"
         },
         "tolerations": {
-          "type": "object"
+          "type": "array"
         },
         "nodeSelector": {
           "type": "object"
