@@ -81,6 +81,7 @@ fileServer:
     volumes: []
     volumeMounts: []
     extraContainers: []
+    initContainers: []
 
   pvc:
     name: nx-cloud-file-server
@@ -134,6 +135,7 @@ aggregator:
 
     volumes: []
     volumeMounts: []
+    initContainers: []
 
   serviceAccount:
     create: true
@@ -198,6 +200,7 @@ frontend:
     volumes: []
     volumeMounts: []
     extraContainers: []
+    initContainers: []
 
   serviceAccount:
     create: true
@@ -273,6 +276,7 @@ api:
     volumes: []
     volumeMounts: []
     extraContainers: []
+    initContainers: []
 
   serviceAccount:
     create: true

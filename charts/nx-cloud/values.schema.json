@@ -274,6 +274,9 @@
             },
             "volumeMounts": {
               "type": "array"
+            },
+            "initContainers": {
+              "type": "array"
             }
           },
           "required": ["schedule"]
@@ -540,6 +543,9 @@
           "type": "array"
         },
         "extraContainers": {
+          "type": "array"
+        },
+        "initContainers": {
           "type": "array"
         }
       },

@@ -55,6 +55,10 @@ spec:
         {{- if .Values.fileServer.deployment.volumes }}
         {{- toYaml .Values.fileServer.deployment.volumes | nindent 8 }}
         {{- end }}
+      {{- with .Values.fileServer.deployment.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: nx-cloud-file-server
           image: {{ .Values.fileServer.image.repository }}:{{ .Values.fileServer.image.tag | default .Values.global.imageTag }}
