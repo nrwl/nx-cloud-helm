@@ -80,6 +80,10 @@ spec:
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.global.nxCloudAppURL }}
+            - name: NX_API_INTERNAL_PORT
+              value: {{ .Values.api.service.port | quote }}
+            - name: NX_API_INTERNAL_BASE_URL
+              value: http://{{ .Values.api.service.name }}
             {{- if .Values.global.mongodbConnectionString.secretName }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
