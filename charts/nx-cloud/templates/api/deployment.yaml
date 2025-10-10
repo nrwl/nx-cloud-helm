@@ -60,9 +60,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       terminationGracePeriodSeconds: 60
+      {{- with .Values.api.deployment.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: nx-cloud-nx-api
-          image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag | default .Values.global.imageTag }}
+          image: {{ include "nxCloud.image" (dict "image" .Values.api.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.api.image.pullPolicy | default .Values.global.imagePullPolicy | quote }}
           {{- if or .Values.config.agentConfigs .Values.api.deployment.volumeMounts }}
           volumeMounts:

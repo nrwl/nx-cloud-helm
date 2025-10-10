@@ -50,9 +50,13 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.frontend.deployment.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: nx-cloud-frontend
-          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Values.global.imageTag }}
+          image: {{ include "nxCloud.image" (dict "image" .Values.frontend.image "global" .Values.global) }}
           imagePullPolicy: {{ .Values.frontend.image.pullPolicy | default .Values.global.imagePullPolicy }}
           {{- if .Values.frontend.deployment.resources }}
           resources: {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
@@ -76,6 +80,10 @@ spec:
               value: 'private-enterprise'
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.global.nxCloudAppURL }}
+            - name: NX_API_INTERNAL_PORT
+              value: {{ .Values.api.service.port | quote }}
+            - name: NX_API_INTERNAL_BASE_URL
+              value: http://{{ .Values.api.service.name }}
             {{- if .Values.global.mongodbConnectionString.secretName }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
