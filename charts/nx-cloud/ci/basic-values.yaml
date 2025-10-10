@@ -1,4 +1,5 @@
 global:
+  imageRegistry: "docker.io"
   nxCloudAppURL: "https://nx.test"
   mongodbConnectionString:
     secretName: nx-cloud-credentials
@@ -53,6 +54,8 @@ frontend:
     resources: null
 
 api:
+  image:
+    digest: sha256:034e529bbf353fe6ac2fffe551fa0edc5165f1dc1eba26cae86d104b75d896c1
   valkey:
     clientProvider: "redisson"
     useSentinel: true

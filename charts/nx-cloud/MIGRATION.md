@@ -152,3 +152,144 @@ charts and how their values were derived.
 | bitbucket.apiUrl                  | BITBUCKET_API_URL                                         | frontend                                                    |
 | saml.enabled                      | SAML_ENTRY_POINT, SAML_CERT                               | frontend                                                    |
 | vcsHttpsProxy                     | VERSION_CONTROL_HTTPS_PROXY                               | frontend, nx-api                                            |
+
+## Using self-signed certificates
+
+To add self-signed certificates to a Java keystore, you can use a combination of the `initContainers`, `extraObjects` and `extraVolumes` values.
+
+1. Add a ConfigMap with a script that copies Java keystore files to a volume.
+    ```yaml
+    extraObjects:
+      find-java-security:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: nx-cloud-java-security-script
+        data:
+          find-java-security.sh: |
+            #!/bin/sh
+            # For Amazon Corretto, find the security directory dynamically
+            if [ -n "$JAVA_HOME" ]; then
+              # Use JAVA_HOME if available
+              JAVA_PATH="$JAVA_HOME"
+            else
+              # Look for Corretto installations first
+              for DIR in /usr/lib/jvm/java-*-amazon-corretto* /usr/lib/jvm/amazon-corretto-*; do
+                if [ -d "$DIR" ]; then
+                  JAVA_PATH="$DIR"
+                  break
+                fi
+              done
+            
+              # Fallback to any Java installation if Corretto not found
+              if [ -z "$JAVA_PATH" ]; then
+                for DIR in /usr/lib/jvm/* /usr/java/*; do
+                  if [ -d "$DIR" ]; then
+                    JAVA_PATH="$DIR"
+                    break
+                  fi
+                done
+              fi
+            fi
+            
+            # Check various possible security directory locations
+            if [ -d "$JAVA_PATH/jre/lib/security" ]; then
+              # Path found in some Corretto distributions, including Corretto 17
+              cp -r "$JAVA_PATH/jre/lib/security" /cacerts
+            elif [ -d "$JAVA_PATH/lib/security" ]; then
+              # Alternative path in some Corretto and OpenJDK distributions
+              cp -r "$JAVA_PATH/lib/security" /cacerts
+            elif [ -d "$JAVA_PATH/conf/security" ]; then
+              # Another alternative location in some JDK distributions
+              cp -r "$JAVA_PATH/conf/security" /cacerts
+            else
+              echo "Could not find Java security directory in Corretto installation"
+              # List all potential security directories for debugging
+              find /usr -name "security" -type d 2>/dev/null | grep -i java
+              exit 1
+            fi
+            echo "Successfully copied Java security files from $JAVA_PATH to /cacerts"
+    ```
+
+2. Create a ConfigMap with the certificates through the `extraObjects` value or by providing it through another mechanism such as External Secret Operator.
+    ```yaml
+    extraObjects:
+      self-signed-certs:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: self-signed-certs
+        data:
+          self-signed-cert.crt: |
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+            
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+    ```
+3. Add values required to copy and store the certificates
+    ```yaml
+    aggregator:
+      cronjob:
+        initContainers:
+          - command:
+              - sh
+              - /scripts/find-java-security.sh
+            image: nxprivatecloud/nx-cloud-aggregator
+            name: copy-cacerts
+            volumeMounts:
+              - mountPath: /cacerts
+                name: cacerts
+              - mountPath: /scripts
+                name: java-security-script
+         
+        volumes:
+          - name: cacerts
+            emptyDir: {}
+          - name: self-signed-certs-volume
+            configMap:
+              name: self-signed-certs  
+          - name: java-security-script
+            configMap:
+              name: nx-cloud-java-security-script
+    
+        volumeMounts:
+          - mountPath: /usr/lib/jvm/java-21-amazon-corretto/jre/lib/security
+            name: cacerts
+            subPath: security
+          - mountPath: /self-signed-certs
+            name: self-signed-certs-volume
+    
+    api:
+      deployment:
+        initContainers:
+          - command:
+              - sh
+              - /scripts/find-java-security.sh
+            image: nxprivatecloud/nx-cloud-nx-api
+            name: copy-cacerts
+            volumeMounts:
+              - mountPath: /cacerts
+                name: cacerts
+              - mountPath: /scripts
+                name: java-security-script
+    
+        volumes:
+          - name: cacerts
+            emptyDir: {}
+          - name: self-signed-certs-volume
+            configMap:
+              name: self-signed-certs
+          - name: java-security-script
+            configMap:
+              name: nx-cloud-java-security-script
+    
+        volumeMounts:
+          - mountPath: /usr/lib/jvm/java-21-amazon-corretto/jre/lib/security
+            name: cacerts
+            subPath: security
+          - mountPath: /self-signed-certs
+            name: self-signed-certs-volume
+    ```

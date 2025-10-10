@@ -50,12 +50,22 @@ aggregator:
           name: nx-cloud-credentials
           key: ADMIN_PASSWORD
     resources: null
+    initContainers:
+      - name: init-aggregator
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo "Initializing aggregator"']
 
 frontend:
   deployment:
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
     resources: null
+    initContainers:
+      - name: init-frontend
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo "Initializing frontend"']
     extraContainers:
       - name: sidecar-debian-frontend
         image: debian:stable-slim
@@ -80,6 +90,11 @@ api:
       FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
       FILE_SERVER_INTERNAL_PORT: "5000"
     resources: null
+    initContainers:
+      - name: init-api
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo "Initializing API"']
     extraContainers:
       - name: sidecar-debian-api
         image: debian:stable-slim

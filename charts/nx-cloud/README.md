@@ -31,7 +31,8 @@ Below is a summary table of configurable values from values.yaml.
 |-------------------------------------------------------------|--------|---------------------------------------------|---------------------------------------------------------------------------|
 | global.labels                                               | object | {}                                          | Common labels added to all resources.                                     |
 | global.podLabels                                            | object | {}                                          | Pod labels applied to all Deployments/Pods.                               |
-| global.imageTag                                             | string | "2025.06.3"                                 | Default image tag used when per-service tag is empty.                     |
+| global.imageRegistry                                        | string | ""                                          | Global image registry override.                                           |
+| global.imageTag                                             | string | "2025.07.1"                                 | Default image tag used when per-service tag is empty.                     |
 | global.imagePullPolicy                                      | string | IfNotPresent                                | Global image pull policy.                                                 |
 | global.imagePullSecrets                                     | list   | []                                          | List of image pull secret names.                                          |
 | global.verboseLogging                                       | bool   | false                                       | Enable verbose logging globally.                                          |
@@ -55,6 +56,7 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.logLevel                                         | string | "INFO"                                      | Log level for file server.                                                |
 | fileServer.image.repository                                 | string | "nxprivatecloud/nx-cloud-file-server"       | File server image repository.                                             |
 | fileServer.image.tag                                        | string | ""                                          | File server image tag (overrides global.imageTag when set).               |
+| fileServer.image.digest                                     | string | ""                                          | File server image digest (overrides tag when set).                        |
 | fileServer.image.pullPolicy                                 | string | IfNotPresent                                | Image pull policy for file server.                                        |
 | fileServer.service.annotations                              | object | {}                                          | Service annotations for file server.                                      |
 | fileServer.service.labels                                   | object | {}                                          | Service labels for file server.                                           |
@@ -81,6 +83,7 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.deployment.volumes                               | list   | []                                          | Additional volumes.                                                       |
 | fileServer.deployment.volumeMounts                          | list   | []                                          | Additional volume mounts.                                                 |
 | fileServer.deployment.extraContainers                       | list   | []                                          | Extra sidecars for file server only.                                      |
+| fileServer.deployment.initContainers                        | list   | []                                          | Init containers for file server.                                          |
 | fileServer.pvc.name                                         | string | nx-cloud-file-server                        | PVC name for file server storage.                                         |
 | fileServer.pvc.annotations                                  | object | {}                                          | PVC annotations.                                                          |
 | fileServer.pvc.labels                                       | object | {}                                          | PVC labels.                                                               |
@@ -96,6 +99,7 @@ Below is a summary table of configurable values from values.yaml.
 | aggregator.logLevel                                         | string | "INFO"                                      | Log level for aggregator.                                                 |
 | aggregator.image.repository                                 | string | "nxprivatecloud/nx-cloud-aggregator"        | Aggregator image repository.                                              |
 | aggregator.image.tag                                        | string | ""                                          | Aggregator image tag (overrides global.imageTag when set).                |
+| aggregator.image.digest                                     | string | ""                                          | Aggregator image digest (overrides tag when set).                         |
 | aggregator.image.pullPolicy                                 | string | IfNotPresent                                | Image pull policy for aggregator.                                         |
 | aggregator.cronjob.schedule                                 | string | "*/10 * * * *"                              | Cron schedule for the aggregator job.                                     |
 | aggregator.cronjob.annotations                              | object | {}                                          | CronJob annotations.                                                      |
@@ -113,6 +117,7 @@ Below is a summary table of configurable values from values.yaml.
 | aggregator.cronjob.resources.requests.cpu                   | string | '500m'                                      | Requested CPU.                                                            |
 | aggregator.cronjob.volumes                                  | list   | []                                          | Additional volumes for aggregator.                                        |
 | aggregator.cronjob.volumeMounts                             | list   | []                                          | Additional volume mounts for aggregator.                                  |
+| aggregator.cronjob.initContainers                           | list   | []                                          | Init containers for aggregator.                                           |
 | aggregator.serviceAccount.create                            | bool   | true                                        | Whether to create a ServiceAccount for aggregator.                        |
 | aggregator.serviceAccount.name                              | string | nx-cloud-aggregator                         | ServiceAccount name for aggregator.                                       |
 | aggregator.serviceAccount.annotations                       | object | {}                                          | ServiceAccount annotations for aggregator.                                |
@@ -123,6 +128,7 @@ Below is a summary table of configurable values from values.yaml.
 | frontend.logLevel                                           | string | "INFO"                                      | Log level for frontend.                                                   |
 | frontend.image.repository                                   | string | "nxprivatecloud/nx-cloud-frontend"          | Frontend image repository.                                                |
 | frontend.image.tag                                          | string | ""                                          | Frontend image tag (overrides global.imageTag when set).                  |
+| frontend.image.digest                                       | string | ""                                          | Frontend image digest (overrides tag when set).                           |
 | frontend.image.pullPolicy                                   | string | ""                                          | Image pull policy for frontend (defaults to global if empty).             |
 | frontend.service.annotations                                | object | {}                                          | Service annotations for frontend.                                         |
 | frontend.service.labels                                     | object | {}                                          | Service labels for frontend.                                              |
@@ -150,6 +156,7 @@ Below is a summary table of configurable values from values.yaml.
 | frontend.deployment.volumes                                 | list   | []                                          | Additional volumes.                                                       |
 | frontend.deployment.volumeMounts                            | list   | []                                          | Additional volume mounts.                                                 |
 | frontend.deployment.extraContainers                         | list   | []                                          | Extra sidecars for frontend only.                                         |
+| frontend.deployment.initContainers                          | list   | []                                          | Init containers for frontend.                                             |
 | frontend.serviceAccount.create                              | bool   | true                                        | Whether to create a ServiceAccount for frontend.                          |
 | frontend.serviceAccount.name                                | string | nx-cloud-frontend                           | ServiceAccount name for frontend.                                         |
 | frontend.serviceAccount.annotations                         | object | {}                                          | ServiceAccount annotations for frontend.                                  |
@@ -169,6 +176,7 @@ Below is a summary table of configurable values from values.yaml.
 | api.valkey.passwordSecret.key                               | string | ""                                          | Secret key for Valkey password.                                           |
 | api.image.repository                                        | string | "nxprivatecloud/nx-cloud-nx-api"            | API image repository.                                                     |
 | api.image.tag                                               | string | ""                                          | API image tag (overrides global.imageTag when set).                       |
+| api.image.digest                                            | string | ""                                          | API image digest (overrides tag when set).                                |
 | api.image.pullPolicy                                        | string | ""                                          | Image pull policy for API (defaults to global if empty).                  |
 | api.service.annotations                                     | object | {}                                          | Service annotations for API.                                              |
 | api.service.labels                                          | object | {}                                          | Service labels for API.                                                   |
@@ -196,6 +204,7 @@ Below is a summary table of configurable values from values.yaml.
 | api.deployment.volumes                                      | list   | []                                          | Additional volumes.                                                       |
 | api.deployment.volumeMounts                                 | list   | []                                          | Additional volume mounts.                                                 |
 | api.deployment.extraContainers                              | list   | []                                          | Extra sidecars for API only.                                              |
+| api.deployment.initContainers                               | list   | []                                          | Init containers for API.                                                  |
 | api.serviceAccount.create                                   | bool   | true                                        | Whether to create a ServiceAccount for API.                               |
 | api.serviceAccount.name                                     | string | nx-cloud-nx-api                             | ServiceAccount name for API.                                              |
 | api.serviceAccount.annotations                              | object | {}                                          | ServiceAccount annotations for API.                                       |

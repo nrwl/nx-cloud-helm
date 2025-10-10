@@ -29,6 +29,11 @@ fileServer:
     port: 5000
 
   deployment:
+    initContainers:
+      - name: init-file-server
+        image: busybox:latest
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'echo "Initializing file server"']
     extraContainers:
       - name: sidecar-debian-file-server
         image: debian:stable-slim
