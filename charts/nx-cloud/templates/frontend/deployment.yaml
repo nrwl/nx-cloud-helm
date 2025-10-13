@@ -77,7 +77,7 @@ spec:
             - containerPort: 4202
           env:
             - name: NX_CLOUD_MODE
-              value: 'private-enterprise'
+              value: {{ .Values.global.nxCloudMode | default "private-enterprise" | quote }}
             - name: NX_CLOUD_APP_URL
               value: {{ .Values.global.nxCloudAppURL }}
             - name: NX_API_INTERNAL_PORT
