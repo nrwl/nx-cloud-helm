@@ -10,7 +10,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- if not .Values.frontend.hpa.enabled }}
   replicas: {{ .Values.frontend.deployment.replicas | default 1}}
+  {{- end }}
   selector:
     matchLabels:
       app: nx-cloud-frontend
@@ -33,7 +35,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.frontend.serviceAccount.create }}
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
+      {{- end }}
       {{- if .Values.frontend.deployment.volumes }}
       volumes:
         {{- toYaml .Values.frontend.deployment.volumes | nindent 8 }}
@@ -61,18 +65,18 @@ spec:
           {{- if .Values.frontend.deployment.resources }}
           resources: {{- toYaml .Values.frontend.deployment.resources | nindent 12 }}
           {{- end }}
+          {{- with .Values.frontend.deployment.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.frontend.deployment.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 4202
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.frontend.deployment.readinessProbe }}
           readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 4202
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - containerPort: 4202
           env:

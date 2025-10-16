@@ -1,4 +1,5 @@
 global:
+  imageRegistry: "docker.io"
   nxCloudAppURL: "https://nx.test"
   mongodbConnectionString:
     secretName: nx-cloud-credentials
@@ -16,42 +17,25 @@ extraObjects:
       NX_CLOUD_MONGO_SERVER_ENDPOINT: mongodb://mongo-mongodb-0.mongo-mongodb-headless.mongodb.svc.cluster.local:27017
       ADMIN_PASSWORD: password
 
-  fileServerServiceAccount:
+  backendNotFoundService:
     apiVersion: v1
-    kind: ServiceAccount
+    kind: Service
     metadata:
-      name: existing-file-server-sa
-
-  aggregatorServiceAccount:
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: existing-aggregator-sa
-
-  frontendServiceAccount:
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: existing-frontend-sa
-
-  apiServiceAccount:
-    apiVersion: v1
-    kind: ServiceAccount
-    metadata:
-      name: existing-api-sa
-
-fileServer:
-  enabled: true
-  serviceAccount:
-    create: false
-    name: existing-file-server-sa
-  deployment:
-    resources: null
+      name: backend-not-found
+      labels:
+        app: backend-not-found
+        app.kubernetes.io/name: nx-cloud
+        app.kubernetes.io/instance: nx-cloud
+    spec:
+      selector:
+        app: backend-not-found
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 80
+          targetPort: 80
 
 aggregator:
-  serviceAccount:
-    create: false
-    name: existing-aggregator-sa
   cronjob:
     env:
       NX_CLOUD_SKIP_SLOW_AGGREGATOR_QUERIES: 'true'
@@ -64,18 +48,19 @@ aggregator:
     resources: null
 
 frontend:
-  serviceAccount:
-    create: false
-    name: existing-frontend-sa
   deployment:
     env:
       NX_API_INTERNAL_BASE_URL: 'http://nx-cloud-nx-api-service'
     resources: null
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 50
 
 api:
-  serviceAccount:
-    create: false
-    name: existing-api-sa
+  image:
+    digest: sha256:034e529bbf353fe6ac2fffe551fa0edc5165f1dc1eba26cae86d104b75d896c1
   valkey:
     clientProvider: "redisson"
     useSentinel: true

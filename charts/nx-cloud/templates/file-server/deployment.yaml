@@ -32,7 +32,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.fileServer.serviceAccount.create }}
       serviceAccountName: {{ .Values.fileServer.serviceAccount.name }}
+      {{- end }}
       {{- if .Values.fileServer.deployment.securityContext }}
       securityContext: {{- toYaml .Values.fileServer.deployment.securityContext | nindent 8 }}
       {{- end }}
@@ -88,17 +90,18 @@ spec:
           {{- end }}
           ports:
             - containerPort: {{ .Values.fileServer.deployment.port }}
+          {{- with .Values.fileServer.deployment.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /file/uptime-check
-              port: {{ .Values.fileServer.deployment.port }}
-            initialDelaySeconds: 10
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.fileServer.deployment.startupProbe }}
           startupProbe:
-            httpGet:
-              path: /file/uptime-check
-              port: {{ .Values.fileServer.deployment.port }}
-            failureThreshold: 10
-            periodSeconds: 5
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.fileServer.deployment.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- if .Values.fileServer.deployment.securityContext }}
           securityContext:
           {{- omit .Values.fileServer.deployment.securityContext "fsGroup" "fsGroupChangePolicy" | toYaml | nindent 12 }}
