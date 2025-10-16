@@ -86,7 +86,7 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.deployment.initContainers                        | list   | []                                          | Init containers for file server.                                          |
 | fileServer.deployment.livenessProbe                         | object | httpGet on /file/uptime-check:5000          | Liveness probe configuration for file server container.                   |
 | fileServer.deployment.startupProbe                          | object | httpGet on /file/uptime-check:5000          | Startup probe configuration for file server container.                    |
-| fileServer.deployment.readinessProbe                        | object | httpGet on /file/uptime-check:5000          | Readiness probe configuration for file server container.                  |
+| fileServer.deployment.readinessProbe                        | object | {}                                          | Readiness probe configuration for file server container.                  |
 | fileServer.pvc.name                                         | string | nx-cloud-file-server                        | PVC name for file server storage.                                         |
 | fileServer.pvc.annotations                                  | object | {}                                          | PVC annotations.                                                          |
 | fileServer.pvc.labels                                       | object | {}                                          | PVC labels.                                                               |
@@ -160,7 +160,7 @@ Below is a summary table of configurable values from values.yaml.
 | frontend.deployment.volumeMounts                            | list   | []                                          | Additional volume mounts.                                                 |
 | frontend.deployment.extraContainers                         | list   | []                                          | Extra sidecars for frontend only.                                         |
 | frontend.deployment.initContainers                          | list   | []                                          | Init containers for frontend.                                             |
-| frontend.deployment.startupProbe                            | object | httpGet on /healthz:4202                    | Startup probe configuration for frontend container.                       |
+| frontend.deployment.startupProbe                            | object | {}                                          | Startup probe configuration for frontend container.                       |
 | frontend.deployment.livenessProbe                           | object | httpGet on /healthz:4202                    | Liveness probe configuration for frontend container.                      |
 | frontend.deployment.readinessProbe                          | object | httpGet on /readyz:4202                     | Readiness probe configuration for frontend container.                     |
 | frontend.serviceAccount.create                              | bool   | true                                        | Whether to create a ServiceAccount for frontend.                          |
@@ -222,7 +222,7 @@ Below is a summary table of configurable values from values.yaml.
 | api.deployment.initContainers                               | list   | []                                          | Init containers for API.                                                  |
 | api.deployment.startupProbe                                 | object | httpGet on /nx-cloud/uptime-check:4203      | Startup probe configuration for API container.                            |
 | api.deployment.livenessProbe                                | object | httpGet on /nx-cloud/uptime-check:4203      | Liveness probe configuration for API container.                           |
-| api.deployment.readinessProbe                               | object | httpGet on /nx-cloud/uptime-check:4203      | Readiness probe configuration for API container.                          |
+| api.deployment.readinessProbe                               | object | {}                                          | Readiness probe configuration for API container.                          |
 | api.serviceAccount.create                                   | bool   | true                                        | Whether to create a ServiceAccount for API.                               |
 | api.serviceAccount.name                                     | string | nx-cloud-nx-api                             | ServiceAccount name for API.                                              |
 | api.serviceAccount.annotations                              | object | {}                                          | ServiceAccount annotations for API.                                       |

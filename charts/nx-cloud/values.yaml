@@ -339,13 +339,7 @@ api:
         port: 4203
       initialDelaySeconds: 30
 
-    readinessProbe:
-      httpGet:
-        path: /readyz
-        port: 4203
-      initialDelaySeconds: 10
-      periodSeconds: 30
-      timeoutSeconds: 15
+    readinessProbe: {}
 
   serviceAccount:
     create: true
