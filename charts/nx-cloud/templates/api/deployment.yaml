@@ -83,18 +83,18 @@ spec:
           {{- end }}
           ports:
             - containerPort: 4203
+          {{- with .Values.api.deployment.startupProbe }}
           startupProbe:
-            httpGet:
-              path: /nx-cloud/uptime-check
-              port: 4203
-            initialDelaySeconds: 10
-            failureThreshold: 5
-            periodSeconds: 10
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.api.deployment.livenessProbe }}
           livenessProbe:
-            httpGet:
-              path: /nx-cloud/uptime-check
-              port: 4203
-            initialDelaySeconds: 30
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.api.deployment.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           env:
             - name: NX_CLOUD_MODE
               value: {{ .Values.global.nxCloudMode | default "private-enterprise" | quote }}

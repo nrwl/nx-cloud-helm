@@ -84,6 +84,9 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.deployment.volumeMounts                          | list   | []                                          | Additional volume mounts.                                                 |
 | fileServer.deployment.extraContainers                       | list   | []                                          | Extra sidecars for file server only.                                      |
 | fileServer.deployment.initContainers                        | list   | []                                          | Init containers for file server.                                          |
+| fileServer.deployment.livenessProbe                         | object | httpGet on /file/uptime-check:5000          | Liveness probe configuration for file server container.                   |
+| fileServer.deployment.startupProbe                          | object | httpGet on /file/uptime-check:5000          | Startup probe configuration for file server container.                    |
+| fileServer.deployment.readinessProbe                        | object | httpGet on /file/uptime-check:5000          | Readiness probe configuration for file server container.                  |
 | fileServer.pvc.name                                         | string | nx-cloud-file-server                        | PVC name for file server storage.                                         |
 | fileServer.pvc.annotations                                  | object | {}                                          | PVC annotations.                                                          |
 | fileServer.pvc.labels                                       | object | {}                                          | PVC labels.                                                               |
@@ -157,11 +160,23 @@ Below is a summary table of configurable values from values.yaml.
 | frontend.deployment.volumeMounts                            | list   | []                                          | Additional volume mounts.                                                 |
 | frontend.deployment.extraContainers                         | list   | []                                          | Extra sidecars for frontend only.                                         |
 | frontend.deployment.initContainers                          | list   | []                                          | Init containers for frontend.                                             |
+| frontend.deployment.startupProbe                            | object | httpGet on /healthz:4202                    | Startup probe configuration for frontend container.                       |
+| frontend.deployment.livenessProbe                           | object | httpGet on /healthz:4202                    | Liveness probe configuration for frontend container.                      |
+| frontend.deployment.readinessProbe                          | object | httpGet on /readyz:4202                     | Readiness probe configuration for frontend container.                     |
 | frontend.serviceAccount.create                              | bool   | true                                        | Whether to create a ServiceAccount for frontend.                          |
 | frontend.serviceAccount.name                                | string | nx-cloud-frontend                           | ServiceAccount name for frontend.                                         |
 | frontend.serviceAccount.annotations                         | object | {}                                          | ServiceAccount annotations for frontend.                                  |
 | frontend.serviceAccount.labels                              | object | {}                                          | ServiceAccount labels for frontend.                                       |
 | frontend.serviceAccount.automount                           | bool   | false                                       | Automount service account token for frontend pods.                        |
+| frontend.hpa.enabled                                        | bool   | false                                       | Enable Horizontal Pod Autoscaler for frontend.                            |
+| frontend.hpa.annotations                                    | object | {}                                          | HPA annotations for frontend.                                             |
+| frontend.hpa.labels                                         | object | {}                                          | HPA labels for frontend.                                                  |
+| frontend.hpa.minReplicas                                    | int    | 1                                           | Minimum number of frontend replicas for HPA.                              |
+| frontend.hpa.maxReplicas                                    | int    | 10                                          | Maximum number of frontend replicas for HPA.                              |
+| frontend.hpa.targetCPUUtilizationPercentage                 | int    | 80                                          | Target CPU utilization percentage for scaling.                            |
+| frontend.hpa.targetMemoryUtilizationPercentage              | string | ""                                          | Target memory utilization percentage (empty to disable).                  |
+| frontend.hpa.behavior                                       | object | {}                                          | HPA scaling behavior configuration (scaleUp/scaleDown policies).          |
+| frontend.hpa.customMetrics                                  | list   | []                                          | Custom metrics for HPA scaling decisions.                                 |
 | api.verboseLogging                                          | bool   | false                                       | Enable verbose logging for API.                                           |
 | api.logLevel                                                | string | "INFO"                                      | Log level for API.                                                        |
 | api.valkey.clientProvider                                   | string | "redisson"                                  | Valkey client provider implementation.                                    |
@@ -205,6 +220,9 @@ Below is a summary table of configurable values from values.yaml.
 | api.deployment.volumeMounts                                 | list   | []                                          | Additional volume mounts.                                                 |
 | api.deployment.extraContainers                              | list   | []                                          | Extra sidecars for API only.                                              |
 | api.deployment.initContainers                               | list   | []                                          | Init containers for API.                                                  |
+| api.deployment.startupProbe                                 | object | httpGet on /nx-cloud/uptime-check:4203      | Startup probe configuration for API container.                            |
+| api.deployment.livenessProbe                                | object | httpGet on /nx-cloud/uptime-check:4203      | Liveness probe configuration for API container.                           |
+| api.deployment.readinessProbe                               | object | httpGet on /nx-cloud/uptime-check:4203      | Readiness probe configuration for API container.                          |
 | api.serviceAccount.create                                   | bool   | true                                        | Whether to create a ServiceAccount for API.                               |
 | api.serviceAccount.name                                     | string | nx-cloud-nx-api                             | ServiceAccount name for API.                                              |
 | api.serviceAccount.annotations                              | object | {}                                          | ServiceAccount annotations for API.                                       |

@@ -85,6 +85,21 @@ fileServer:
     extraContainers: []
     initContainers: []
 
+    livenessProbe:
+      httpGet:
+        path: /file/uptime-check
+        port: 5000
+      initialDelaySeconds: 10
+
+    startupProbe:
+      httpGet:
+        path: /file/uptime-check
+        port: 5000
+      failureThreshold: 10
+      periodSeconds: 5
+
+    readinessProbe: {}
+
   pvc:
     name: nx-cloud-file-server
     annotations: {}
@@ -206,12 +221,39 @@ frontend:
     extraContainers: []
     initContainers: []
 
+    startupProbe: {}
+
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 4202
+      initialDelaySeconds: 15
+      periodSeconds: 20
+
+    readinessProbe:
+      httpGet:
+        path: /readyz
+        port: 4202
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
   serviceAccount:
     create: true
     name: nx-cloud-frontend
     annotations: {}
     labels: {}
     automount: false
+
+  hpa:
+    enabled: false
+    annotations: {}
+    labels: {}
+    minReplicas: 1
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: ""
+    behavior: {}
+    customMetrics: []
 
 api:
   verboseLogging: false
@@ -282,6 +324,28 @@ api:
     volumeMounts: []
     extraContainers: []
     initContainers: []
+
+    startupProbe:
+      httpGet:
+        path: /nx-cloud/uptime-check
+        port: 4203
+      initialDelaySeconds: 10
+      failureThreshold: 5
+      periodSeconds: 10
+
+    livenessProbe:
+      httpGet:
+        path: /nx-cloud/uptime-check
+        port: 4203
+      initialDelaySeconds: 30
+
+    readinessProbe:
+      httpGet:
+        path: /readyz
+        port: 4203
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 15
 
   serviceAccount:
     create: true
