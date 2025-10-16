@@ -32,7 +32,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.fileServer.serviceAccount.create }}
       serviceAccountName: {{ .Values.fileServer.serviceAccount.name }}
+      {{- end }}
       {{- if .Values.fileServer.deployment.securityContext }}
       securityContext: {{- toYaml .Values.fileServer.deployment.securityContext | nindent 8 }}
       {{- end }}
