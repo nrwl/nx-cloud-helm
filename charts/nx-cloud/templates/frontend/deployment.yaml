@@ -38,9 +38,19 @@ spec:
       {{- if .Values.frontend.serviceAccount.create }}
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
       {{- end }}
-      {{- if .Values.frontend.deployment.volumes }}
+      {{- if or .Values.config.agentConfigs .Values.frontend.deployment.volumes }}
       volumes:
+        {{- if .Values.config.agentConfigs }}
+        - name: resource-class-config-volume
+          configMap:
+            name: agent-configuration
+            items:
+              - key: agentConfigs.yaml
+                path: agentConfigs.yaml
+        {{- end }}
+        {{- if .Values.frontend.deployment.volumes }}
         {{- toYaml .Values.frontend.deployment.volumes | nindent 8 }}
+        {{- end }}
       {{- end }}
       {{- with .Values.frontend.deployment.nodeSelector }}
       nodeSelector:
@@ -88,6 +98,10 @@ spec:
               value: {{ .Values.api.service.port | quote }}
             - name: NX_API_INTERNAL_BASE_URL
               value: http://{{ .Values.api.service.name }}
+            {{- if .Values.config.agentConfigs }}
+            - name: NX_CLOUD_RESOURCE_CLASS_FILEPATH
+              value: /opt/nx-cloud/resource-classes/agentConfigs.yaml
+            {{- end }}
             {{- if .Values.global.mongodbConnectionString.secretName }}
             - name: NX_CLOUD_MONGO_SERVER_ENDPOINT
               valueFrom:
@@ -114,9 +128,15 @@ spec:
           envFrom:
             {{- toYaml .Values.frontend.deployment.envFrom | nindent 12 }}
           {{- end }}
-          {{- if .Values.frontend.deployment.volumeMounts }}
+          {{- if or .Values.frontend.deployment.volumeMounts .Values.config.agentConfigs }}
           volumeMounts:
+            {{- if .Values.config.agentConfigs }}
+            - name: resource-class-config-volume
+              mountPath: /opt/nx-cloud/resource-classes
+            {{- end }}
+            {{- if .Values.frontend.deployment.volumeMounts }}
             {{- toYaml .Values.frontend.deployment.volumeMounts | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- if .Values.frontend.deployment.securityContext }}
           securityContext:
