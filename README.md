@@ -43,7 +43,3 @@ Disk size:
 - The biggest resource consideration will be the permanent Volume where your cached artefacts will be stored. This depends on the size/activity of the workspace. You can start with 20-50GB and scale up if needed.
 - For Mongo, 5-10GB should be enough
 
-## More Information
-
-You can find more information about Nx Cloud and running it on
-prem [here](https://nx.dev/nx-cloud/private-cloud/get-started).
