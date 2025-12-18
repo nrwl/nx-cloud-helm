@@ -41,6 +41,7 @@ jobs:
         uses: helm/kind-action@v1.10.0
 
       - name: Install MongoDB
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm install mongo oci://registry-1.docker.io/bitnamicharts/mongodb \
           --version 16.5.32 \
@@ -50,6 +51,7 @@ jobs:
           --wait
 
       - name: Install Valkey
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm install valkey oci://registry-1.docker.io/bitnamicharts/valkey \
           --version 3.0.22 \
