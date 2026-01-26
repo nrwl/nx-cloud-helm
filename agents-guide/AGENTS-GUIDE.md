@@ -62,6 +62,12 @@ Note on storage:
    - `AZURE_CONNECTION_STRING=...`
 4. You'll then need to make sure your pods either have the correct service account attached for interacting with the above buckets (see [the AWS example](./AWS-AGENTS-GUIDE.md#connecting-an-s3-bucket))
 
+### Kubernetes permissions
+
+The Nx Agents helm chart requires certain Kubernetes RBAC permissions to function correctly. The chart includes a Role and RoleBinding that grant the necessary permissions to the workflow controller service account.
+
+If you are managing permissions yourself (e.g., using a pre-existing service account or a separate RBAC configuration), please consult the permissions defined in [`charts/nx-agents/templates/roles.yaml`](../charts/nx-agents/templates/roles.yaml) to ensure your configuration includes all required permissions.
+
 ### Connect NxCloud to your Nx Agents deployment
 
 These are the options you can use to configure how NxCloud connects to your Nx Agents cluster.
