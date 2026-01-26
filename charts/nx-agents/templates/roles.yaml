@@ -61,6 +61,14 @@ rules:
     - jobs/status
   verbs:
     - get
+- apiGroups:
+    - coordination.k8s.io
+  resources:
+    - leases
+  verbs:
+    - get
+    - create
+    - update
 {{- end }}
 {{- if not .Values.roles.runner.existingRole }}
 ---
