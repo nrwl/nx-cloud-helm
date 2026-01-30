@@ -17,7 +17,7 @@ spec:
   selector:
     matchLabels:
       app: nx-cloud-workflow-controller
-  replicas: 1
+  replicas: {{ .Values.controller.deployment.replicas }}
   {{- if .Values.controller.deployment.strategy }}
   strategy:
     {{- toYaml .Values.controller.deployment.strategy | nindent 4 }}
