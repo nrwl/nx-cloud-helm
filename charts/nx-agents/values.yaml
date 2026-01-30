@@ -51,6 +51,7 @@ roleBindings:
 controller:
   # Options specifically for the controller deployment object
   deployment:
+    replicas: 1
     port: 9000
     annotations: {}
 
