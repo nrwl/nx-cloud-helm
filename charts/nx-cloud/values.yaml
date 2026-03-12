@@ -69,6 +69,7 @@ fileServer:
     envFrom: []
 
     securityContext: {}
+    podSecurityContext: {}
 
     affinity: {}
     tolerations: []
@@ -140,6 +141,7 @@ aggregator:
     envFrom: []
 
     securityContext: {}
+    podSecurityContext: {}
 
     affinity: {}
     tolerations: []
@@ -205,6 +207,7 @@ frontend:
     envFrom: []
 
     securityContext: {}
+    podSecurityContext: {}
 
     affinity: {}
     tolerations: []
@@ -309,6 +312,7 @@ api:
     envFrom: []
 
     securityContext: {}
+    podSecurityContext: {}
 
     affinity: {}
     tolerations: []

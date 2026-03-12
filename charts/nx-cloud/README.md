@@ -73,7 +73,8 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.deployment.strategy.rollingUpdate.maxUnavailable | int    | 1                                           | Max unavailable during rolling update.                                    |
 | fileServer.deployment.strategy.rollingUpdate.maxSurge       | int    | 0                                           | Max surge during rolling update.                                          |
 | fileServer.deployment.envFrom                               | list   | []                                          | envFrom sources for file server.                                          |
-| fileServer.deployment.securityContext                       | object | {}                                          | Pod securityContext for file server.                                      |
+| fileServer.deployment.securityContext                       | object | {}                                          | Pod container securityContext for file server.                            |
+| fileServer.deployment.podSecurityContext                  | object | {}                                          | Pod securityContext for file server.                                      |
 | fileServer.deployment.affinity                              | object | {}                                          | Affinity rules for file server.                                           |
 | fileServer.deployment.tolerations                           | list   | []                                          | Tolerations for file server.                                              |
 | fileServer.deployment.nodeSelector                          | object | {}                                          | Node selector for file server.                                            |
@@ -111,7 +112,8 @@ Below is a summary table of configurable values from values.yaml.
 | aggregator.cronjob.env                                      | object | {}                                          | Environment variables for aggregator.                                     |
 | aggregator.cronjob.envValueFrom                             | object | {}                                          | env valueFrom references for aggregator.                                  |
 | aggregator.cronjob.envFrom                                  | list   | []                                          | envFrom sources for aggregator.                                           |
-| aggregator.cronjob.securityContext                          | object | {}                                          | Pod securityContext for aggregator.                                       |
+| aggregator.cronjob.securityContext                          | object | {}                                          | Pod container securityContext for aggregator.                             |
+| aggregator.cronjob.podSecurityContext                       | object | {}                                          | Pod securityContext for aggregator.                                       |
 | aggregator.cronjob.affinity                                 | object | {}                                          | Affinity rules for aggregator.                                            |
 | aggregator.cronjob.tolerations                              | list   | []                                          | Tolerations for aggregator.                                               |
 | aggregator.cronjob.nodeSelector                             | object | {}                                          | Node selector for aggregator.                                             |
@@ -149,7 +151,8 @@ Below is a summary table of configurable values from values.yaml.
 | frontend.deployment.strategy.rollingUpdate.maxUnavailable   | int    | 0                                           | Max unavailable during rolling update.                                    |
 | frontend.deployment.strategy.rollingUpdate.maxSurge         | int    | 1                                           | Max surge during rolling update.                                          |
 | frontend.deployment.envFrom                                 | list   | []                                          | envFrom sources for frontend.                                             |
-| frontend.deployment.securityContext                         | object | {}                                          | Pod securityContext for frontend.                                         |
+| frontend.deployment.securityContext                         | object | {}                                          | Pod container securityContext for frontend.                               |
+| frontend.deployment.podSecurityContext                      | object | {}                                          | Pod securityContext for frontend.                                         |
 | frontend.deployment.affinity                                | object | {}                                          | Affinity rules for frontend.                                              |
 | frontend.deployment.tolerations                             | list   | []                                          | Tolerations for frontend.                                                 |
 | frontend.deployment.nodeSelector                            | object | {}                                          | Node selector for frontend.                                               |
@@ -209,7 +212,8 @@ Below is a summary table of configurable values from values.yaml.
 | api.deployment.strategy.rollingUpdate.maxUnavailable        | int    | 0                                           | Max unavailable during rolling update.                                    |
 | api.deployment.strategy.rollingUpdate.maxSurge              | int    | 1                                           | Max surge during rolling update.                                          |
 | api.deployment.envFrom                                      | list   | []                                          | envFrom sources for API.                                                  |
-| api.deployment.securityContext                              | object | {}                                          | Pod securityContext for API.                                              |
+| api.deployment.securityContext                              | object | {}                                          | Pod container securityContext for API.                                    |
+| api.deployment.podSecurityContext                           | object | {}                                          | Pod securityContext for API.                                              |
 | api.deployment.affinity                                     | object | {}                                          | Affinity rules for API.                                                   |
 | api.deployment.tolerations                                  | list   | []                                          | Tolerations for API.                                                      |
 | api.deployment.nodeSelector                                 | object | {}                                          | Node selector for API.                                                    |

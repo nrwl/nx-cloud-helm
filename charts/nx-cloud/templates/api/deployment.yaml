@@ -35,6 +35,10 @@ spec:
       {{- if .Values.api.serviceAccount.create }}
       serviceAccountName: {{ .Values.api.serviceAccount.name }}
       {{- end }}
+      {{- with .Values.api.deployment.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if or .Values.config.agentConfigs .Values.api.deployment.volumes }}
       volumes:
         {{- if .Values.config.agentConfigs }}

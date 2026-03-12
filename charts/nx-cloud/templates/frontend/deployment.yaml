@@ -38,6 +38,10 @@ spec:
       {{- if .Values.frontend.serviceAccount.create }}
       serviceAccountName: {{ .Values.frontend.serviceAccount.name }}
       {{- end }}
+      {{- with .Values.frontend.deployment.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if or .Values.config.agentConfigs .Values.frontend.deployment.volumes }}
       volumes:
         {{- if .Values.config.agentConfigs }}
