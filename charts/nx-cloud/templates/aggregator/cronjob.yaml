@@ -29,6 +29,10 @@ spec:
           {{- if .Values.aggregator.serviceAccount.create }}
           serviceAccountName: {{ .Values.aggregator.serviceAccount.name }}
           {{- end }}
+          {{- with .Values.aggregator.cronjob.podSecurityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with .Values.aggregator.cronjob.nodeSelector }}
           nodeSelector:
             {{- toYaml . | nindent 12 }}
