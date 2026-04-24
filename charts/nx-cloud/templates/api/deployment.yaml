@@ -123,6 +123,12 @@ spec:
             {{- end }}
             - name: NX_API_LOG_LEVEL
               value: {{ .Values.api.logLevel | default .Values.global.logLevel | quote }}
+            {{- if .Values.fileServer.enabled }}
+            - name: FILE_SERVER_INTERNAL_BASE_URL
+              value: http://{{ .Values.fileServer.service.name }}
+            - name: FILE_SERVER_INTERNAL_PORT
+              value: {{ .Values.fileServer.service.port | quote }}
+            {{- end }}
             {{- range $key, $value := .Values.api.deployment.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
