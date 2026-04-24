@@ -160,9 +160,6 @@ api:
     podLabels:
       dummy-api-pod-label-1: "dummy-value-1"
       dummy-api-pod-label-2: "dummy-value-2"
-    env:
-      FILE_SERVER_INTERNAL_BASE_URL: http://nx-cloud-file-server-service
-      FILE_SERVER_INTERNAL_PORT: "5000"
     resources: null
 
   serviceAccount:
