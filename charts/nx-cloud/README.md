@@ -67,7 +67,7 @@ Below is a summary table of configurable values from values.yaml.
 | fileServer.deployment.labels                                | object | {}                                          | Deployment labels for file server.                                        |
 | fileServer.deployment.podLabels                             | object | {}                                          | Pod labels for file server deployment.                                    |
 | fileServer.deployment.port                                  | int    | 5000                                        | Container port for file server.                                           |
-| fileServer.deployment.env                                   | object | { NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "1" } | Environment variables for file server.                                    |
+| fileServer.deployment.env                                   | object | { NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "29" }| Environment variables for file server.                                    |
 | fileServer.deployment.envValueFrom                          | object | {}                                          | env valueFrom references for file server.                                 |
 | fileServer.deployment.strategy.type                         | string | RollingUpdate                               | Deployment strategy type.                                                 |
 | fileServer.deployment.strategy.rollingUpdate.maxUnavailable | int    | 1                                           | Max unavailable during rolling update.                                    |
