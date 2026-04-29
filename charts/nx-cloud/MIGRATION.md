@@ -153,6 +153,55 @@ charts and how their values were derived.
 | saml.enabled                      | SAML_ENTRY_POINT, SAML_CERT                               | frontend                                                    |
 | vcsHttpsProxy                     | VERSION_CONTROL_HTTPS_PROXY                               | frontend, nx-api                                            |
 
+## Configuring record and artifact expiration
+
+Pre-1.0 charts exposed a single `clearRecordsOlderThanDays` value that drove every expiration env var at once. That value has been removed in v1; expiration is now configured directly via env vars on the relevant components.
+
+The aggregator CronJob deletes Mongo records and the file server deletes cached artifacts on disk. They run independently, so it is the operator's responsibility to keep them in sync.
+
+### Important: keep the file server window longer than the hash window
+
+If the file server deletes an artifact while its hash record still exists in Mongo, cache reads for that hash will fail with "artifact not found". Always set:
+
+```
+NX_CACHE_EXPIRATION_PERIOD_IN_DAYS  >  NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS
+```
+
+A one-day buffer is usually enough.
+
+### Defaults
+
+| Component   | Env var                                          | Code default (when unset) | Chart default                                  |
+|-------------|--------------------------------------------------|---------------------------|------------------------------------------------|
+| file server | `NX_CACHE_EXPIRATION_PERIOD_IN_DAYS`             | 28                        | `29` (set in `fileServer.deployment.env`)      |
+| aggregator  | `NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS`        | 92                        | unset (falls back to code default)             |
+| aggregator  | `NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS`       | 28                        | unset (falls back to code default)             |
+| aggregator  | `NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS`    | 14                        | unset (falls back to code default)             |
+| aggregator  | `NX_CLOUD_DB_TERMINAL_OUTPUTS_EXPIRATION_IN_DAYS`| 14                        | unset (falls back to code default)             |
+
+The chart's default file server window (29) is one day longer than the default hash window (28), which is the safe ordering described above.
+
+### Overriding the defaults
+
+To shorten or extend retention, set the env vars directly. For example, to keep 7 days of hash data and clean files one day later:
+
+```yaml
+fileServer:
+  deployment:
+    env:
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "8"
+
+aggregator:
+  cronjob:
+    env:
+      NX_CLOUD_DB_RUN_DATA_EXPIRATION_IN_DAYS: "7"
+      NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS: "7"
+      NX_CLOUD_DB_HASH_DETAILS_EXPIRATION_IN_DAYS: "7"
+      NX_CLOUD_DB_TERMINAL_OUTPUTS_EXPIRATION_IN_DAYS: "7"
+```
+
+If you only override the hash window, remember to bump the file server window to match.
+
 ## Using self-signed certificates
 
 To add self-signed certificates to a Java keystore, you can use a combination of the `initContainers`, `extraObjects` and `extraVolumes` values.

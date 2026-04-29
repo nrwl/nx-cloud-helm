@@ -52,7 +52,11 @@ fileServer:
     podLabels: {}
     port: 5000
     env:
-      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "1"
+      # Must be greater than the longest aggregator hash expiration
+      # (NX_CLOUD_DB_HASH_DATA_EXPIRATION_IN_DAYS, default 28 days) so that
+      # the file server never deletes an artifact while its hash record still
+      # exists in Mongo. Set to 29 = 28 + 1 day of safety margin.
+      NX_CACHE_EXPIRATION_PERIOD_IN_DAYS: "29"
 
     envValueFrom: {}
     #  ENV_NAME:
