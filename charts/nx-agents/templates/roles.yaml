@@ -1,10 +1,16 @@
 {{- if not .Values.roles.controller.existingRole }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
+{{- if .Values.roles.controller.clusterScoped }}
+kind: ClusterRole
+metadata:
+  name: nx-cloud-workflow-controller-role
+{{- else }}
 kind: Role
 metadata:
   name: nx-cloud-workflow-controller-role
   namespace: {{ .Values.global.namespace }}
+{{- end }}
 rules:
 - apiGroups:
     - ''
@@ -61,6 +67,7 @@ rules:
     - jobs/status
   verbs:
     - get
+{{- if not .Values.roles.controller.clusterScoped }}
 - apiGroups:
     - coordination.k8s.io
   resources:
@@ -69,6 +76,27 @@ rules:
     - get
     - create
     - update
+{{- end }}
+{{- if .Values.roles.controller.clusterScoped }}
+---
+# Leader-election lease lives in the controller's own namespace, so the lease
+# permissions stay namespace-scoped even when the workload permissions are
+# provisioned cluster-wide.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: nx-cloud-workflow-controller-lease-role
+  namespace: {{ .Values.global.namespace }}
+rules:
+- apiGroups:
+    - coordination.k8s.io
+  resources:
+    - leases
+  verbs:
+    - get
+    - create
+    - update
+{{- end }}
 {{- end }}
 {{- if not .Values.roles.runner.existingRole }}
 ---

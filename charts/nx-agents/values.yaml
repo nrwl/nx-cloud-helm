@@ -32,6 +32,12 @@ roles:
   controller:
     # when set to true, controller role will not be created and will use the existing role
     existingRole: false
+    # When set to true, the controller's job/secret/pod/service/deployment permissions are
+    # provisioned as a ClusterRole + ClusterRoleBinding so the controller can manage workloads
+    # in many namespaces (dedicated-compute deployments, where each onboarded org gets its own
+    # namespace selected by computeRoutingKey). The leader-election lease still uses a
+    # namespace-scoped Role + RoleBinding in the controller's own namespace.
+    clusterScoped: false
   runner:
     # when set to true, runner role will not be created and will use the existing role
     existingRole: false
