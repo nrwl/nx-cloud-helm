@@ -6,7 +6,11 @@
   {{- end }}
 {{- end }}
 {{- else }}
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name=nx-cloud-frontend,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:{{ .Values.frontend.service.port }}
+  The chart-managed Ingress is disabled. Reach the frontend through whatever
+  you've configured (externally-managed Ingress, gateway, LoadBalancer, etc.),
+  or port-forward for local testing:
+
+    export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name=nx-cloud-frontend,app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+    kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:{{ .Values.frontend.service.port }}
+    # then visit http://127.0.0.1:8080
 {{- end }}
