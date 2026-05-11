@@ -1,0 +1,73 @@
+global:
+  namespace: 'nx-cloud-workflows'
+
+naming:
+  nameOverride: ''
+  fullNameOverride: ''
+
+serviceAccounts:
+  controller:
+    annotations: {}
+    imagePullSecrets:
+      - name: controller
+  runner:
+    annotations: {}
+    imagePullSecrets:
+      - name: runner
+
+controller:
+  deployment:
+    port: 9000
+    annotations: {}
+    env:
+      - name: example-env
+        value: example-value
+    podAnnotations:
+      example.io/static: 'plain-string-no-templating'
+      example.io/release: '{{ .Release.Name }}'
+      # canonical pattern from Helm's tips-and-tricks: re-roll the pod
+      # whenever the hashed content changes. here we hash the controller
+      # env list, but the same pattern is used to hash a ConfigMap body.
+      checksum/env: '{{ toYaml .Values.controller.deployment.env | sha256sum }}'
+  service:
+    port: 9000
+    type: ClusterIP
+    loadBalancerIP: ''
+    loadBalancerSourceRanges: []
+    annotations: {}
+  image:
+    registry: 'us-east1-docker.pkg.dev/nxcloudoperations'
+    imageName: nx-cloud-workflow-controller
+    repository: 'nx-cloud-enterprise-public'
+    tag: test.0219162846
+    pullPolicy: Always
+  resources:
+    limits:
+      memory: '1Gi'
+      cpu: '1.0'
+    requests:
+      memory: '0.5Gi'
+      cpu: '0.5'
+
+executor:
+  env: {}
+
+daemonset:
+  enabled: false
+
+secret:
+  name: 'cloudsecret'
+  awsS3AccessKeyId: 'AWS_KEY'
+  awsS3SecretAccessKey: 'AWS_SECRET'
+
+extraManifests:
+  secret:
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cloudsecret
+      namespace: nx-cloud-workflows
+    type: Opaque
+    stringData:
+      AWS_KEY: "MYAWSKEY"
+      AWS_SECRET: "SUPER_SECRET_AWS_SECRET"
