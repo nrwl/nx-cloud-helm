@@ -29,6 +29,10 @@ spec:
         {{- if .Values.controller.deployment.podLabels }}
         {{- toYaml .Values.controller.deployment.podLabels | nindent 8}}
         {{- end }}
+      {{- if .Values.controller.deployment.podAnnotations }}
+      annotations:
+        {{- tpl (toYaml .Values.controller.deployment.podAnnotations) $ | nindent 8 }}
+      {{- end }}
     spec:
       securityContext:
         runAsNonRoot: true
