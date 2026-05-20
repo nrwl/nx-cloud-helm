@@ -106,6 +106,7 @@ This table maps legacy values (pre-1.0.0) to their new equivalents.
 | fileStorage.size                    | fileServer.pvc.size                                | Moved. Note default changed to 10Gi in values.yaml.                                                                                                                               |
 | fileStorage.resourcePolicy          | fileServer.pvc.helmResourcePolicy                  | Renamed/moved.                                                                                                                                                                    |
 | awsS3.*                             | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
+| (no legacy key — recent nx-cloud requirement) | `AWS_REGION` env var on the api component | Recent nx-cloud builds (late-2025 and newer) require `AWS_REGION` to be set explicitly. Earlier builds silently defaulted to `us-east-1` when unset. Only applies if your pinned `nxprivatecloud/nx-cloud-nx-api` image includes the change. For S3-compatible endpoints (MinIO, Hetzner, Ceph) any non-empty string works because the endpoint URL controls routing. Set via `api.deployment.env.AWS_REGION`. See the [nx-cloud release notes](https://nx.dev/docs/reference/nx-cloud/release-notes). |
 | azure.*                             | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | useCosmosDb                         | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | gitlab.*                            | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
@@ -118,6 +119,14 @@ This table maps legacy values (pre-1.0.0) to their new equivalents.
 | resourceClassConfiguration          | config.agentConfigs (string)                       | Moved and changed: now a single string containing the agent configs.                                                                                                              |
 | secret.*                            | Removed                                            | Use environment variables mounted via env/envFrom/envValueFrom. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | extraManifests                      | extraObjects                                       | Renamed.                                                                                                                                                                          |
+
+## New prerequisite: Valkey (nx-cloud 2025.07+)
+
+nx-cloud `2025.07` introduced a hard dependency on an external [Valkey](https://valkey.io/) instance (Redis-compatible). If you are running an `nxprivatecloud/*` image tagged `2025.07` or newer — including the image tags pinned by the chart's `appVersion` — you must provision Valkey externally and wire it via `api.valkey.*` before upgrading. The api pod will fail to start otherwise.
+
+See the [nx-cloud release notes for 2025.07](https://nx.dev/docs/reference/nx-cloud/release-notes#202507) for the upstream change, and `values.yaml` for the full set of `api.valkey.*` knobs.
+
+If you are pinning your `*.image.tag` to a pre-`2025.07` nx-cloud build, this prerequisite does not apply to your deployment.
 
 ## Environment variables configured by legacy values
 
