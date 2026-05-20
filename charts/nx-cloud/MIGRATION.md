@@ -106,6 +106,7 @@ This table maps legacy values (pre-1.0.0) to their new equivalents.
 | fileStorage.size                    | fileServer.pvc.size                                | Moved. Note default changed to 10Gi in values.yaml.                                                                                                                               |
 | fileStorage.resourcePolicy          | fileServer.pvc.helmResourcePolicy                  | Renamed/moved.                                                                                                                                                                    |
 | awsS3.*                             | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
+| (no legacy key — new requirement)   | `AWS_REGION` env var on the api component          | **Now required.** Previously the nx-api silently defaulted to `us-east-1` when `AWS_REGION` was unset; that default was removed in v1. For S3-compatible endpoints (MinIO, Hetzner, Ceph), any non-empty string works because the endpoint URL controls routing — e.g. `AWS_REGION: "us-east-1"`. Set via `api.deployment.env.AWS_REGION`. |
 | azure.*                             | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | useCosmosDb                         | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | gitlab.*                            | Removed                                            | Configure via environment variables on the relevant components. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
@@ -118,6 +119,38 @@ This table maps legacy values (pre-1.0.0) to their new equivalents.
 | resourceClassConfiguration          | config.agentConfigs (string)                       | Moved and changed: now a single string containing the agent configs.                                                                                                              |
 | secret.*                            | Removed                                            | Use environment variables mounted via env/envFrom/envValueFrom. See: [Environment variables configured by legacy values](#environment-variables-configured-by-legacy-values).     |
 | extraManifests                      | extraObjects                                       | Renamed.                                                                                                                                                                          |
+
+## New prerequisite: Valkey 7.2+
+
+v1.x requires an external [Valkey](https://valkey.io/) 7.2+ instance (Redis-compatible). The chart does **not** include a Valkey subchart — you must provision it yourself before upgrading.
+
+The api deployment unconditionally mounts `VALKEY_PASSWORD` from a Kubernetes Secret. If `api.valkey.passwordSecret.name` is empty (the default), the api pod will **fail admission**. Configure the following values:
+
+| Value                              | Description                                                            |
+|------------------------------------|------------------------------------------------------------------------|
+| `api.valkey.primaryAddress`        | Hostname or IP of the Valkey primary node.                             |
+| `api.valkey.port`                  | Valkey port (default: `6379`).                                         |
+| `api.valkey.passwordSecret.name`   | Name of the Kubernetes Secret holding the Valkey password. **Required.** |
+| `api.valkey.passwordSecret.key`    | Key within that Secret whose value is the password. **Required.**      |
+
+Example:
+
+```yaml
+api:
+  valkey:
+    primaryAddress: "valkey.infra.svc.cluster.local"
+    port: 6379
+    passwordSecret:
+      name: valkey-credentials
+      key: password
+```
+
+Create the Secret before deploying the chart:
+
+```bash
+kubectl create secret generic valkey-credentials \
+  --from-literal=password='<your-valkey-password>'
+```
 
 ## Environment variables configured by legacy values
 
@@ -142,6 +175,7 @@ charts and how their values were derived.
 | awsS3.accelerated                 | AWS_S3_ACCELERATED (set to 'TRUE' when true)              | nx-api                                                      |
 | awsS3.endpoint                    | AWS_S3_ENDPOINT                                           | nx-api                                                      |
 | awsS3.enablePathStyleAccess       | AWS_S3_ENABLE_PATH_STYLE_ACCESS (set to 'TRUE' when true) | nx-api                                                      |
+| (no legacy key — new requirement) | AWS_REGION                                                | nx-api — **now required**; was silently defaulted to `us-east-1` in pre-1.0. For S3-compatible endpoints any non-empty string works (e.g. `us-east-1`). |
 | azure.container                   | AZURE_CONTAINER                                           | nx-api                                                      |
 | useCosmosDb                       | NX_CLOUD_USE_MONGO42 (set to 'false' when true)           | nx-api, aggregator                                          |
 | gitlab.auth.enabled               | GITLAB_APP_ID, GITLAB_APP_SECRET                          | frontend                                                    |
