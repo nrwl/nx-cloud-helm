@@ -1,5 +1,7 @@
 global:
   namespace: 'nx-cloud-workflows'
+  namespaceLabels:
+    my.app/custom-label: test
 
 naming:
   nameOverride: ''
