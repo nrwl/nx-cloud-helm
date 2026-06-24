@@ -7,6 +7,9 @@ global:
   # tell this chart not to try and create it for you.
   createNamespace: true
 
+  # Additional labels to apply to the namespace when createNamespace is true.
+  namespaceLabels: {}
+
 naming:
   # Overrides the app name (defined in _helpers.tpl) used when installing the chart
   nameOverride: ''
