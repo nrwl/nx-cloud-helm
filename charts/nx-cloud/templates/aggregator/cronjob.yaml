@@ -45,6 +45,9 @@ spec:
           tolerations:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.aggregator.cronjob.priorityClassName }}
+          priorityClassName: {{ . }}
+          {{- end }}
           {{- with .Values.aggregator.cronjob.initContainers }}
           initContainers:
             {{- toYaml . | nindent 12 }}

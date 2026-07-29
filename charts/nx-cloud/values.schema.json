@@ -277,6 +277,10 @@
             "tolerations": {
               "type": "array"
             },
+            "priorityClassName": {
+              "type": "string",
+              "description": "Name of a Kubernetes PriorityClass to assign to this component's pods. Controls scheduling priority and graceful node shutdown order. Defaults to empty (cluster default priority)."
+            },
             "nodeSelector": {
               "type": "object"
             },
@@ -738,6 +742,10 @@
         },
         "tolerations": {
           "type": "array"
+        },
+        "priorityClassName": {
+          "type": "string",
+          "description": "Name of a Kubernetes PriorityClass to assign to this component's pods. Controls scheduling priority and graceful node shutdown order. Defaults to empty (cluster default priority)."
         },
         "nodeSelector": {
           "type": "object"

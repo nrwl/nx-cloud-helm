@@ -68,6 +68,9 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.frontend.deployment.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
       {{- with .Values.frontend.deployment.initContainers }}
       initContainers:
         {{- toYaml . | nindent 8 }}

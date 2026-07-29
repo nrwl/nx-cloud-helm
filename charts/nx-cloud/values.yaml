@@ -78,6 +78,7 @@ fileServer:
     affinity: {}
     tolerations: []
     nodeSelector: {}
+    priorityClassName: ""
 
     resources:
       limits: {}
@@ -150,6 +151,7 @@ aggregator:
     affinity: {}
     tolerations: []
     nodeSelector: {}
+    priorityClassName: ""
 
     resources:
       limits: {}
@@ -216,6 +218,7 @@ frontend:
     affinity: {}
     tolerations: []
     nodeSelector: {}
+    priorityClassName: ""
 
     resources:
       limits: {}
@@ -321,6 +324,7 @@ api:
     affinity: {}
     tolerations: []
     nodeSelector: {}
+    priorityClassName: ""
 
     resources:
       limits: {}
