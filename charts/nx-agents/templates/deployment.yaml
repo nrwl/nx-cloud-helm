@@ -84,6 +84,10 @@ spec:
                 - 'ALL'
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
+          {{- if .Values.controller.deployment.lifecycle }}
+          lifecycle:
+            {{- toYaml .Values.controller.deployment.lifecycle | nindent 12 }}
+          {{- end }}
           livenessProbe:
             httpGet:
               path: /healthz
@@ -141,7 +145,7 @@ spec:
           {{- end }}
       serviceAccount: {{ .Values.serviceAccounts.controller.name }}
       serviceAccountName: {{ .Values.serviceAccounts.controller.name }}
-      terminationGracePeriodSeconds: 10
+      terminationGracePeriodSeconds: {{ .Values.controller.deployment.terminationGracePeriodSeconds | default 10 }}
       {{- if gt (len .Values.controller.deployment.volumes) 0 }}
       volumes:
         {{- toYaml .Values.controller.deployment.volumes | nindent 8 }}

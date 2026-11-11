@@ -90,6 +90,20 @@ controller:
     # certain configuration options to the controller. Available options are documented in the controller's help output.
     # e.g. `docker run --rm -it <PATH_TO_CONTROLLER_IMAGE> /nx-cloud-workflow-controller --help`
     args: {}
+
+    # Lifecycle hooks for the controller container. Behind a cloud load balancer that registers pod IPs (for example an
+    # AWS NLB with IP targets), a preStop sleep keeps the old pod serving while the load balancer deregisters it during a
+    # rollout:
+    # lifecycle:
+    #   preStop:
+    #     sleep:
+    #       seconds: 30
+    lifecycle: {}
+
+    # How long Kubernetes waits for the controller to exit after deleting the pod. This includes any preStop hook, so
+    # keep it longer than the preStop sleep.
+    terminationGracePeriodSeconds: 10
+
     strategy:
       rollingUpdate:
         maxSurge: 25%
