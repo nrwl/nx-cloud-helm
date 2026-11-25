@@ -78,8 +78,8 @@ stringData:
 
 ### GitLab Auth
 
-To use GitHub for user authentication, you will need two values: `GITLAB_APP_ID` and `GITLAB_APP_SECRET`. Read [here](https://nx.dev/ci/recipes/enterprise/single-tenant/auth-gitlab) on how to get
-those values.
+To use GitLab for user authentication, you will need two values: `GITLAB_APP_ID` and `GITLAB_APP_SECRET`. Read [here](https://nx.dev/docs/enterprise/single-tenant/auth-gitlab) on how to get
+those values. Create the application in a GitLab group with several owners (group Settings > Applications), not under a personal profile.
 
 Then update your `helm-values.yaml` and `secrets.yaml`:
 
